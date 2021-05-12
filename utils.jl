@@ -13,12 +13,16 @@ using Dates
 end
 
 @with_kw struct Assignment
+    number::Int = 99
+    release::Date = Date(0)
     title::String = ""
     due_date::String = ""
     link::String = ""
 end
 
 @with_kw struct Lecture
+    number::Int = 99
+    release::Date = Date(0)
     title::String = ""
     date::String = ""
     link::String = ""
@@ -59,17 +63,24 @@ getpath(l::Lesson) = joinpath("/lessons", "Lesson$(lpad(l.number, 2, '0'))")
 lesson_badge(l::Lesson) = string(
     "[!", "[lesson", l.number, "link]",
     "(https://img.shields.io/badge/Lesson-", l.number,
-    "-purple)](", getpath(l), ")")
+    "-purple)](", getpath(l), ")"
+)
 
+date_badge(l::Lesson) = string(
+    "!", "[lesson", l.number, "link]",
+    "(https://img.shields.io/badge/Date-", 
+    replace(string(l.date), "-"=>"--"),
+    "-orange)"
+)
 function hfun_include_lessons()
     lessons = [Lesson(joinpath("lessons", p)) for p in filter(f-> startswith(f, "Lesson"), readdir("lessons/"))]
     io = IOBuffer()
     for lesson in lessons
         lesson.release > today() && continue
+        @show date_badge(lesson)
         write(io, Franklin.md2html("""
             ### [$(lesson.title)]($(getpath(lesson)))
-            $(lesson_badge(lesson))
-            **Date:** $(lesson.date)
+            $(lesson_badge(lesson)) $(date_badge(lesson))
             """))
         write(io, Franklin.md2html(""""""))
     end
