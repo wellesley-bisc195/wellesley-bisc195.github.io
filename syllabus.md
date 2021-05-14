@@ -62,11 +62,10 @@ Recommended: Molecular and/or Cell Biology.
 **Online textbook (free):**
 [Think Julia: How to think like a computer scientist](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
 
-
 ### Lessons
 
-<!-- Function to add lessons -->
+{{include_lessons}}
 
 ### Assignments
 
-<!-- Function to add assignments -->
+{{include_assignments}}

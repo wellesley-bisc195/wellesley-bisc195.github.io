@@ -17,7 +17,7 @@ end
     number::Int = 99
     release::Date = Date(0)
     title::String = ""
-    due_date::String = ""
+    due_date::Date = Date(0)
     link::String = ""
 end
 
@@ -68,7 +68,7 @@ function Assignment(path)
     number = default_pagevar(path, :number, 99)
     release = default_pagevar(path, :release, Date(0))
     title = default_pagevar(path, :title, "")
-    due_date = default_pagevar(path, :due_date, "")
+    due_date = default_pagevar(path, :due_date, Date(0))
     link = default_pagevar(path, :link, "")
     return Assignment(number, release, title, due_date, link)
 end
@@ -126,7 +126,23 @@ function hfun_include_lessons()
             $(date_badge(lesson))
             $(join([chapter_badge(c) for c in lesson.chapters], ' '))
             $(join([assignment_badge(Assignment(a)) for a in lesson.assignments], ' '))
-            """; stripp=true))
+            """))
+    end
+    return String(take!(io))
+end
+
+function hfun_include_assignments()
+    assignments = [Assignment(joinpath("assignments", p)) for p in filter(f-> startswith(f, "Assignment"), readdir("assignments/"))]
+    io = IOBuffer()
+    for assignment in assignments
+        assignment.release > today() && continue
+
+        write(io, Franklin.md2html("""
+            ### [$(assignment.title)]($(getpath(assignment)))
+            
+            $(assignment_badge(assignment))
+            $(due_badge(assignment))
+            """))
     end
     return String(take!(io))
 end
@@ -162,5 +178,15 @@ function hfun_lesson_preamble()
     return String(take!(io))
 end
 
+function hfun_assignment_preamble()
+    assignment = Assignment(locvar(:number))
+    io = IOBuffer()
+    write(io, Franklin.md2html("""
+        # [Assignment $(assignment.number) - $(assignment.title)]($(getpath(assignment)))
+        
+        $(due_badge(assignment))
+        """))
+    return String(take!(io))
+end
 
 # same for hfun_include_assignments
