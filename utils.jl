@@ -184,6 +184,7 @@ function hfun_assignment_preamble()
     write(io, Franklin.md2html("""
         # [Assignment $(assignment.number) - $(assignment.title)]($(getpath(assignment)))
         
+        {{Placeholder for repo link}}
         $(due_badge(assignment))
         """))
     return String(take!(io))
