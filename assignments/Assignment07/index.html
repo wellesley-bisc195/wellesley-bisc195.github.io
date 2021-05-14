@@ -1,0 +1,135 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title><a href="@id assignment07">Assignment07</a></title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=a_hrefid_assignment07assignment07 ><a href="#a_hrefid_assignment07assignment07" class=header-anchor ><a href="@id assignment07">Assignment07</a></a></h1> <p><a href="https://classroom.github.com/a/OrKQtjqa"><img src="https://img.shields.io/badge/Assignment07-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 07 invitation" /></a> <a href="@ref assignment07"><img src="https://img.shields.io/badge/07-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 07 - Description" /></a> <a href="@ref assignment07"><img src="https://img.shields.io/badge/Due-7&#37;2F14&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 07 - Due" /></a></p> <h2>Instructions</h2> <p>Click the assignment 7 invitation above and clone the repository. This assignment is going to be a bit different than assignments in the past, so read on.</p> <h3 id=building_a_package ><a href="#building_a_package" class=header-anchor >Building a package</a></h3> <p><code>Assignment07</code> is a julia package &#40;actually, all of your assignments have been julia packages&#41;. Let&#39;s take a look at it from the command line.</p> <ol> <li><p>Change your current working directory to the assignment directory.</p> <li><p>List the contents of the directory &#40;take a look back at <a href="@ref lesson01">Lesson 1</a> if you don&#39;t remember how&#41;.</p> <p>In the main directory, you should see &#40;among other things&#41; the <code>src/</code> directory, which contains the main project code, the <code>test/</code> directory, which contains the automated tests, and the <code>Project.toml</code> file, which describes the properties of the package.</p> <li><p>Look at the contents of <code>Project.toml</code> &#40;do you remember how to do this from the command line?&#41;.</p> </ol> <pre><code class=language-toml >name &#61; &quot;Assignment07&quot;
+   uuid &#61; &quot;67893044-1481-44cf-8ab6-de350e09ee4e&quot;
+   authors &#61; &#91;&quot;Kevin Bonham, PhD &lt;kbonham@wellesley.edu&gt;&quot;&#93;
+   version &#61; &quot;0.1.0&quot;
+   
+   &#91;compat&#93;
+   julia &#61; &quot;1.4&quot;</code></pre> <p>This file is written in a format called <code>toml</code> &#40;for <a href="https://en.wikipedia.org/wiki/TOML">Tom&#39;s obvious, minimal language</a>&#41;. It&#39;s not julia code, but it has some similar features.</p> <p>Open the file in VS Code, and add your name to the list of <code>authors</code>. Arrays in <code>toml</code> files have the same syntax as in <code>julia</code></p> <ol start=4 > <li><p>Open a julia REPL, and set the working directory <code>Assignment07-&lt;username&gt;/</code> Open the Pkg REPL prompt &#40;with <code>&#93;</code>&#41;, and activate the project</p> </ol> <pre><code class=language-julia >&#40;@v1.4&#41; pkg&gt; activate .
+   Activating environment at &#96;~/repos/courses/assignment07/Project.toml&#96;
+   
+   &#40;Assignment07&#41; pkg&gt;</code></pre> <p>Now, look at <code>Project.toml</code> again - you should see a new section <code>&#91;deps&#93;</code> that lists <code>BioSequences</code>. This describes your Package&#39;s &quot;dependencies,&quot; which are other packages that your package depends on to function correctly.</p> <ol start=5 > <li><p>Look at the directory again - you should now see that a <code>Manifest.toml</code> file has been created. This file contains more specific information about the precise configuration &#40;versions, names, locations, etc&#41; of all the packages, including &quot;indirect&quot; dependencies &#40;the dependencies of your dependencies&#41;. You should never edit this file manually.</p> </ol> <h3 id=adding_code ><a href="#adding_code" class=header-anchor >Adding code</a></h3> <p>When you execute <code>using BioSequences</code>, julia interprets this as asking to execute the code found in the <code>BioSequences</code> package - specifically the code in <code>src/BioSequences.jl</code>. Take a look at that file on github <a href="https://github.com/BioJulia/BioSequences.jl/blob/master/src/BioSequences.jl">here</a>.</p> <p>This file contains a <code>module</code> definition, which is declared like this:</p> <pre><code class=language-julia >module BioSequences
+
+# code for the module
+
+end</code></pre> <p>A <code>module</code> is a container for code that can be called with <code>using</code>. You can define a module right in your REPL:</p> <pre><code class=language-julia >julia&gt; module MyModule
+
+       function somefunction&#40;&#41;
+           println&#40;&quot;Hi&#33; I&#39;m a function in MyModule&quot;&#41;
+       end
+
+       end
+Main.MyModule
+
+julia&gt; using .MyModule # the leading &#96;.&#96; is necessary for modules that aren&#39;t installed as packages
+
+julia&gt; MyModule.somefunction&#40;&#41;
+Hi&#33; I&#39;m a function in MyModule</code></pre> <p>Note that <code>somefunction&#40;&#41;</code> is not available by itself, you need to tell julia that it&#39;s found in <code>MyModule</code> by typing <code>MyModule.somefunction&#40;&#41;</code>. In order to make the function available without specifying its module, the module must <code>export</code> it.</p> <pre><code class=language-julia >julia&gt; module MyModule
+
+       export somefunction,
+              otherfunction
+
+       function somefunction&#40;&#41;
+           println&#40;&quot;Hi&#33; I&#39;m a function in MyModule&quot;&#41;
+       end
+
+       function otherfunction&#40;&#41;
+           println&#40;&quot;Me too&#33; Me too&#33;&quot;&#41;
+       end
+
+       function notexported&#40;&#41;
+           println&#40;&quot;Me too - but I&#39;m not exported :-&#40;&quot;&#41;
+       end
+
+       end
+WARNING: replacing module MyModule.
+Main.MyModule
+
+julia&gt; using .MyModule
+
+julia&gt; somefunction&#40;&#41;
+Hi&#33; I&#39;m a function in MyModule
+
+julia&gt; otherfunction&#40;&#41;
+Me too&#33; Me too&#33;
+
+julia&gt; notexported&#40;&#41;
+ERROR: UndefVarError: notexported not defined
+Stacktrace:
+ &#91;1&#93; top-level scope at REPL&#91;14&#93;:1
+ &#91;2&#93; eval&#40;::Module, ::Any&#41; at ./boot.jl:331
+ &#91;3&#93; eval_user_input&#40;::Any, ::REPL.REPLBackend&#41; at /Users/julia/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.4/REPL/src/REPL.jl:86
+ &#91;4&#93; run_backend&#40;::REPL.REPLBackend&#41; at /Users/ksb/.julia/packages/Revise/tV8FE/src/Revise.jl:1165
+ &#91;5&#93; top-level scope at none:0
+
+julia&gt; MyModule.notexported&#40;&#41;
+Me too - but I&#39;m not exported :-&#40;</code></pre> <h3 id=bioinformatics_functionality ><a href="#bioinformatics_functionality" class=header-anchor >Bioinformatics Functionality</a></h3> <p>Now, let&#39;s make Assignment07 into a package that you can reuse for future assignments.</p> <div class=colbox-green ><div class=title >Tip</div> <p>In many packages, there&#39;s so much code that it would be hard to keep track of if everything were in the main module file. Instead, most of the code is written in separate files, and then <code>include&#40;&quot;code_file.jl&quot;&#41;</code> is added to the module file.</p> <p>In julia, <code>include&#40;&quot;code_file.jl&quot;&#41;</code> executes all of the text contained in <code>code_file.jl</code>, so it&#39;s identical to having that code in the module file itself, but it keeps things more orderly.</p> <p>Take a look at the <code>src/AssignmentXX.jl</code> files in your previous assignments, and the module file of <code>BioSequences</code> linked above. They all follow this pattern.</p></div> <p>Write and export the following functions in the <code>Assignment07</code> module. You may copy as much code as you like from previous assignments, but keep in mind that some of the functions have slightly different parameters.</p> <div class=colbox-orange ><div class=title >Bonus Challenge</div> <p>You may write all of the code using <code>String</code>s for DNA sequences as we&#39;ve been doing. However, if you&#39;d like an additional challenge, you may try to write the functions using the DNA types from <code>BioSequences</code>.</p> <p>If you&#39;d like to try this, edit the file in <code>test/runtests.jl</code> to comment out the &quot;Using Strings&quot; testset and un-comment the &quot;Using BioSequences&quot; testset. Tip - in VS code you can select a whole block of text and press <code>cmd&#43;/</code> to comment/un-comment &#40;for Windows users, it&#39;s <code>ctrl&#43;/</code>&#41;.</p></div> <ol> <li><p><code>normalizeDNA&#40;sequence&#41;</code>: This function is already written for you.</p> <li><p><code>compsition&#40;sequence&#41;</code>: Like <code>basecomposition&#40;&#41;</code> from assignment04, but instead of returning a <code>Tuple</code> of values, return a <code>Dict</code>, with keys <code>&#39;A&#39;</code>, <code>&#39;C&#39;</code>, <code>&#39;G&#39;</code>, <code>&#39;T&#39;</code>, and <code>&#39;N&#39;</code>.</p> <p>Examples:</p> </ol> <pre><code class=language-julia >julia&gt; composition&#40;&quot;ACCGGGTTTTN&quot;&#41;
+   Dict&#123;Char,Int64&#125; with 5 entries:
+     &#39;A&#39; &#61;&gt; 1
+     &#39;G&#39; &#61;&gt; 3
+     &#39;T&#39; &#61;&gt; 4
+     &#39;N&#39; &#61;&gt; 1
+     &#39;C&#39; &#61;&gt; 2
+    
+   julia&gt; composition&#40;&quot;AAX&quot;&#41;
+   ERROR: Invalid base, X</code></pre> <div class=colbox-orange ><div class=title >&quot;Bonus Challenge&quot;</div> <p>If you&#39;re using <code>BioSequences</code>, this function already exists:</p> <pre><code class=language-julia >julia&gt; using BioSequences
+
+julia&gt; BioSequences.composition&#40;dna&quot;ACCGGGTTTTN&quot;&#41;
+Composition&#123;DNA&#125; with 5 entries:
+DNA_C &#61;&gt; 2
+DNA_N &#61;&gt; 1
+DNA_A &#61;&gt; 1
+DNA_G &#61;&gt; 3
+DNA_T &#61;&gt; 4
+
+julia&gt; d&#91;DNA_T&#93;
+4</code></pre> <p>You can use functions from BioSequences in your own functions by doing <code>using BioSequences</code>, but if you want to export them from your own package or add additional methods, you must do an &quot;import&quot;: <code>import BioSequences: composition</code></p> <div class=colbox-green ><div class=title >Tip</div> <p> This may be true for some other functions too... read the documentation, be sure that your functions meet the specifications. To use <code>import</code> on multiple functions, separate them by commas: Eg. <code>import PackageA: func1, func2</code></p></div></div> <ol> <li><p><code>gc_content&#40;seq&#41;</code>: Exactly like <code>gc_content&#40;&#41;</code> from Assignment 4, except that it should accommodate ambiguous bases &#40;eg sequences that have <code>&#39;N&#39;</code> in them&#41;.</p> <p>Examples:</p> </ol> <pre><code class=language-julia >julia&gt; gc_content&#40;&quot;ATNG&quot;&#41;
+   0.25
+   
+   julia&gt; gc_content&#40;&quot;ccccggggn&quot;&#41;
+   0.8888888888888888</code></pre> <div class=colbox-orange ><div class=title >Bonus Challenge</div> <p>The <code>BioSequences</code> tests assume you&#39;re passing <code>LongSequence</code>s as arguments, eg <code>gc_content&#40;dna&quot;ATNG&quot;&#41;</code>, but extra bonus if you can accommodate <code>String</code>s as well.</p></div> <ol start=2 > <li><p><code>complement&#40;sequence&#41;</code>: Like <code>complement&#40;&#41;</code> from Assignment 5, except that it should accomodate ambiguous bases &#40;the complement of <code>N</code> is <code>N</code>&#41;, and should work on <code>String</code>s rather than <code>Char</code>.</p> </ol> <div class=colbox-green ><div class=title >Tip</div> <p>In julia, you can write functions with the same name for different types. These different versions are called the &quot;methods&quot; of the function.</p> <p>For example, you could define one version of <code>complement</code> that works on <code>Char</code>, and a different one that works on <code>String</code>s.</p> <pre><code class=language-julia >julia&gt; function complement&#40;base::Char&#41;
+         comp &#61; Dict&#40;&#39;A&#39;&#61;&gt;&#39;T&#39;,
+                     &#39;T&#39;&#61;&gt;&#39;A&#39;,
+                     &#39;G&#39;&#61;&gt;&#39;C&#39;,
+                     &#39;C&#39;&#61;&gt;&#39;G&#39;,
+                     &#39;N&#39;&#61;&gt;&#39;N&#39;&#41;
+         return comp&#91;base&#93;
+      end
+complement &#40;generic function with 1 method&#41;
+
+julia&gt; function complement&#40;seq::AbstractString&#41;
+         # some other code here
+         println&#40;&quot;string version&#33;&quot;&#41;
+      end
+complement &#40;generic function with 2 methods&#41;
+
+julia&gt; complement&#40;&#39;C&#39;&#41;
+&#39;G&#39;: ASCII/Unicode U&#43;0047 &#40;category Lu: Letter, uppercase&#41;
+
+julia&gt; complement&#40;&quot;ABC&quot;&#41;
+string version&#33;</code></pre> <p>Examples:</p> <pre><code class=language-julia >julia&gt; complement&#40;&quot;ATTN&quot;&#41;
+&quot;TAAN&quot;
+
+julia&gt; complement&#40;&quot;ATTAGC&quot;&#41;
+&quot;TAATCG&quot;</code></pre></div> <ol start=3 > <li><p><code>reverse_complement&#40;sequence&#41;</code>: Exactly like <code>reverse_complement&#40;&#41;</code> from Assignment 5, except that it should accomodate ambiguous bases &#40;the complement of <code>N</code> is <code>N</code>&#41;.</p> <p>Examples:</p> </ol> <pre><code class=language-julia >julia&gt; reverse_complement&#40;&quot;ATTAGC&quot;&#41;
+   &quot;GCTAAT&quot;
+   
+   julia&gt; reverse_complement&#40;&quot;ATN&quot;&#41;
+   &quot;NAT&quot;</code></pre> <ol start=4 > <li><p><code>parse_fasta&#40;path&#41;</code>: Similar to <code>parse_fasta&#40;&#41;</code> from Assignment 6, with a few changes:</p> <ul> <li><p>headers don&#39;t need to be split into their component parts. That is, the array of headers should just be an array of strings &#40;though the leading <code>&gt;</code> should be removed&#41;.</p> <li><p>All sequences should be valid DNA sequences &#40;including <code>N</code>s&#41;</p> </ul> <p>Examples:</p> </ol> <pre><code class=language-julia >julia&gt; ex1 &#61; parse_fasta&#40;&quot;data/ex1.fasta&quot;&#41;;
+
+   julia&gt; ex1&#91;1&#93;&#93;
+   ERROR: syntax: extra token &quot;&#93;&quot; after end of expression
+   Stacktrace:
+    &#91;1&#93; top-level scope at REPL&#91;6&#93;:1
+   
+   julia&gt; ex1&#91;1&#93;
+   2-element Array&#123;String,1&#125;:
+    &quot;ex1.1 | easy&quot;
+    &quot;ex1.2 | multiline&quot;
+   
+   julia&gt; ex1&#91;2&#93;
+   2-element Array&#123;String,1&#125;:
+    &quot;AATTATAGC&quot;
+    &quot;CGCCCCCCAGTCGGATT&quot;
+   
+   julia&gt; ex2 &#61; parse_fasta&#40;&quot;data/ex2.fasta&quot;&#41;;
+   ERROR: invalid base H</code></pre> <div class=colbox-orange ><div class=title >Bonus Challenge</div> <p>If you want an extra extra challenge, try using the <code>FASTX.jl</code> package to parse fasta files for you.</p> <p>If you&#39;re writing your own, be sure that the sequences stored in your array have the type <code>LongSequence</code> and not String.</p></div> <div class=page-foot > <div class=copyright > &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> </div> </div> <script src="/libs/highlight/highlight.pack.js"></script> <script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: ' '});</script> <label for=sidebar-checkbox  class=sidebar-toggle ></label>

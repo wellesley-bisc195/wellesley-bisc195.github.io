@@ -1,0 +1,153 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Getting set up</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1><a href="/assignments/Assignment01">Assignment 1 - Getting set up</a></h1> <p>{{Placeholder for repo link}} <img src="https://img.shields.io/badge/Due-2021--06--11-red?style&#61;for-the-badge" alt=assignment1due  /></p> <h1 id=assignment01 ><a href="#assignment01" class=header-anchor >Assignment01</a></h1> <p><a href="https://classroom.github.com/a/jOe6EhXJ"><img src="https://img.shields.io/badge/Assignment01-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 01 - Invitation" /></a> <a href="@ref assignment01"><img src="https://img.shields.io/badge/Assignment01-Description-blue?style&#61;for-the-badge" alt="Assignment 01 - Description" /></a> <a href="@ref Instructions-for-Assignment01"><img src="https://img.shields.io/badge/Assignment01-Script-blue?style&#61;for-the-badge" alt="Assignment 01 - Assignment script" /></a> <a href="@ref assignment01"><img src="https://img.shields.io/badge/Due-6&#37;2F11&#37;2F2020-orange?style&#61;for-the-badge" alt="Assignment 01 - Due" /></a></p> <p>In this course, assignments are provided through github classroom. This assigment is mostly designed to familiarize you with the process of downloading and completing assignments.</p> <p>You should have already signed up for a github account, and joined the classroom. If not, go back and follow the <a href="@ref github_signup">instructions here</a>.</p> <div class=colbox-purple ><div class=title >To Do: Accept the assignment</div> <p><strong>Step 1:</strong> Accept <code>Assignment01</code> at <a href="https://classroom.github.com/a/jOe6EhXJ">this link</a></p> <p>When you accept the assignment, a git repository is created in your github account.</p> <p><strong>Step 2:</strong> Click the link shown on the webpage.</p> <p><img src="https://user-images.githubusercontent.com/3502975/67243455-8ee74800-f425-11e9-867e-c81368c82cad.png" alt="accept assignment" /></p> <p>This repository contains a lot more stuff than the repository you made before, but it&#39;s still simply a directory with subdirectories and files &#40;plus git superpowers of course&#41;. You can click on the directories and files to see their contents.</p> <p>Of course, this repository is stored on github, not your computer. We can fix that by <code>clone</code>ing<sup id="fnref:1"><a href="#fndef:1" class=fnref >[1]</a></sup> this repository to your computer.</p></div> <div class=colbox-purple ><div class=title >To Do: Clone the repo</div> <p><strong>Step 3a:</strong> Find the repository url on the github page:</p> <p><img src="https://user-images.githubusercontent.com/3502975/67320638-7c7c1580-f4dc-11e9-8e6e-f5228bc96e86.png" alt="clone repo" /></p> <p><strong>Step 3b:</strong> Copy the url listed, and then in your terminal,</p> <pre><code class=language-sh >&#36; git clone &lt;url&gt;</code></pre>
+<pre><code class=language-julia >remote: Enumerating objects: 18, done.
+remote: Counting objects: 100&#37; &#40;18/18&#41;, done.
+remote: Compressing objects: 100&#37; &#40;14/14&#41;, done.
+remote: Total 18 &#40;delta 0&#41;, reused 0 &#40;delta 0&#41;, pack-reused 0
+Unpacking objects: 100&#37; &#40;18/18&#41;, done.</code></pre>
+<p>You should now have a new directory called <code>Assignment01-&lt;your_username&gt;/</code>.</p></div>
+<div class=colbox-purple ><div class=title >To Do</div>
+<p><strong>Step 4:</strong>  First, change your working directory to <code>Assignment01-&lt;your_username&gt;/</code>,  &#40;you remember how to <a href="@ref cd">do this right</a>?&#41;.</p>
+<p>Then do <code>git status</code></p>
+<pre><code class=language-sh >Assignment01 &#36; git status</code></pre>
+<pre><code class=language-julia >On branch master
+Your branch is up to date with &#39;origin/master&#39;.
+
+nothing to commit, working tree clean</code></pre>
+<p>You now have a local copy of the &quot;remote&quot;<sup id="fnref:2"><a href="#fndef:2" class=fnref >[2]</a></sup> repository. By default, the name of this remote is <code>origin</code>.</p></div>
+<div class=colbox-blue ><div class=title >Note</div>
+<p>In principal, it is possible to have many remotes and many local copies, but in practice, you&#39;ll usually only have one of each. See the url of <code>origin</code>:</p>
+<pre><code class=language-sh >Assignment01 &#36; git remote get-url origin</code></pre>
+<pre><code class=language-julia >https://github.com/wellesley-bisc195/Assignment01-&lt;your_username&gt;</code></pre>
+<p>There are many other useful options for <code>git remote</code>. Take a look by executing <code>git remote --help</code>.</p></div>
+<h3 id=explore_the_assignment_with_the_command_line ><a href="#explore_the_assignment_with_the_command_line" class=header-anchor >Explore the assignment with the command line</a></h3>
+<p>The <code>Assignment01</code> repository has a directory called <code>src/</code> &#40;for &quot;source code&quot;&#41; that contains some files ending in <code>.jl</code>. These files contain some <code>julia</code> code.</p>
+<p>Let&#39;s take a look at these files using the terminal:</p>
+<pre><code class=language-sh >Assignment01 &#36; ls src</code></pre>
+<pre><code class=language-julia >Assignment01.jl		run.jl			some_variables.jl
+assignment.jl		some_functions.jl</code></pre>
+<p>The <code>cat</code> command prints the contents of a file or files to the screen:</p>
+<pre><code class=language-sh >Assignment01 &#36; cat src/some_functions.jl</code></pre>
+<pre><code class=language-julia >function say_name&#40;name&#41;
+    println&#40;&quot;Hi there, &#36;&#40;name&#41;&#33;&quot;&#41;
+end
+
+function say_age&#40;age&#41;
+    println&#40;&quot;You are &#36;age years old.&quot;&#41;
+end</code></pre>
+<div class=colbox-purple ><div class=title >To Do</div>
+<p>Explore this directory from your terminal using <code>ls</code> and <code>cat</code>. Don&#39;t change the working directory,  or if you do, make sure you know how to return.</p>
+<p>When you&#39;re finished, you should be able to execute <code>pwd</code> and see a path that ends with <code>Assignment01-&lt;your-username&gt;</code></p></div>
+<h3 id=explore_the_assignment_with_vs_code ><a href="#explore_the_assignment_with_vs_code" class=header-anchor >Explore the assignment with VS code</a></h3>
+<p>This assignment is just a directory with text files, some of which contain code.</p>
+<p>VS Code, which you should already have installed &#40;if you don&#39;t, <a href="@ref install-ide">click here</a>&#41;, is designed to explore exactly this kind of project.</p>
+<div class=colbox-purple ><div class=title >To Do: open the assignment in VS Code</div>
+<p>Open the VS Code app, then click <code>File -&gt; Open</code>, and open the Assignment01 <strong>directory</strong>.</p>
+<p>You&#39;ll see the folder structure on the left, and you can click on individual files to open and edit them.</p>
+<p>This is one of the primary ways you will interact with your code in this course, so get comfortable&#33;</p></div>
+<h3 id=run_the_code ><a href="#run_the_code" class=header-anchor >Run the code</a></h3>
+<p>You can run this code in your terminal:</p>
+<div class=colbox-purple ><div class=title >To Do</div>
+<pre><code class=language-sh >Assignment01 &#36; julia src/run.jl</code></pre>
+<pre><code class=language-julia >Hi there, Kevin&#33;
+You are 36 years old.</code></pre></div>
+<p>I&#39;m guessing the output of this program is incorrect - at least for you.</p>
+<div class=colbox-purple ><div class=title >To Do</div>
+<p><strong>Step 5</strong>: Edit the files.</p>
+<p>Open up <code>src/some_variables.jl</code> in VS code and change the values &quot;Kevin&quot; and 36 to be more appropriate. Be sure to save the file, then execute <code>julia src/run.jl</code> again.</p>
+<p>The output of the program should say your name and your age, rather than mine.</p></div>
+<div class=colbox-purple ><div class=title >To Do</div>
+<p><strong>Step 6:</strong> Commit the changes.</p>
+<p>Once you have it working, go ahead and commit the changes. Be sure to use an informative commit message.</p>
+<p>Check out your commit history to see the changes you&#39;ve made:</p>
+<pre><code class=language-sh >Assignment01 &#36; git log --pretty&#61;oneline | head</code></pre>
+<pre><code class=language-julia >372e3269256dbce109e4dc0b832e5ce95fca82bd remove old stuff from README
+126a20c75f8a4b19bef85edde9a30dc68f4ec20c add assignment files
+c4a1404ff3fa3aed01936dd474e144694b07efdb Files generated by PkgTemplates
+55dcf2bd2ddae163fbd657273cb3b0ec836e2386 Initial commit</code></pre></div>
+<p>You&#39;ll see something different, of course, but at the top you should see you recent commits, including the commit messages you wrote.</p>
+<p>So far, this might seem like something that could have been handled with google docs. You only had to change a single file. Let&#39;s try something a little more complicated.</p>
+<p>If you open the files in VS Code, you might notice that there are a bunch of connections between the files. For example, in <code>some_functions.jl</code>, I&#39;ve defined the <code>say_name&#40;&#41;</code> and <code>say_age&#40;&#41;</code> functions, then in <code>run.jl</code>, one of the first lines is <code>include&#40;&quot;some_functions.jl&quot;&#41;</code>, and in the <code>main&#40;&#41;</code> function, you can see <code>say_name&#40;n&#41;</code> and <code>say_age&#40;a&#41;</code>.</p>
+<p>This is not an accident.</p>
+<div class=colbox-purple ><div class=title >ToDo</div>
+<p><strong>Step 7:</strong> Change the line <code>function say_name&#40;name&#41;</code> in <code>some_functions.jl</code> to <code>function say_the_name&#40;name&#41;</code>, save the file, then try to run <code>julia src/run.jl</code> again. What happens?</p>
+<p>You should get an <code>UndefinedVarError</code>, since <code>run.jl</code> is trying to call something called <code>say_name</code>, but this doesn&#39;t exist anymore.</p></div>
+<div class=colbox-green ><div class=title >Tip</div>
+<p>Seeing error messages when you try to run code is a <strong>very</strong> normal part of programming, and not just when you&#39;re learning. A lot of the error message might seem like <a href="https://en.wikipedia.org/wiki/Gibberish">gobbledygook</a>, but it&#39;s worth paying attention. Learning to find the useful information in an error message is incredibly useful when trying to debug your code.</p>
+<p>Like most of coding, this takes lots of practice, but here are some places to start:</p>
+<ul>
+<li><p>Can you find the name of the error?</p>
+
+<li><p>Are their parts of the message in plain english?   Those parts are usually quite helpful.</p>
+
+<li><p>Can you find line numbers/file names   pointing to where the problem might be?</p>
+
+</ul></div>
+<p>OK, changing to <code>say_the_name</code> is maybe not worth it. But you&#39;ve now changed a bunch of things - how do you get back to a working version?</p>
+<p>In this silly little case, perhaps it&#39;s not so hard, but in real-life coding, one often needs to make many changes to many different files. Git makes this easy.</p>
+<p>Assuming you haven&#39;t made any new commits since you had a working program, just do</p>
+<pre><code class=language-sh >Assignment01 &#36; git reset --hard HEAD</code></pre>
+<p><code>HEAD</code> is short-hand for the last commit on this branch. The <code>--hard</code> flag undoes any changes. We&#39;ll talk about more complicated uses of <code>git reset</code> later.</p>
+<div class=colbox-blue ><div class=title >Note</div>
+<p>If you did make commits in the mean time, no problem. Use the <code>git log</code> command from above to see your recent commits, then copy the commit hash &#40;the weird sequence of characters on the left&#41; and use that instead of <code>HEAD</code> in the <code>git reset</code> command.</p></div>
+<h3 id=practice ><a href="#practice" class=header-anchor >Practice</a></h3>
+<p>The variables <code>a</code> and <code>n</code> in <code>some_variables.jl</code> aren&#39;t very informative. It&#39;s usually a good idea to have variable and function names be &quot;self documenting&quot;, that is have the name tell you something about what they&#39;re for.</p>
+<div class=colbox-purple ><div class=title >Practice</div>
+<p>Change these variables to <code>my_age</code> and <code>my_name</code> respectively, then fix <code>run.jl</code> so that it uses these new variables.</p>
+<p>Be sure to save the files and <code>commit</code> your changes when everything is working again &#40;you can also commit intermediate steps&#41;.</p></div>
+<h2 id=complete_the_assignment ><a href="#complete_the_assignment" class=header-anchor >Complete the assignment</a></h2>
+<p>The <code>src</code> directory in the <code>Assignment01</code> repo contains a code file called <code>assignment.jl</code>.</p>
+<p>Open this file in VS Code and follow the instructions in the comments.</p>
+<div class=colbox-green ><div class=title >Tip</div>
+<p>In julia, comment lines start with <code>#</code>, and this allows us to write plain english inside code files.</p>
+<p>These lines are skipped by the julia parser entirely, even if they contain valid code.</p>
+<p>The formatting of the comments might look a little weird, it allows me to generate <a href="@ref Instructions-for-Assignment01">a website</a> from the code that&#39;s a bit easier too look at</p></div>
+<p>Then use <code>git add</code> and <code>git commit</code> to commit these changes to the repository. You do not have to wait until you&#39;re finished to commit changes - There are many different philosophies about what amount of work should be included in a commit, but my philosophy is &quot;commit early, commit often.&quot;</p>
+<div class=colbox-green ><div class=title >Tip</div>
+<p>For files that are already being tracked, you can skip the two-step <code>add</code> and <code>commit</code>. Instead, you can do <code>git commit -a -m &quot;commit message&quot;</code> - the <code>-a</code> &#40;or <code>--all</code>&#41; flag automatically adds all previously tracked files.</p></div>
+<p>Once you&#39;ve made and committed the requested changes, it&#39;s time to <code>push</code><sup id="fnref:3"><a href="#fndef:3" class=fnref >[3]</a></sup> those commits back to the remote. When you cloned this repo, git automatically set the remote tracking branch, so you can just do</p>
+<pre><code class=language-sh >&#36; git push</code></pre>
+<pre><code class=language-julia >Enumerating objects: 7, done.
+Counting objects: 100&#37; &#40;7/7&#41;, done.
+Delta compression using up to 12 threads
+Compressing objects: 100&#37; &#40;4/4&#41;, done.
+Writing objects: 100&#37; &#40;4/4&#41;, 409 bytes | 409.00 KiB/s, done.
+Total 4 &#40;delta 2&#41;, reused 0 &#40;delta 0&#41;
+remote: Resolving deltas: 100&#37; &#40;2/2&#41;, completed with 2 local objects.
+To https://github.com/wellesley-bisc195/lesson-2-bisc195tester
+   be920ca..0da312f  master -&gt; master</code></pre>
+<p>Good work&#33;</p>
+<h1 id=key_terms ><a href="#key_terms" class=header-anchor >Key Terms</a></h1>
+<p><table class=fndef  id="fndef:1">
+    <tr>
+        <td class=fndef-backref ><a href="#fnref:1">[1]</a>
+        <td class=fndef-content ><code>clone</code> - A copy of a repository in a different location. Clones can be linked to enable easy syncing of commits.
+    
+</table>
+<table class=fndef  id="fndef:2">
+    <tr>
+        <td class=fndef-backref ><a href="#fnref:2">[2]</a>
+        <td class=fndef-content ><code>remote</code> - A clone of a repository that exists on a server, rather than your local machine. You can see what remotes are linked to your local repo with <code>git remote</code>.
+    
+</table>
+<table class=fndef  id="fndef:3">
+    <tr>
+        <td class=fndef-backref ><a href="#fnref:3">[3]</a>
+        <td class=fndef-content ><code>push</code> - Move commits from a local repo to the remote.
+    
+</table>
+</p>
+<div class=page-foot >
+  <div class=copyright >
+    &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div>
+      </div>  
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+    <label for=sidebar-checkbox  class=sidebar-toggle ></label>

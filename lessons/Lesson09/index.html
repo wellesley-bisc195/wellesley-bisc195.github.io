@@ -1,0 +1,104 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Types and methods</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=lesson_9_-_types_and_methods ><a href="#lesson_9_-_types_and_methods" class=header-anchor >Lesson 9 - Types and methods</a></h1> <p><a href="@ref assignment09"><img src="https://img.shields.io/badge/09-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 09 - Description" /></a> <a href="@ref assignment09"><img src="https://img.shields.io/badge/Due-7&#37;2F20&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 09 - Due" /></a></p> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap17">Chapter 17</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap18">Chapter 18</a> of Think Julia.</p> <li><p>Run all code examples from Lesson 9 on their own computers</p> <li><p>Cloned the Assignment 9 repository with github classroom.</p> <li><p>Completed assignment 9 with all tests passing.</p> </ul> <h2>Types can be scary &#40;but don&#39;t have to be&#41;</h2> <p>The first programming language I learned was python, which has a very lax relationship with types. When I first started learning julia, seeing types everywhere freaked me out a little bit.</p> <p>One bit of good news is that, most of the time, you don&#39;t need to worry <em>too</em> much about types to write julia code. As you&#39;ve seen, beyond knowing that things like <code>split&#40;&#41;</code> only work on strings, or seeing a <code>MethodError</code> and needing to know whalht that means, mostly you can write functions without specifying argument types and you can get a lot done with built-in types.</p> <p>But knowing a little bit about types can lead to simpler and clearer code and can help you debug problems more easily. But if it&#39;s not immediately obvious how to use types, or the syntax is a bit clumsy for a bit, that&#39;s fine. It&#39;s useful to know this tool exists, but you don&#39;t need to use it all the time.</p> <h2 id=functions_vs_methods ><a href="#functions_vs_methods" class=header-anchor >Functions vs Methods</a></h2> <p>As you&#39;ve seen, a function is an action performed on data. Most functions have names, like <code>length&#40;&#41;</code> or <code>gc_content&#40;&#41;</code>, But when you call a function, what is actually executed is a specific &quot;<em>method</em>&quot; of that function. That is, a version of the function that depends on the types of its arguments.</p> <p>When you first define a function, it only has one method &#40;the one you just defined&#41;.</p> <pre><code class=language-julia >julia&gt; function somefunc&#40;x&#41;
+           println&#40;&quot;Fallback method&#33;&quot;&#41;
+       end
+somefunc &#40;generic function with 1 method&#41;</code></pre> <p>But in julia, the same function <strong>name</strong> can refer to many methods, with different argument types, and even different numbers of arguments.</p> <pre><code class=language-julia >julia&gt; function somefunc&#40;x::Number&#41;
+           println&#40;&quot;Number method&#33;&#33;&quot;&#41;
+       end
+somefunc &#40;generic function with 2 methods&#41;
+
+julia&gt; function somefunc&#40;x::AbstractString&#41;
+           println&#40;&quot;AbstractString method&#33;&#33;&quot;&#41;
+       end
+somefunc &#40;generic function with 3 methods&#41;
+
+julia&gt; function somefunc&#40;x,y&#41;
+           println&#40;&quot;Two argument method&#33;&#33;&quot;&#41;
+       end
+somefunc &#40;generic function with 4 methods&#41;
+
+julia&gt; somefunc&#40;2.3&#41;
+Number method&#33;&#33;
+
+julia&gt; somefunc&#40;&quot;woo&#33;&quot;&#41;
+AbstractString method&#33;&#33;
+
+julia&gt; somefunc&#40;&#91;&#93;&#41;
+Fallback method&#33;
+
+julia&gt; somefunc&#40;1.0, &quot;hey&#33;&quot;&#41;
+Two argument method&#33;&#33;</code></pre> <p>One can even define a method that calls another method of the same function&#33; For example, we can write a <code>complement&#40;&#41;</code> function that works on <code>Char</code>:</p> <pre><code class=language-julia >julia&gt; function complement&#40;base::Char&#41;
+           base &#61; uppercase&#40;base&#41;
+           comps &#61; Dict&#40;&#39;A&#39; &#61;&gt; &#39;T&#39;,
+                        &#39;C&#39; &#61;&gt; &#39;G&#39;,
+                        &#39;G&#39; &#61;&gt; &#39;C&#39;,
+                        &#39;T&#39; &#61;&gt; &#39;A&#39;,
+                        &#39;N&#39; &#61;&gt; &#39;N&#39;&#41;
+           return comps&#91;base&#93;
+       end
+complement &#40;generic function with 1 method&#41;</code></pre> <p>And then another function that works on <code>String</code>s, that maps the <code>complement&#40;::Char&#41;</code> method onto the <code>String</code>.</p> <pre><code class=language-julia >julia&gt; function complement&#40;seq::AbstractString&#41;
+           map&#40;complement, seq&#41;
+       end
+complement &#40;generic function with 2 methods&#41;
+
+julia&gt; complement&#40;&quot;ATTGC&quot;&#41;
+&quot;TAACG&quot;</code></pre> <p>This works because <code>map</code> on a <code>String</code> applies the function to each element of the <code>String</code>, which are <code>Char</code>s. </p> <p>Some functions have <em>a ton</em> of methods - you can see them using the <code>methods&#40;&#41;</code> function:</p> <pre><code class=language-julia >julia&gt; methods&#40;complement&#41;
+# 2 methods for generic function &quot;complement&quot;:
+&#91;1&#93; complement&#40;base::Char&#41; in Main at REPL&#91;5&#93;:2
+&#91;2&#93; complement&#40;seq::AbstractString&#41; in Main at REPL&#91;3&#93;:2</code></pre> <div class=colbox-orange ><div class=title >&quot;Checking Question&quot;</div> <p>How many methods does <code>&#43;</code> have?</p></div> <h2 id=writing_your_own_types ><a href="#writing_your_own_types" class=header-anchor >Writing your own types</a></h2> <p>Sometimes, the best way to to solve a problem is to make a new type. For example, when you parsed FASTA files in Assignments 7 and 8, you were keeping headers and sequences separate - this could lead to problems trying to keep them in sync later when you try to work with them.</p> <p>Further, most of you solved that assignment by keeping a bunch of extra vectors around that stored intermediate sequences, and had to deal with special-casing the first and last sequence. That works, but it&#39;s a lot to keep track of.</p> <p>Compare that approach to the following:</p> <pre><code class=language-julia >mutable struct FastaRecord
+    header
+    sequence
+end
+
+# these are &quot;accessor&quot; functions - they&#39;re not strictly necessary
+function header&#40;fr::FastaRecord&#41;
+    return fr.header
+end
+
+function sequence&#40;fr::FastaRecord&#41;
+    return fr.sequence
+end
+
+## Note: Simple functions like those above can be written with shortened syntax:
+# header&#40;fr::FastaRecord&#41; &#61; fr.header
+# sequence&#40;fr::FastaRecord&#41; &#61; fr.sequence
+
+# sequence&#33; updates the sequence field
+function sequence&#33;&#40;fr::FastaRecord, seq::AbstractString&#41;
+    fr.sequence &#61; seq
+end
+
+function parse_fasta&#40;path&#41;
+    records &#61; FastaRecord&#91;&#93;
+    for line in eachline&#40;path&#41;
+        if startswith&#40;line, &#39;&gt;&#39;&#41;
+            # if the line is a header, we push&#33; a new record with an empty sequence to the &#96;records&#96; vector
+            header &#61; line&#91;2:end&#93;
+            push&#33;&#40;records, FastaRecord&#40;header, &quot;&quot;&#41;&#41;
+        else
+            # otherwise, we add the line onto the end of the sequence
+            record &#61; records&#91;end&#93;
+            newseq &#61; sequence&#40;record&#41; * line
+            sequence&#33;&#40;record, newseq&#41;
+        end
+    end
+    return records
+end</code></pre> <pre><code class=language-julia >julia&gt; ex1 &#61; parse_fasta&#40;&quot;/Users/ksb/repos/courses/assignment07/data/ex1.fasta&quot;&#41;
+2-element Array&#123;FastaRecord,1&#125;:
+ FastaRecord&#40;&quot;ex1.1 | easy&quot;, &quot;AATTATAGC&quot;&#41;
+ FastaRecord&#40;&quot;ex1.2 | multiline&quot;, &quot;CGCCCCCCAGTCGGATT&quot;&#41;</code></pre> <p>We can also write functions like <code>length</code> and <code>gc_content</code> that work on our <code>FastaRecord</code> type.</p> <pre><code class=language-julia >Base.length&#40;fr::FastaRecord&#41; &#61; length&#40;sequence&#40;fr&#41;&#41;
+
+# assuming you&#39;ve already written &#96;gc_content&#40;&#41;&#96; that works on &#96;String&#96;s
+gc_content&#40;fr::FastaRecord&#41; &#61; gc_content&#40;sequence&#40;fr&#41;&#41;</code></pre> <div class=colbox-orange ><div class=title >&quot;Checking Question&quot;</div> <p>If multiple methods work for a particular function call, how does julia decide which one to use? Eg, if I write</p> <pre><code class=language-julia >julia&gt; function foo&#40;x::Number, y::Number&#41;
+        println&#40;&quot;first method&quot;&#41;
+    end
+    foo &#40;generic function with 1 method&#41;
+
+    julia&gt; function foo&#40;x::Float64, y::Number&#41;
+                println&#40;&quot;second method&quot;&#41;
+            end
+    foo &#40;generic function with 2 methods&#41;
+
+    julia&gt; function foo&#40;x::Float64, y::Float64&#41;
+                println&#40;&quot;third method&quot;&#41;
+            end
+    foo &#40;generic function with 3 methods&#41;</code></pre> <p>Which method is called when I run <code>foo&#40;1.0, 1&#41;</code>? What about <code>foo&#40;42, 1.0&#41;</code>? Try to answer the question before running the code, then check to see if you&#39;re right.</p></div> <div class=page-foot > <div class=copyright > &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> </div> </div> <script src="/libs/highlight/highlight.pack.js"></script> <script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: ' '});</script> <label for=sidebar-checkbox  class=sidebar-toggle ></label>

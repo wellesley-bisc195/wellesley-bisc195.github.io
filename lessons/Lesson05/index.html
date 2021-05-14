@@ -1,0 +1,107 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Lesson 5 - Arrays</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=lesson_5_-_arrays ><a href="#lesson_5_-_arrays" class=header-anchor >Lesson 5 - Arrays</a></h1> <p><a href="https://classroom.github.com/a/F3lWDTLh"><img src="https://img.shields.io/badge/Assignment05-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 05 - Invitation" /></a> <a href="@ref assignment05"><img src="https://img.shields.io/badge/05-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 05 - Description" /></a> <a href="@ref Instructions-for-Assignment05"><img src="https://img.shields.io/badge/05-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 05 - Rendered" /></a> <a href="@ref assignment05"><img src="https://img.shields.io/badge/Due-7&#37;2F2&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 05 - Due" /></a></p> <h2>Learning objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Compare and contrast <code>Vector</code>, <code>Matrix</code>, and <code>Tuple</code> types for storing ordered data</p> <li><p>Differentiate between scalar and vector properties of <code>String</code>s</p> <li><p>Explain the uses and limitations of mutable and immutable types</p> <li><p>Recognize when to use copies or references to data</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Solve bugs that occur from attempting to access keys or indexes that don&#39;t exist</p> <li><p>Initialize and grow Vectors of different types</p> <li><p>Use indexes, ranges, and loops to access subsets of data</p> <li><p>Use string joining and interpolation to compose complex strings</p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap08">Chapter 8</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap10">Chapter 10</a> of Think Julia.</p> <li><p>Run all code examples from Lesson 5 on their own computers</p> <li><p>Cloned the Assignment 5 repository with github classroom.</p> <li><p>Completed assignment 5 with all tests passing.</p> </ul> <h2 id=string_as_array ><a href="#string_as_array" class=header-anchor >String as Array</a></h2> <p>After reading chapters 8 and 10, you might have noticed that <code>String</code>s act an awful lot like 1D <code>Array</code>s &#40;<code>Vector</code>s&#41;.</p> <p>Both <code>String</code>s and <code>Vector</code>s:</p> <ol> <li><p>are ordered collections &#40;<code>String</code>s are collections of <code>Char</code>, <code>Vector</code>s can have any type&#41;</p> <li><p>can be indexed and sliced</p> </ol> <p>There are many differences, but chief among them is that <code>Vector</code>s are &quot;mutable&quot;; that is, we can change the vector by changing individual elements, adding things, or removing things. </p> <pre><code class=language-julia >v &#61; collect&#40;2:2:10&#41;
+
+push&#33;&#40;v, 42&#41;;
+pushfirst&#33;&#40;v, -1&#41;;
+
+v
+
+deleteat&#33;&#40;v, 1:2:7&#41;;
+
+v</code></pre> <p><code>String</code>s, by contrast, are <em>immutable</em>. This might not be obvious, since you can do things like</p> <pre><code class=language-julia >s &#61; &quot;a string&quot;
+s &#61; s * &quot; &quot; * s</code></pre> <p>It seems like <code>s</code> has changed, but it has not changed by altering the actual object - instead, we constructed an <strong>entirely new string</strong> and just reassigned <code>s</code> to the new <code>String</code>.</p> <div class=colbox-orange ><div class=title >Checking Questions</div> <ol> <li><p>Assign an empty vector &#40;<code>&#91;&#93;</code>&#41; to the variable <code>v1</code>, then try to <code>push&#33;</code> an <code>Int64</code>, <code>Float64</code>, and <code>String</code> to it. What is the <code>typeof</code> the <code>Vector</code>?</p> <li><p>Assign <code>&#91;1.2, 3, 4&#93;</code> to the variable <code>v2</code>. What is the type of the second elementt &#40;<code>v2&#91;2&#93;</code>&#41;? Is that what you expected?</p> <li><p>Use <code>push&#33;&#40;&#41;</code> to add the integer <code>5</code> to the vector <code>v2</code>. What is the type of <code>v2&#91;4&#93;</code>?</p> <li><p>Use <code>push&#33;&#40;&#41;</code> to add the <code>String</code> <code>&quot;6&quot;</code> to the vector <code>v2</code>. What happens?</p> </ol></div> <p><code>String</code>s themselves are not <code>Vector</code>s, but we can use <code>Vector</code>s of <code>Char</code>s to act like mutable <code>String</code>s.</p> <pre><code class=language-julia >vc &#61; collect&#40;&quot;Collect makes vector&quot;&#41;
+
+push&#33;&#40;vc, &#39;s&#39;&#41;;
+join&#40;vc&#41;</code></pre> <p>The <code>join&#40;&#41;</code> function takes a vector of <code>String</code>s or <code>Char</code>s and creates a new string.</p> <div class=colbox-green ><div class=title >Tip</div> <p>Remember that you can use the help REPL &#40;press <code>?</code> at the REPL&#41; to view the docstring of <code>join&#40;&#41;</code>.</p></div> <p>The <code>join&#40;&#41;</code> function can also take <em>optional</em> arguments that can put a <code>String</code> in between each thing that&#39;s <code>join&#40;&#41;</code>ed,</p> <pre><code class=language-julia >join&#40;&#91;&quot;I&quot;, &quot;love&quot;, &quot;the&quot;, &quot;julia&quot;, &quot;language&#33;&quot;&#93;, &quot; 👏 &quot;&#41;</code></pre>
+<p>and something different between the last two values</p>
+<pre><code class=language-julia >join&#40;&#91;&quot;Head&quot;, &quot;shoulders&quot;, &quot;knees&quot;, &quot;toes&quot;&#93;, &quot;, &quot;, &quot;, and &quot;&#41;</code></pre>
+<h2 id=aliasing ><a href="#aliasing" class=header-anchor >Aliasing</a></h2>
+<p>Make sure you&#39;ve read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_aliasing">the section on &quot;aliasing&quot;</a> in <em>Think Julia</em> prior to answering the following questions. Even if you already read it, it&#39;s worth reading again - this is a constant source of hard-to-find bugs.</p>
+<div class=colbox-orange ><div class=title >&quot;Checking questions&quot;</div>
+<p>For each of the following questions, first try to predict the answer, then check your answer at the REPL. If you were wrong, try to explain the correct answer.</p>
+<ol>
+<li><p>The follwing code assigns 3 variables &#40;<code>a</code>, <code>b</code>, and <code>c</code>&#41; to the float <code>6.02e24</code>,  then reassigns one of them &#40;<code>a</code>&#41; to the float <code>3.14</code>.</p>
+
+</ol>
+<pre><code class=language-julia >julia&gt; a &#61; b &#61; c &#61; 6.02e24
+    6.02e24
+
+    julia&gt; a &#61; 3.14
+    3.14</code></pre>
+<p>What is the value of <code>b</code>?</p>
+<ol start=2 >
+<li><p>Can you assign <code>c</code> to an <code>Int64</code>?</p>
+
+<li><p>The following code assigns 3 variables &#40;<code>u</code>, <code>v</code>, <code>w</code>&#41; to an empty Integer vector,  then <code>push&#33;</code>es the integer <code>12</code> to one of them &#40;<code>u</code>&#41;</p>
+
+</ol>
+<pre><code class=language-julia >julia&gt; u &#61; v &#61; w &#61; Int64&#91;&#93;
+    0-element Array&#123;Int64,1&#125;
+    
+    julia&gt; push&#33;&#40;u, 12&#41;
+    1-element Array&#123;Int64,1&#125;:
+        12</code></pre>
+<p>What is the value of <code>v</code>?</p>
+<ol start=4 >
+<li><p>Can you <code>push&#33;&#40;&#41;</code> a <code>Float64</code> to <code>w</code>?</p>
+
+<li><p>Which of the following have the same <em>type</em> as <code>m</code>  if <code>m &#61; &#91;1, 4&#93;</code>?</p>
+<ul>
+<li><p><code>n &#61; &#91;5,4,3,2,1&#93;</code></p>
+
+<li><p><code>o &#61; Int64&#91;&#93;</code></p>
+
+<li><p><code>p &#61; &#91;&quot;2&quot;, &quot;1&quot;&#93;</code></p>
+
+<li><p><code>q &#61; &#91;1.2, 3.4&#93;</code></p>
+
+</ul>
+<p>Hint: you can check by doing eg <code>n isa &#40;typeof&#40;m&#41;&#41;</code></p>
+
+</ol></div>
+<h2 id=maps_and_filters_revisited ><a href="#maps_and_filters_revisited" class=header-anchor >Maps and filters revisited</a></h2>
+<p>In <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_map_filter_and_reduce">chapter 10 of <em>Think Julia</em></a>, you are introduced to the concept of &quot;map&quot; and &quot;filter&quot; functions, which apply a function to each element of a collection, or return only elements that meet a condition respectively.</p>
+<p>In the chapter, the examples shown are of hand-written map and filter functions written with loops, but these pattterns are so useful that there are <code>map&#40;&#41;</code> and <code>filter&#40;&#41;</code> functions, each of which take a function as the first argument, and a collection as the second argument.</p>
+<p>For example,</p>
+<pre><code class=language-julia >function add3&#40;x&#41;
+    return x &#43; 3
+end
+
+v &#61; map&#40;add3, &#91;1,2,3,4&#93;&#41;</code></pre>
+<p>This is the same as</p>
+<pre><code class=language-julia >v &#61; Int64&#91;&#93;
+
+for x in &#91;1,2,3,4&#93;
+    push&#33;&#40;v, add3&#40;x&#41;&#41;
+end</code></pre>
+<p>This type of <code>map&#40;&#41;</code> returns a copy of the vector, so the original data will not be altered, but you can also use <code>map&#33;&#40;&#41;</code> with the same syntax to mutate the underlying vector.</p>
+<p>Similarly, one can use <code>filter&#40;&#41;</code> &#40;or, to mutate, <code>filter&#33;&#40;&#41;</code>&#41; to perform a filtering function. In this case, the function passed as the first argument must be a boolean function &#40;anything that returns <code>true</code> will be kept&#41;.</p>
+<pre><code class=language-julia >original &#61; &#91;3.14, 8.5, 25.3, 1.0&#93;
+
+function lessthan5&#40;x&#41;
+    return x &lt; 5
+end
+
+newv &#61; filter&#40;lessthan5, original&#41;</code></pre>
+<p>is the same as</p>
+<pre><code class=language-julia >newv &#61; Float64&#91;&#93;
+
+for x in original
+    if lessthan5&#40;x&#41;
+        push&#33;&#40;newv, x&#41;
+    end
+end</code></pre>
+<div class=page-foot >
+  <div class=copyright >
+    &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div>
+      </div>  
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+    <label for=sidebar-checkbox  class=sidebar-toggle ></label>

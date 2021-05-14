@@ -1,0 +1,137 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Lesson 3 - Functions, conditions, recursion, Oh My&#33;</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=lesson_3_-_functions_conditions_recursion_oh_my ><a href="#lesson_3_-_functions_conditions_recursion_oh_my" class=header-anchor >Lesson 3 - Functions, conditions, recursion, Oh My&#33;</a></h1> <p><a href="https://classroom.github.com/a/UbCNPRi2"><img src="https://img.shields.io/badge/Assignment03-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Invitation" /></a> <a href="@ref assignment03"><img src="https://img.shields.io/badge/03-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Description" /></a> <a href="@ref Instructions-for-Assignment03"><img src="https://img.shields.io/badge/03-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Rendered" /></a> <a href="@ref assignment03"><img src="https://img.shields.io/badge/Due-6&#37;2F18&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Due" /></a></p> <h2>Learning objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Distinguish fruitful functions from void functions</p> <li><p>Recognize boolean values and conditional statements</p> <li><p>Recognize errors resulting resulting from functions expecting boolean values</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Write boolean functions to check the properties of numerical values</p> <li><p>Use alternative evaluation execute different funuctions depending on input</p> <li><p>Recognize recursive functions, and identify situations in which they might be useful</p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap05">Chapter 5</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap0">Chapter 6</a> of Think Julia.</p> <li><p>Cloned the Assignment 3 repository with github classroom.</p> <li><p>Completed assignment 3 with all tests passing.</p> <li><p>Run all code examples from Lesson 2 on their own computers</p> </ul> <h2>Conditional &#40;boolean&#41; execution</h2> <p>We can build some useful functions with only the components we&#39;ve discussed so far, but they would be somewhat limited. Let&#39;s work on expanding our repertoire with conditional execution, loops, and recursion.</p> <p>The following sections assume that you have read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap05">chapter 5</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap06">chapter 6</a> in <em>Think Julia</em>. You can do chapter 4 if you like &#40;it lets you play with 🐢&#39;s - it&#39;s fun&#33;&#41;, but that&#39;s not required for now.</p> <h3><a href="@id booleans">Computer logic - Booleans</a></h3> <p>All computers are build on boolean &#40;true/false&#41; logic. At it&#39;s core, the two compoents of computer programs &#40;data and actions&#41; are composed from &quot;bits&quot;, which are physical objects that can have 2 states, <code>0</code> or <code>1</code>, <code>off</code> or <code>on</code>, <code>false</code> or <code>true</code>, and <a href="https://en.wikipedia.org/wiki/Logic_gate#Truth_tables">logical operators</a>.</p> <p>But we don&#39;t need to understand the all the details of how this works at a low-level &#40;I certainly don&#39;t&#41; to effectively use boolean operations in our code. There are a couple of things to keep in mind.</p> <p>As you read in <em>Think Julia</em>, you can use conditional evalutation &#40;<code>if</code> block&#41; to execute different code under different circumstances.</p> <pre><code class=language-julia >compliment
+function compliment&#40;base&#41;
+    if base &#61;&#61; &#39;A&#39;
+        return &#39;T&#39;
+    elseif base &#61;&#61; &#39;T&#39;
+        return &#39;A&#39;
+    else
+        error&#40;&quot;Base &#36;base not supported&quot;&#41;
+    end
+end
+
+compliment&#40;&#39;A&#39;&#41;</code></pre> <pre><code class=language-julia >julia&gt; compliment&#40;&#39;G&#39;&#41;
+ERROR: Base G not supported
+# ...</code></pre> <div class=colbox-green ><div class=title >Tip</div> <p>Notice that we can use variables to insert values in strings using &quot;interpolation&quot; with <code>&#36;</code></p> <pre><code class=language-julia >julia&gt; mystr &#61; &quot;hello&quot;;
+
+julia&gt; myint &#61; 4;
+
+julia&gt; &quot;Well, &#36;mystr there. 2 &#43; 2 is &#36;myint&quot;
+&quot;Well, hello there. 2 &#43; 2 is 4&quot;</code></pre> <p>Any arbitrary expression can be interpolated, though in many cases you&#39;ll need parentheses:</p> <pre><code class=language-julia >julia&gt; &quot;2&#43;2 is &#36;&#40;2&#43;2&#41;&quot;
+&quot;2&#43;2 is 4&quot;</code></pre> <p>If you want to include an actual <code>&#36;</code> sign in a string, you must &quot;escape&quot; it with <code>\</code>, or use a &quot;raw&quot; string:</p> <pre><code class=language-julia >julia&gt; println&#40;&quot;That will be \&#36;2.50&quot;&#41;
+That will be &#36;2.50
+
+julia&gt; println&#40;raw&quot;But I don&#39;t have &#36;2.50&#33;&#39;&quot;&#41;
+But I don&#39;t have &#36;2.50&#33;&#39;</code></pre></div> <p>Here, we&#39;re trying to make a function that returns the <code>compliment</code> of a DNA base - that is, the base that would be on the opposite strand.</p> <p>I&#39;ve entered the complimentary bases for <code>A</code> and <code>T</code>, but we&#39;re missing <code>C</code> and <code>G</code>.</p> <div class=colbox-purple ><div class=title ></div> <p>Define the <code>compliment&#40;&#41;</code> function so that it gives the compliment of <code>&#39;G&#39;</code> and <code>&#39;C&#39;</code> <em>in addition to</em> <code>&#39;A&#39;</code> and <code>&#39;T&#39;</code>.</p> <p>Be sure to use single quotes - the reason will become clear shortly.</p></div> <h3 id=combinatorial_logic ><a href="#combinatorial_logic" class=header-anchor >Combinatorial logic</a></h3> <p>In many cases, we want to test the truth of multiple statements at once. Combining boolean values has rules and precedence, and it&#39;s possible to string many of them together.</p> <p>If your statements get too long, it can be challenging to reason about them. For example, what&#39;s the truth of the following statement? &#40;remember, <code>||</code> means &quot;or&quot; and <code>&amp;&amp;</code> means &quot;and&quot;&#41;:</p> <pre><code class=language-julia >true &amp;&amp; false || true &amp;&amp; true</code></pre>
+<p>You might figure it out, but personally, my head hurts. In my experience, though, I am typically only comparing two things, so the rules are easy, or I&#39;m using the same logic opperators throughout &#40;all <code>&amp;&amp;</code> or all <code>||</code>&#41;.</p>
+<pre><code class=language-julia >function basetype&#40;base&#41;
+    if base &#61;&#61; &#39;A&#39; || base &#61;&#61; &#39;G&#39;
+        println&#40;&quot;That&#39;s a purine&#33;&quot;&#41;
+    elseif base &#61;&#61; &#39;T&#39; || base &#61;&#61; &#39;C&#39;
+        println&#40;&quot;That&#39;s a pyrimidine&#33;&quot;&#41;
+    else
+        error&#40;&quot;Base &#36;base not supported&quot;&#41;
+    end
+end
+
+basetype&#40;&#39;C&#39;&#41;</code></pre>
+<p>Another, likely less obvious place where combinatorial logic is at play is in the behavior of <code>elseif</code>. It&#39;s important to remember that the first statement in a conditional block that evaluates to <code>true</code> will be executed, and nothing else will. For example,</p>
+<pre><code class=language-julia >oddhalf
+function oddhalf&#40;num&#41;
+    if iseven&#40;num&#41;
+        println&#40;&quot;That&#39;s an even number, you should get an Int, but you won&#39;t.&quot;&#41;
+    elseif num &#61;&#61; 42
+        println&#40;&quot;Life, the Universe, and Everything&#33;&quot;&#41;
+    else
+        println&#40;&quot;That&#39;s an odd number, expect a Float&#33;&quot;&#41;
+    end
+    return num / 2
+end
+
+oddhalf&#40;42&#41;</code></pre>
+<p>Here, there&#39;s no way for <code>elseif num &#61;&#61; 42</code> to ever be true, since when <code>num</code> is 42, the <code>iseven&#40;num&#41;</code> gets hit first, and that part of the block is evaluated.</p>
+<div class=colbox-blue ><div class=title >Note</div>
+<p>The julia logic operators <code>&amp;&amp;</code> and <code>||</code>
+are &quot;short circuiting&quot;, which means that
+if the answer can be known before the right-hand side is evaluated,
+then the right-hand side **won&#39;t** be evaluated. 
+This feature can be used to introduce
+a more concise conditional evaluation than an <code>if</code> block.
+
+For example,</p>
+<pre><code class=language-julia >julia&gt; function verbosehalf&#40;x&#41;
+           iseven&#40;x&#41; &amp;&amp; println&#40;&quot;That&#39;s an even number&#33;&quot;&#41;
+           iseven&#40;x&#41; || println&#40;&quot;That&#39;s an odd number&#33;&quot;&#41;
+           x / 2
+       end
+    verbosehalf &#40;generic function with 1 method&#41;
+
+    julia&gt; verbosehalf&#40;42&#41;
+    That&#39;s an even number&#33;
+    21.0
+
+    julia&gt; verbosehalf&#40;43&#41;
+    That&#39;s an odd number&#33;
+    21.5</code></pre>
+<p>When <code>43</code> is passed as an argument, <code>iseven&#40;x&#41;</code> evaluates to <code>false</code>.
+And because <code>false &amp;&amp; &lt;anything&gt;</code> is always false,
+that line just evaluates to false without ever getting to the <code>println&#40;&#41;</code> call.
+But <code>false || &lt;anything&gt;</code> depends on the right hand statement
+&#40;<code>false || true</code> is different than <code>false || false</code>&#41;,
+the right hand statement must be evaluated.
+
+In this case, those lines are equivalent to</p>
+<pre><code class=language-julia >if iseven&#40;x&#41;
+        println&#40;&quot;That&#39;s an even number&#33;&quot;&#41;
+    else
+        println&#40;&quot;That&#39;s an odd number&#33;&quot;&#41;
+    end</code></pre>
+<p>But be aware, chaining these short-circuit expressions is NOT like <code>if/elseif/else</code> since,
+regardless of the outcome of the expression, the following lines _are_ evaluated.
+Eg, if I try to write the <code>oddhalf&#40;&#41;</code> function from above like this:</p>
+<pre><code class=language-julia >function oddhalf&#40;num&#41;
+        iseven&#40;num&#41; &amp;&amp; println&#40;&quot;That&#39;s an even number, you should get an Int, but you won&#39;t.&quot;&#41;
+        num &#61;&#61; 42 &amp;&amp; println&#40;&quot;Life, the Universe, and Everything&#33;&quot;&#41;
+        println&#40;&quot;That&#39;s an odd number, expect a Float&#33;&quot;&#41;
+        return num / 2
+    end
+
+    oddhalf&#40;42&#41;</code></pre>
+<pre><code class=language-julia >That&#39;s an even number, you should get an Int, but you won&#39;t.
+    Life, the Universe, and Everything&#33;
+    That&#39;s an odd number, expect a Float&#33;
+    21.0</code></pre>
+<p>Not exactly what we wanted...</p></div>
+<div class=colbox-orange ><div class=title >&quot;Checking Questions&quot;</div>
+<p>1. Referring back to our <code>compliment</code> function,
+   What happens if you try to pass <code>&quot;G&quot;</code> as an argument
+   &#40;note the double quotes&#41;?
+   Can you explain this behavior?
+
+2. Evaluate <code>&#39;G&#39; &#61;&#61; &quot;G&quot;</code> - did you expect it to be <code>true</code> or <code>false</code>?
+3. What are the types of <code>&#39;G&#39;</code> and <code>&quot;G&quot;</code>?
+4. Use the <code>||</code> operator to modify the <code>if</code>/<code>elseif</code> statements
+   in your &#91;<code>compliment&#40;&#41;</code> function&#93;&#40;@ref booleans&#41; from above
+   so that it works with either single-quoted or double-quoted ACGT.
+
+   Note: you should have no more than 3 <code>elseif</code>s in your function,
+   and you should always return a single-quoted version of the compliment.</p></div>
+<h2 id=some_notes_on_recursion ><a href="#some_notes_on_recursion" class=header-anchor >Some notes on recursion</a></h2>
+<p>I find recursion difficult to wrap my head around. To be honest, I almost told you skip those sections of chapters 5 and 6. But I think it is valuable to encounter the concept so that you know it exists, even if we don&#39;t explore the concept in great detail.</p>
+<p>In the years I&#39;ve been programming, I think I&#39;ve only written 2 recursive functions. But there are areas of biology where they can be quite valuable, and actually easier to understand, especially those involving phylogenetic trees or other graph structures, such as those used in genome assembly.</p>
+<p>In these cases, we often want to perform and action on a node, and all the children of that node, which are also nodes, also with children... and so on. In fact, this is similar to how many shell programs interact with your file system &#40;which is also like a tree&#41;.</p>
+<p>But beyond noting that it has its uses, we won&#39;t spend much time on recursive functions in this course.</p>
+<div class=page-foot >
+  <div class=copyright >
+    &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div>
+      </div>  
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+    <label for=sidebar-checkbox  class=sidebar-toggle ></label>

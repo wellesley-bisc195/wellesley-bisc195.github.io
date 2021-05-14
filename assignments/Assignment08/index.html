@@ -1,0 +1,116 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title><a href="@id assignment08">Assignment 08</a></title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=a_hrefid_assignment08assignment_08 ><a href="#a_hrefid_assignment08assignment_08" class=header-anchor ><a href="@id assignment08">Assignment 08</a></a></h1> <p><a href="@ref assignment08"><img src="https://img.shields.io/badge/Due-7&#37;2F17&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 08 - Due" /></a></p> <h2 id=check_list ><a href="#check_list" class=header-anchor >Check list</a></h2> <p>There are a lot of different tasks introduced in this assignment, and you will not have automated tests to tell you when you&#39;re done. Here&#39;s a checklist to help you keep track, which Kevin will add to your github repo once you&#39;ve created it and shared it with him.</p> <ul> <li><p>&#91; &#93; Code repo &#40;from Assignment 7&#41;, renamed and in public repo</p> <ul> <li><p>&#91; &#93; tests still passing</p> </ul> <li><p>&#91; &#93; Analysis repo complete</p> <ul> <li><p>&#91; &#93; README has heading 1 title and bold author line</p> <li><p>&#91; &#93; <code>Project.toml</code> with code repo, <code>Revise</code>, <code>DataFrames</code>, and <code>Plots</code> as dependencies</p> <li><p>&#91; &#93; <code>data/</code> directory with explanation for how to download data</p> <ul> <li><p>&#91; &#93; <code>cov-sequences.fasta</code></p> </ul> <li><p>&#91; &#93; <code>notebooks/</code> directory with <code>1-sequence-stats.md</code></p> <ul> <li><p>&#91; &#93; Including code and description for calculating mean and standard deviations for sequence length and gc content</p> </ul> </ul> </ul> <h2 id=wrapping_up_assignment07_package ><a href="#wrapping_up_assignment07_package" class=header-anchor >Wrapping up Assignment07 Package</a></h2> <p>In the <a href="@ref assignment07">previous assignment</a>, we created a julia package that you&#39;re going to be re-using for the rest of the course. But it doesn&#39;t have a very good name, and at the moment, your assignments are in private repos, which makes some stuff &#40;like using it for automated tests&#41; harder.</p> <div class=colbox-orange ><div class=title ></div> <p>Before continuing, make sure that you&#39;ve successfully completed assignment 7 and all of the tests are passing</p></div> <p>First, let&#39;s make a new, public home for your bioinformatics package.</p> <ol> <li><p>On github, create a new repository:</p> <p><img src="../assets/img/new-repo.png" alt="Create repo" /></p> <li><p>Give it a good name - Julia package names usually end with <code>.jl</code>. Be sure that the repo is set to <code>public</code>. <img src="../assets/img/repo-name.png" alt="Create repo" /></p> <li><p>Copy the url of the repository</p> <p><img src="../assets/img/clone-repo.png" alt="Create repo" /></p> <li><p>On your computer, navigate to your <code>Assignment07-&lt;username&gt;</code> directory. We are now going to point <code>git</code> to this new location, so that when you make new changes in the future, they will go there instead.</p> <p>In the terminal,</p> </ol> <pre><code class=language-sh >&#36; git remote set-url origin &lt;paste URL here&gt;
+   &#36; git push -u origin trunk
+   Enumerating objects: 61, done.
+   Counting objects: 100&#37; &#40;61/61&#41;, done.
+   Delta compression using up to 12 threads
+   Compressing objects: 100&#37; &#40;46/46&#41;, done.
+   Writing objects: 100&#37; &#40;61/61&#41;, 76.07 KiB | 1.46 MiB/s, done.
+   Total 61 &#40;delta 21&#41;, reused 24 &#40;delta 7&#41;, pack-reused 0
+   remote: Resolving deltas: 100&#37; &#40;21/21&#41;, done.
+   To github.com:kescobo/BioinformaticsBISC195.jl.git
+    * &#91;new branch&#93;      trunk -&gt; trunk
+   Branch &#39;trunk&#39; set up to track remote branch &#39;trunk&#39; from &#39;origin&#39;.</code></pre> <ol start=5 > <li><p>Now let&#39;s rename the module in the julia code. Open the assignment <em>directory</em> in VS Code. There are a few places that the module name currently exists - use <code>cmd&#43;shift&#43;F</code> &#40;<code>ctrl&#43;shift&#43;F</code> on Windows&#41; to open the search panel &#40;you can also click the magnifying glass icon in the sidebar&#41; and search for <code>Assignment07</code>. </p> <p>Replace <code>Assignment07</code> with whatever you named your module, and then rename the main module file at <code>src/Assignment07.jl</code>.</p> <li><p>Commit and push your changes.</p> <li><p>Back on github, click on the <code>Settings</code> tab for your repository, then on <code>Manage access</code>, and add Kevin &#40;<code>@kescobo</code>&#41; as a collaborator.</p> </ol> <h2 id=building_an_analysis_repository ><a href="#building_an_analysis_repository" class=header-anchor >Building an analysis repository</a></h2> <p>Now, we&#39;ll create a new project to handle our analyses of SARS-CoV2 genomes. While it is possible to keep everything in the same directory, it&#39;s a good idea to keep code that may be useful in many projects &#40;such as your bioinformatics functions&#41; separate from code that is used for one specific purpose.</p> <ol> <li><p>Open a terminal, and create a new directory with <code>mkdir</code> for CoV2 analysis &#40;you can put it in the same directory as your other assignments, but don&#39;t put it <em>inside</em> any of those assignments&#41;. Use <code>cd</code> to make this new directory your working directory, then enter <code>git init</code> to make this into a git repository.</p> <li><p>On github, create a new repository, copy its url, and use <code>git remote add</code> to set this as <code>origin</code> &#40;refer <a href="@ref git-version-control">back to lesson 1</a> if you need a reminder about how these commands work&#41;.</p> </ol> <pre><code class=language-sh >&#36; git remote add origin &lt;url&gt;</code></pre>
+<p>Don&#39;t forget to add Kevin as a collaborator.</p>
+<ol start=3 >
+<li><p>Create a directory inside this repo called <code>notebooks</code>, and another called <code>data</code>.</p>
+
+<li><p>Open the analysis directory in VS Code. Create a file called <code>README.md</code>, give it a title &#40;use markdown to make the title Heading 1 format&#41;, and add <code>By &lt;your name&gt;</code> under the title in bold.</p>
+
+<li><p>Commit and push your changes. Remember, the first time you push, you need to say <em>where</em> to push:</p>
+
+</ol>
+<pre><code class=language-sh >&#36; git push --set-upstream origin master</code></pre>
+<p>Take a look at the repo on github -    your README should show up, correctly formatted,    but the directories won&#39;t show up until there are committed files in them.</p>
+<ol start=6 >
+<li><p>Add a file called <code>data.md</code> to the <code>data/</code> directory - This is where we&#39;ll describe how to get the data that we&#39;re going to analyze, but you can leave it blank for now</p>
+
+<li><p>Add a file called <code>1-sequence-stats.md</code> to the <code>notebooks</code> directory. Also ok to leave this file blank for now.</p>
+
+<li><p>Commit and push your changes.</p>
+
+</ol>
+<p>At this point, you should have a git repo with the following structure:</p>
+<pre><code class=language-julia >./MyAnalysis
+├── data
+│   └── data.md
+├── notebooks
+│   └── 1-sequence-stats.md
+└── README.md</code></pre>
+<h2 id=getting_the_data ><a href="#getting_the_data" class=header-anchor >Getting the data</a></h2>
+<p>An enormous amount of data has already been generated on SARS-CoV2 &#40;the virus&#41; and COVID-19 &#40;the disease caused by CoV2&#41;. You can get links to much of it <a href="https://www.ncbi.nlm.nih.gov/sars-cov-2/">on NCBI</a> - the National Center for Biotechnology Information.</p>
+<p>We&#39;re particularly interested in the genome sequences of SARS-related corona viruses. Go to the <a href="https://www.ncbi.nlm.nih.gov/labs/virus/vssi/#/virus?SeqType_s&#61;Nucleotide&amp;VirusLineage_ss&#61;SARS-CoV-2,&#37;20taxid:2697049">Virus search page</a>, and use the search function to see all of the genomes of SARS-CoV &#40;Severe accute respiratory syndrom-related Coronavirus&#41;, MERS-CoV &#40;Middle East repiratory syndrom-related Coronavirus&#41;, and SARS-CoV2 &#40;the virus that causes COVID19&#41;.</p>
+<p>Refine the search a bit by selecting only complete genomes &#40;under &quot;Nucleotide completeness&quot;&#41;. At the time I write this, there are just under 7300 such records, though there may be more by the time you search.</p>
+<p>The search parameters you enter are stored in the url. Copy the url and put it into your <code>data/data.md</code> file, explaining what it is. It&#39;s always a good idea to keep track of where data comes from so that your work is reproducible by someone else.</p>
+<p>Click &quot;download&quot;, make sure &quot;FASTA Nucleotide&quot; is selected, and download all records. When it asks about the FASTA definition line &#40;the header&#41;, build a custom header and be sure to include the Accession number &#40;this is a unique identifier&#41;, the species, and the Geo location. </p>
+<p>Download the sequences, and put them into your <code>data/</code> directory with a more descriptive name than <code>sequences.fasta</code>. Be sure to describe what you did in <code>data/data.md</code>.</p>
+<div class=colbox-green ><div class=title >Tip</div>
+<p>Usually, it&#39;s not a good idea to add and commit large files
+like genome sequences to the git repository,
+especially if those files are likely to change often
+&#40;since <code>git</code> stores a record of all of the different versions&#41;. 
+
+In this case, our file is not going to change, and it&#39;s not **that** big,
+so it&#39;s ok to commit it, but if you want to avoid commiting it,
+and to make <code>git</code> forget about trying to track it,
+you can create a file called <code>.gitignore</code> inside your repo,
+and put <code>data/&lt;filename&gt;</code> in it.
+Be sure to add and commit the <code>.gitignore</code> file&#33;</p></div>
+<h2 id=setting_up_julia_project ><a href="#setting_up_julia_project" class=header-anchor >Setting up julia project</a></h2>
+<p>Open a julia REPL in your analysis directory &#40;you can do this from VS Code or by opening a new REPL and using <code>cd&#40;&#41;</code>&#41;.</p>
+<p>Now, activate the environment from the Pkg REPL, and use <code>dev</code> &#40;short for <code>develop</code>&#41; to install your bioinformatics project. To do this, you can use the path &#40;relative or absolute&#41; to the bioinformatics project directory.</p>
+<p>For example, if it is in your <code>Documents/</code> directory, you might enter</p>
+<pre><code class=language-julia >pkg&gt; dev /Users/&lt;username&gt;/Documents/BioinformaticsBISC195</code></pre>
+<div class=colbox-blue ><div class=title >Note</div>
+<p>As with <code>&#36;</code> in shell prompts, the <code>pkg&gt;</code> is an indicator
+that you should be using the Pkg REPL &#40;accessible by pressing <code>&#93;</code>&#41;,
+and isn&#39;t part of the actual command.</p></div>
+<p>Once you&#39;ve done this, you will be able to do <code>using BioinformaticsBISC195</code> in your julia code, as long as this julia project is active.</p>
+<p>In addition, use <code>add</code> to install the packages <code>Revise</code>, <code>Plots</code>, and <code>DataFrames</code>.  We&#39;ll use those a bit more later.</p>
+<p>Add and commit the <code>Project.toml</code> and <code>Manifest.toml</code> files,</p>
+<h2 id=using_the_notebook ><a href="#using_the_notebook" class=header-anchor >Using the notebook</a></h2>
+<p>In the <code>notebooks/1-sequence-stats.md</code> file, write julia code to calculate the mean and standard deviation of the lengths and gc content of your coronavirus genomes, as you did in <a href="@ref assignment06">Assignment 6</a>. Include a title &#40;with header format&#41; and a description of what your code is doing. </p>
+<p>Remember, you can use the code you&#39;ve written in your bioinformatics package just by doing <code>using &lt;PackageName&gt;</code>. Also remember, in markdown files, julia code should go in &quot;code fences.&quot; Eg.</p>
+<pre><code class=language-md ># Some Coronavirus Analysis
+
+Here&#39;s some description of what I&#39;m doing.
+I downloaded coronavirus geneomes from NCBI
+&#40;see &#96;data/data.md&#96; for more details&#41;
+
+Etc.
+
+&#96;&#96;&#96;julia
+using BioinformaticsBISC195
+
+genomes &#61; parse_fasta&#40;&quot;../data/cov2_sequences.fasta&quot;&#41;
+&#96;&#96;&#96;
+
+Now I have the genomes, and need to do stats.
+Note - your descriptions should be... more descriptive.
+
+&#96;&#96;&#96;julia
+using Statistics
+#more code...
+
+&#96;&#96;&#96;
+
+etc..
+&#96;</code></pre>
+<p>If you&#39;re using VS Code to edit your markdown, and have both the <code>julia</code> and <code>markdown julia</code> extensions installed, you can execute code within code fences in exactly the same way as you&#39;ve been doing in <code>.jl</code> files.</p>
+<h2 id=no_tests ><a href="#no_tests" class=header-anchor >No tests</a></h2>
+<p>There are no automated tests for your analysis code - this is research, I don&#39;t know what the right answer is&#33;</p>
+<p>But this means that it&#39;s extra important that you add extra checks to make sure the code is doing what you intend.</p>
+<div class=page-foot >
+  <div class=copyright >
+    &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div>
+      </div>  
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+    <label for=sidebar-checkbox  class=sidebar-toggle ></label>
