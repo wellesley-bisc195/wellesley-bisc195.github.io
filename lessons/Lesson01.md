@@ -1,5 +1,5 @@
 +++
-lesson_number = 1
+number = 1
 title = "Getting Started"
 date = Date("2021-06-08")
 chapters = ["preface", 1]
@@ -14,42 +14,20 @@ skills = [
     "Navigate a computer file system using a command line interface",
     "Clone, commit to, and push from a git repository",
     "Use the `julia` REPL to do basic arithmatic"
-] 
+]
+tasks = [
+    "Completed the BISC195 entrance survey",
+    "Completed the BISC195 pretest",
+    "Installed visual studio code and julia on their computers",
+]
 +++
 
-# Lesson 1 - Getting started
+{{lesson_preamble}}
 
-[![Lecture 1 - slides](https://img.shields.io/badge/Lecture01-Slides-purple?style=for-the-badge)](@ref lecture1)
-![Lecture 1 - date](https://img.shields.io/badge/Date-6%2F9%2F2020-orange?style=for-the-badge)
+## Table of contents
 
-[![Assignment 01 - Invitation](https://img.shields.io/badge/Assignment01-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/jOe6EhXJ)
-[![Assignment 01 - Description](https://img.shields.io/badge/01-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment01)
-[![Assignment 01 - Rendered](https://img.shields.io/badge/01-Rendered-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment01)
-[![Assignment 01 - Due](https://img.shields.io/badge/Due-6%2F11%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment01)
-
-## Learning Objectives
-
-**Concepts** - After completing this lesson, students will be able to:
-
-- Compare and contrast computer code meaning and syntax
-- Identify common "algorithms" used in their daily lives
-
-**Skills** - After completing this lesson, students will be able to:
-
-- Navigate their computer's file system using a command line interface
-- Clone, commit to, and push from a git repository
-- Use the `julia` REPL to do basic arithmatic
-
-**Assignments** - This lesson is complete when students have:
-
-- Completed the BISC195 entrance survey
-- Completed the BISC195 pretest
-- Read the [Preface](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_preface)
-  and [Chapter 1](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap01)
-  of Think Julia
-- Installed visual studio code and julia on their computers
-  - Windows users should also have installed Windows Terminal
-- Run all code examples from Lesson 1 on their own computers
+\toc
+##
 
 This file contains instructions for completing today's lesson.
 It is written in a language called "markdown",
@@ -73,7 +51,7 @@ Skipping steps or doing things out of order
 can lead to unexpected results.
 @@
 
-## [Part 1 - First steps](@id first-steps)
+## Part 1 - First steps
 
 Most modern computer code is just text
 that tells a computer what to do.
@@ -112,17 +90,16 @@ but in this course, we're going to use [Visual Studio Code](https://code.visuals
 @@title
 Tip
 @@
+If you prefer to use a different text editor, that's ok,
+but it's important to be sure it's a _plain text_ editor
+and not a _rich text_ editor like MS Word. 
+The files saved by rich text editors contain extraneous information,
+and are not suitable for programming.
 
-    If you prefer to use a different text editor, that's ok,
-    but it's important to be sure it's a _plain text_ editor
-    and not a _rich text_ editor like MS Word. 
-    The files saved by rich text editors contain extraneous information,
-    and are not suitable for programming.
-
-    Check with Kevin about your choice if you're unsure.
+Check with Kevin about your choice if you're unsure.
 @@
 
-### [Installing julia](@id install_julia)
+### Installing julia
 
 In this course,
 we're primarily going to be programming in the [julia programming language](https://julialang.org/).
@@ -140,6 +117,8 @@ designed for scientific computing.
     1. Windows users - there will be a `.exe` file - open it to start the installation.
 1. Once the julia application is installed, open it.
    This should cause a text window to open looking something like this:
+
+`test`
 
 ```
                _
@@ -193,7 +172,7 @@ If you don't have an account already, get one at [https://github.com/join](https
 ## Part 2 - Navigating the filesystem using the terminal
 
 You are probably already familiar with
-your computer's "filesystem"[^1].
+your computer's "filesystem"[^fs].
 If you've ever looked at files on your `Desktop`,
 or opened `Finder`/`Explorer` and navigated to your `Documents` folder,
 you've been using the file system.
@@ -219,7 +198,7 @@ and each subdirectory may have yet more subdirectories and files and so on.
 `Finder`/`Explorer` are examples of a graphical user interface (GUI - pronounced "gooey"),
 that is a program that allows you to interact with it visually.
 However, GUIs are difficult to design and maintain,
-so most bioinformatics tools are built around "command line"[^4]
+so most bioinformatics tools are built around "command line"[^cl]
 or text-based interfaces.
 The good news is that the organization of the filesystem
 is the same whether you're interacting with it in a GUI or in the terminal.
@@ -365,7 +344,7 @@ If your `Desktop` is pristine, congratulations!
 You won't see any output.
 
 The filesystem is organized hierarchically -
-At the very top of the hierarchy is the **[^2]**,
+At the very top of the hierarchy is the **root**[^root],
 which you can think of as a folder that contains all other files and folders.
 On a Mac (and other Unix systems),
 the root is referred to with a single forward slash (`/`),
@@ -377,7 +356,7 @@ Windows Users
 @@
 
 When you open Windows Subsystem for Linux, you're actually running
-a fully functional OS with its own file system.
+a fully functional operating system with its own file system.
 As a result, when you type `pwd` in the terminal,
 you will see something like `/home/yourname`,
 rather than seeing your Windows OS home folder.
@@ -417,9 +396,11 @@ no matter where the person is at the time,
 the directions will make sense.
 
 An absolute path is great,
-since the same instructions are useful in most situations,
-but in many cases, it would be tedious to always have to start instructions
-from the same location.
+since the same instructions are always correct, regardless of where you are.
+But in many cases, it would be tedious to always have to start instructions
+from the same location -
+imagine if you had to explain the route to the nearest bathroom
+starting at the campus gate!
 
 When providing a file path to a unix operating system,
 you can also provide relative or absolute paths.
@@ -492,7 +473,7 @@ Checking Questions
 1. What does `pwd` stand for?
 2. What does `ls` stand for?
 3. With `Desktop` as your working directory,
-  how would you list the contents of your home folder?
+   how would you list the contents of your home folder?
 @@
 
 Let's go back to the home folder.
@@ -609,7 +590,7 @@ $ pwd
 
 Now, copy and execute the following command -
 don't worry about what it does.
-(if you really want to know, you can read about it here: "while loop"[^9])
+(if you really want to know, you can read about it here: "while loop"[^wl])
 
 ```sh
 bisc195 $ for i in {1..10}; do echo "This is file #${i}" > "file${i}.txt"; done
@@ -1731,15 +1712,13 @@ it has the same behavior.
 
 ## Key Terms
 
-[^1]: **filesystem** - a hierarchical organization of files and directories. 
-      [Additional reading](https://en.wikipedia.org/wiki/File_system)
+[^fs]: **filesystem** - a hierarchical organization of files and directories. [Additional reading](https://en.wikipedia.org/wiki/File_system).
 
-[^2]: **root** - the top of the filesystem hierarchy. A folder that contains all other files and folders.
+[^root]: **root** - the top of the filesystem hierarchy. A folder that contains all other files and folders.
 
 [^3]: **home** - a user's primary folder containing `Desktop`, `Documents`, and other user-specific folders and files.
 
-[^4]: **command line** - a text-based interface for interacting with your computer. 
-      Also referred to as "terminal" or "shell."
+[^cl]: **command line** - a text-based interface for interacting with your computer. Also referred to as "terminal" or "shell."
 
 [^5]: **working directory** - the current beginning of relative paths. Equivalent to `.` or `./`
 
@@ -1753,43 +1732,41 @@ it has the same behavior.
 
 [^11]: **commit** - A unique reference to a specific state of a repository.
 
-[^12]: **print** - In the days before monitors,
-    results would literally be printed on a piece of paper.
-    These days, "printing" just means displaying the results.
+[^12]: **print** - In the days before monitors, results would literally be printed on a piece of paper. These days, "printing" just means displaying the results.
 
+[^wl]: For more on loops, see below:
 ## More info on loops
 
 Here's some more information about the loop you [ran earlier](@ref directories-and-files),
 but at least for now,
 it's not necessary to understand it.
+The code
 
-[^9]: The code
+```sh
+for counter in {1..10}; do echo "This is file #${counter}" > "file${counter}.txt"; done
+```
 
-      ```sh
-      for counter in {1..10}; do echo "This is file #${counter}" > "file${counter}.txt"; done
-      ```
+is an example of a "for loop",
+which we'll learn more about later.
+For loops execute code the same code multiple times,
+usually with something changing each time through.
+Here, the code `for counter in {1..10}` means
+"run this loop for each of the values from 1-10",
+and also provides a `counter` variable with that value.
 
-      is an example of a "for loop",
-      which we'll learn more about later.
-      This executes code in a loop,
-      usually with something changing each time.
-      Here, the code `for counter in {1..10}` means
-      "run this loop for each of the values from 1-10",
-      and also provides a `counter` variable with that value.
+Inside the loop is a single command:
+`"This is file #${counter}" > "file${counter}.txt""` means
+"write the text 'this is file #1' in a file called `file1.txt`"
+when the value of `counter` is 1,
+"write the text 'this is file #2' in a file called `file2.txt`"
+when the value of `counter` is 2,
+etc.
 
-      Inside the loop is a single command:
-      `"This is file #${counter}" > "file${counter}.txt""` means
-      "write the text 'this is file #1' in a file called `file1.txt`"
-      when the value of `counter` is 1,
-      "write the text 'this is file #2' in a file called `file2.txt`"
-      when the value of `counter` is 2,
-      etc.
+So, in the first cycle of the loop, `file1.txt` is created.
+We then go to the top of the loop, reset the counter,
+then we go again - `file2.txt` is created,
+the value of `counter` is set to 3,
+and so on.
 
-      So, in the first cycle of the loop, `file1.txt` is created.
-      We then go to the top of the loop, reset the counter,
-      then we go again - `file2.txt` is created,
-      the value of `counter` is set to 3,
-      and so on.
-
-      When `file10.txt` is created, the  loop is finished (`done`).
-      All of this should take less than a second to execute.
+When `file10.txt` is created, the  loop is finished (`done`).
+All of this should take less than a second to execute.

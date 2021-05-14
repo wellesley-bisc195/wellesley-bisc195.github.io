@@ -1,3 +1,8 @@
++++
+number = 1
+title = "Getting set up"
++++
+
 # Assignment01
 
 [![Assignment 01 - Invitation](https://img.shields.io/badge/Assignment01-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/jOe6EhXJ)

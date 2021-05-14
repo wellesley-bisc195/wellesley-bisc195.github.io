@@ -4,8 +4,6 @@ title = "Home"
 
 # BISC195 - Essential Skills for Computational Biology
 
-\tableofcontents <!-- you can use \toc as well -->
-
 This course is designed to teach you practical skills
 for using code to answer biological questions.
 
@@ -74,12 +72,9 @@ readings, and assignments
 can all be found with the appropriate lesson.
 There are also indices for each type of lesson content.
 
-<!-- TODO: Fill in these links -->
-
-- [Lesson index](#)
-- [Lecture index](#)
-- [Readings index](#)
-- [Assignment index](#)
+- [Lesson index](/lessons)
+- [Lecture index](/lectures)
+- [Assignment index](/assignments)
 
 ### Call-out boxes
 

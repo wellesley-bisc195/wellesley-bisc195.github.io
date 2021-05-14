@@ -10,6 +10,7 @@ using Dates
     assignments::Vector{Int} = Int[]
     chapters::Vector{Any} = Any[]
     learning_objectives::NamedTuple = (concepts = String[], skills = String[])
+    tasks::Vector{String} = String[]
 end
 
 @with_kw struct Assignment
@@ -28,6 +29,7 @@ end
     link::String = ""
 end
 
+
 function default_pagevar(path, var, default)
     val = pagevar(path, var)
     return isnothing(val) ? default : val
@@ -45,6 +47,7 @@ function Lesson(path)
     skills = default_pagevar(path, :skills, String[])
     concepts = default_pagevar(path, :concepts, String[])
     learning_objectives = (; concepts, skills)
+    tasks = default_pagevar(path, :tasks, String[])
     return Lesson(
         number,
         title,
@@ -53,40 +56,111 @@ function Lesson(path)
         lectures,
         assignments,
         chapters,
-        learning_objectives        
+        learning_objectives,
+        tasks        
     )
 end
 
 Lesson(n::Int) = Lesson("lessons/Lesson$(lpad(n, 2, '0')).md")
 getpath(l::Lesson) = joinpath("/lessons", "Lesson$(lpad(l.number, 2, '0'))")
 
+function Assignment(path)
+    number = default_pagevar(path, :number, 99)
+    release = default_pagevar(path, :release, Date(0))
+    title = default_pagevar(path, :title, "")
+    due_date = default_pagevar(path, :due_date, "")
+    link = default_pagevar(path, :link, "")
+    return Assignment(number, release, title, due_date, link)
+end
+
+Assignment(n::Int) = Assignment("assignments/Assignment$(lpad(n, 2, '0')).md")
+getpath(l::Assignment) = joinpath("/assignments", "Assignment$(lpad(l.number, 2, '0'))")
+
+const book_link = "https://benlauwens.github.io/ThinkJulia.jl/latest/book.html"
+chapter_link(n::Int) = string(book_link, "#chap", lpad(n, 2, '0'))
+chapter_link(s::String) = string(book_link, "#_", s)
+
 lesson_badge(l::Lesson) = string(
     "[!", "[lesson", l.number, "link]",
     "(https://img.shields.io/badge/Lesson-", l.number,
-    "-purple)](", getpath(l), ")"
+    "-purple?style=for-the-badge)](", getpath(l), ")"
 )
 
 date_badge(l::Lesson) = string(
-    "!", "[lesson", l.number, "link]",
+    "!", "[lesson", l.number, "date]",
     "(https://img.shields.io/badge/Date-", 
     replace(string(l.date), "-"=>"--"),
-    "-orange)"
+    "-orange?style=for-the-badge)"
 )
+
+assignment_badge(a::Assignment) = string(
+    "[!", "[assignment", a.number, "link]",
+    "(https://img.shields.io/badge/Assignment-", a.number,
+    "-darkblue?style=for-the-badge)](", getpath(a), ")"
+)
+
+due_badge(a::Assignment) = string(
+    "!", "[assignment", a.number, "due]",
+    "(https://img.shields.io/badge/Due-", 
+    replace(string(a.due_date), "-"=>"--"),
+    "-red?style=for-the-badge)"
+)
+
+chapter_badge(chap::Union{Int,String}) = string(
+    "[!", "[book chapter $chap]",
+    "(https://img.shields.io/badge/Book-", 
+    chap,"-blue?style=for-the-badge)](", chapter_link(chap), ")"
+)
+
+
 function hfun_include_lessons()
     lessons = [Lesson(joinpath("lessons", p)) for p in filter(f-> startswith(f, "Lesson"), readdir("lessons/"))]
     io = IOBuffer()
     for lesson in lessons
         lesson.release > today() && continue
-        @show date_badge(lesson)
+
         write(io, Franklin.md2html("""
             ### [$(lesson.title)]($(getpath(lesson)))
-            $(lesson_badge(lesson)) $(date_badge(lesson))
-            """))
-        write(io, Franklin.md2html(""""""))
+            
+            $(lesson_badge(lesson))
+            $(date_badge(lesson))
+            $(join([chapter_badge(c) for c in lesson.chapters], ' '))
+            $(join([assignment_badge(Assignment(a)) for a in lesson.assignments], ' '))
+            """; stripp=true))
     end
     return String(take!(io))
 end
 
+function hfun_lesson_preamble()
+    lesson = Lesson(locvar(:number))
+    io = IOBuffer()
+    write(io, Franklin.md2html("""
+        # [Lesson $(lesson.number) - $(lesson.title)]($(getpath(lesson)))
+        
+        $(date_badge(lesson)) {{Placeholder for slides}} {{Placeholder for assignment}}
+        """))
+    
+    write(io, Franklin.md2html("""
+        ## Learning Objectives
+
+        **Concepts** - After completing this lesson, students will be able to:
+
+        $(join(["- $concept" for concept in lesson.learning_objectives.concepts], '\n'))
+
+        **Skills** - After completing this lesson, students will be able to:
+
+        $(join(["- $skill" for skill in lesson.learning_objectives.skills], '\n'))
+
+        **Tasks** - This lesson is complete when students have:
+
+        $(join(["- Read [Chapter: $c]($(chapter_link(c))) from _Think Julia_" for c in lesson.chapters], '\n'))
+        $(join(["- Completed [Assignment$(lpad(a, 2, '0'))]($(getpath(Assignment(a))))" for a in lesson.assignments], '\n'))
+        $(join(["- $task" for task in lesson.tasks], '\n'))
+        - Run all code examples from Lesson $(lesson.number) on their own computers
+
+        """))
+    return String(take!(io))
+end
 
 
 # same for hfun_include_assignments

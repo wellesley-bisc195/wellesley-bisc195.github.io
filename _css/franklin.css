@@ -239,11 +239,12 @@ td {
     IMAGES in CONTENT
 ================================================================== */
 
-/* .franklin-content img {
-  width: 70%;
-  text-align: center;
-  padding-left: 10%;
-} */
+.franklin-content img {
+  /* width: 70%; */
+  /* text-align: center; */
+  /* padding-left: 10%; */
+  display: inline-block;
+}
 
 .franklin-content .img-small img {
   width: 50%;
