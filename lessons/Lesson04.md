@@ -1,455 +1,319 @@
-# Lesson 4 - Loop-d-loop
+# Lesson 3 - Functions, conditions, recursion, Oh My!
 
-[![Assignment 04 - Invitation](https://img.shields.io/badge/Assignment04-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/1vpkAM2r)
-[![Assignment 04 - Description](https://img.shields.io/badge/04-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment04)
-[![Assignment 04 - Rendered](https://img.shields.io/badge/04-Script-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment04)
-[![Assignment 04 - Due](https://img.shields.io/badge/Due-6%2F18%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment04)
+[![Assignment 03 - Invitation](https://img.shields.io/badge/Assignment03-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/UbCNPRi2)
+[![Assignment 03 - Description](https://img.shields.io/badge/03-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment03)
+[![Assignment 03 - Rendered](https://img.shields.io/badge/03-Script-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment03)
+[![Assignment 03 - Due](https://img.shields.io/badge/Due-6%2F18%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment03)
 
 ## Learning objectives
 
 **Concepts** - After completing this lesson, students will be able to:
 
-- Compare and contrast `for` loops and `while` loops
-- Recognize the difference between `String`s and `Char`s
-- Debug errors that occur from writing infinite loops
+- Distinguish fruitful functions from void functions
+- Recognize boolean values and conditional statements
+- Recognize errors resulting resulting from functions expecting boolean values
 
 **Skills** - After completing this lesson, students will be able to:
 
-- Use a `for` loop to accomplish a task incrementally
-- Write a `while` loop to repeat code until a condition is met
-- Stop a loop before it's complete with `break`
+- Write boolean functions to check the properties of numerical values
+- Use alternative evaluation execute different funuctions depending on input
+- Recognize recursive functions,
+  and identify situations in which they might be useful
 
 **Assignments** - This lesson is complete when students have:
 
-- Read [Chapter 4](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04)
-  and [Chapter 7](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap07)
+- Read [Chapter 5](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap05)
+  and [Chapter 6](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap0)
   of Think Julia.
-- Run all code examples from Lesson 4 on their own computers
-- Cloned the Assignment 4 repository with github classroom.
-- Completed assignment 4 with all tests passing.
+- Cloned the Assignment 3 repository with github classroom.
+- Completed assignment 3 with all tests passing.
+- Run all code examples from Lesson 2 on their own computers
 
-## Repeating code with loops
+## Conditional (boolean) execution 
 
-Writing code is about being lazy -
-never write more code than you have to!
-We've already seen that we can use functions
-to wrap up code that can then be used over and over and over and...
+We can build some useful functions with only the components we've discussed so far,
+but they would be somewhat limited.
+Let's work on expanding our repertoire
+with conditional execution, loops, and recursion.
 
-But there are plenty more opportunities for re-using code,
-especially "loops."
-In the 🐢exercise from [Chapter 4](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04)
-you've seen one use of the `for` loop.
+The following sections assume that you have read
+[chapter 5](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap05) and
+[chapter 6](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap06)
+in _Think Julia_.
+You can do chapter 4 if you like
+(it lets you play with 🐢's - it's fun!),
+but that's not required for now.
 
-```julia
-for i in 1:5
-    println(i * 3)
-end
-```
+### [Computer logic - Booleans](@id booleans)
 
-This loop says, "For each number, 1 to 5, print that number times 3."
+All computers are build on boolean (true/false) logic. 
+At it's core, the two compoents of computer programs
+(data and actions) are composed from "bits",
+which are physical objects that can have 2 states,
+`0` or `1`, `off` or `on`, `false` or `true`,
+and [logical operators](https://en.wikipedia.org/wiki/Logic_gate#Truth_tables).
 
-The way the computer evaluates this is as a loop -
+But we don't need to understand the all the details of how this works at a low-level
+(I certainly don't)
+to effectively use boolean operations in our code.
+There are a couple of things to keep in mind.
 
-1. `i` is set to 1, `println(i * 3)`
-    1. loop back to the top
-2. `i` is set to 2, `println(i * 3)`
-    1. loop back to the top
-3. etc...
+As you read in _Think Julia_,
+you can use conditional evalutation (`if` block)
+to execute different code under different circumstances.
 
-### Using ranges in `for` loops
-
-The `1:5` is a "range", it's all of the integers from 1 to 5.
-In julia, there are many ways to express ranges -
-and they don't always have to increment by 1!
-
-The easiest way to use ranges is with the `:` syntax,
-`<start>:<optional-increment>:<end>`.
-
-```julia
-for even_number in 2:2:10
-    println(even_number)
-end
-
-for half in 1:0.5:3
-    println(half)
-end
-```
-
-You can even go backwards!
-
-```julia
-function decrement(n)
-    for d in n:-1:0
-        println(d)
+```julia compliment
+function compliment(base)
+    if base == 'A'
+        return 'T'
+    elseif base == 'T'
+        return 'A'
+    else
+        error("Base $base not supported")
     end
 end
 
-decrement(5)
-```
-
-For more complicated ranges, we can also use the `range()` function.
-Use the REPL `help?` mode to learn about the `range` function
-by typing `?` (the prompt should change to `help?>`),
-then type `range` and press `enter`.
-
-@@colbox-purple
-@@title
-
-@@
-
-    Use the `range()` function to make a range
-    that goes from `10` to `1000` with 4 entries.
-
-    You should be able to run:
-
-    ```julia
-    julia> for i in range(#= your code here =#)
-               println(i)
-           end
-    10.0
-    340.0
-    670.0
-    1000.0
-    ```
-@@
-
-### While loops
-
-In many cases,
-the same loop can be written in many different ways.
-For example,
-
-```julia
-function whiledecrement(n)
-    while n >= 0 # greater than or equal to
-        println(n)
-        n = n - 1
-    end
-end
-
-whiledecrement(5)
-```
-
-Where `for` loops march through a predetermined sequence,
-`while` loops continue until a particular condition is met.
-
-### Loops and scope
-
-In julia, loops have their own scope
-(we talked about [scope back in Lesson 2](@ref scope)).
-Functions also have their own scope,
-and the way that the scope of loops and the scope of functions interact
-can be a bit counter-intuitive.
-
-The best way to get a sense of this is to see some examples.
-
-```julia
-i = 5
-
-for i in 1:3
-    println(i)
-end
-
-println(i)
-```
-
-```julia
-function strangeloop(j)
-    k = 1
-    for k in 1:j
-        println(k)
-    end
-    println(k)
-end
-
-k = 5
-
-strangeloop(k)
-
-println(k)
-```
-
-```julia
-m = 10
-
-while m > 0
-    print("$m ")
-    m = m - 1
-end
-```
-```
-ERROR: UndefVarError: m not defined
-```
-
-Wait, what happened to `m`?
-
-```julia
-while m > 0
-    print("$m ")
-    break
-end
-```
-```
-10
-```
-
-This occurs because,
-though the `m` in `while m > 0` refers to the `m`
-assigned to `10`,
-inside the loop,
-`m` hasn't been defined.
-So the expression `m - 1` throws an error.
-
-In a function, things are a bit different:
-
-```julia
-function strangewhile(n)
-    while n > 0
-        print("$n ")
-        n = n - 1
-    end
-    println("") # getting a newline
-    println(n)
-end
-
-strangewhile(10)
-```
-```
-10 9 8 7 6 5 4 3 2 1
-0
-```
-
-Loops inside the function have access to the function arguments.
-Re-assigning `n` inside the function
-changes what the function-scope `n` refers to,
-but doesn't leak outside the function.
-
-```julia
-my_n = 5
-
-strangewhile(my_n)
-```
-```
-5 4 3 2 1
-0
+compliment('A')
 ```
 ```julia
-my_n
+julia> compliment('G')
+ERROR: Base G not supported
+# ...
 ```
-```
-5
-```
-
-## Loops and Strings - Strings as containers
-
-Loops can also operate on `String`s,
-which are built from `Char`s.
-
-```julia sidx
-my_string = "This is a String";
-
-for c in my_string
-    println(c)
-end
-```
-
-We can also access individual parts of a `String`
-by "indexing" them.
-The syntax for this in julia is to put the index in `[]`.
-
-We can index with individual numbers...
-
-```julia sidx
-my_string[1]
-```
-
-or with ranges...
-
-```julia sidx
-my_string[5:8]
-```
-
-Or with the special `end` keyword,
-which references the last index of a collection.
-
-```julia sidx
-lastindex(my_string)
-
-my_string[end]
-
-my_string[end-5:end]
-```
-
-@@colbox-blue
-@@title
-Note
-@@
-For those of you that have learned other programming languages
-like python or java,
-you might be confused that the first index is `1` instead of `0`.
-That is because julia uses "1-based" indexing.
-
-For those of you that have used R or matlab,
-or for those of you that have otherwise never been conditioned
-to think of `0` as the first thing,
-this is probably intuitive.
-@@
 
 @@colbox-green
 @@title
 Tip
 @@
 
-Notice that the type of a string indexed by a number
-(or the pieces of a `for` loop) is `Char`, 
-and the type when indexed by a range is a `String`:
+Notice that we can use variables
+to insert values in strings using "interpolation"
+with `$`
 
 ```julia
-julia> typeof(my_string[1])
-Char
+julia> mystr = "hello";
 
-julia> typeof(my_string[1:2])
-String
+julia> myint = 4;
+
+julia> "Well, $mystr there. 2 + 2 is $myint"
+"Well, hello there. 2 + 2 is 4"
+```
+
+Any arbitrary expression can be interpolated,
+though in many cases you'll need parentheses:
+
+```julia
+julia> "2+2 is $(2+2)"
+"2+2 is 4"
+```
+
+If you want to include an actual `$` sign in a string,
+you must "escape" it with `\ `, or use a "raw" string:
+
+```julia
+julia> println("That will be \$2.50")
+That will be $2.50
+
+julia> println(raw"But I don't have $2.50!'")
+But I don't have $2.50!'
 ```
 @@
 
-@@colbox-orange
+
+Here, we're trying to make a function
+that returns the `compliment` of a DNA base -
+that is, the base that would be on the opposite strand.
+
+I've entered the complimentary bases for `A` and `T`,
+but we're missing `C` and `G`.
+
+@@colbox-purple
 @@title
-"Checking Question"
-@@
-How can you get a single letter `String` with indexing?
+
 @@
 
-## Kmers
+Define the `compliment()` function
+so that it gives the compliment of `'G'` and `'C'`
+_in addition to_ `'A'` and `'T'`.
 
-Over the next couple of lessons,
-we're going to build some functions that help us to find
-and count all of the "kmers" of any length in a sequence,
-then use them to help us identify DNA sequences from various organisms.
-
-A "kmer" is a sequence (DNA, RNA, or amino acid)
-of a given length, `k`. 
-
-It is often useful to know the kmer composition
-of a sequence, given different values of `k`.
-For example, the 2mer (kmers with length 2) composition
-of the sequence "ATATATC" is:
-- "AT" = 3
-- "TA" = 2
-- "TC" = 1
- 
-Note that all reference frames are valid
-that is, we don't just march along by 2s.
-So the 3mer composition of the same sequence would be
-- "ATA" = 2
-- "TAT" = 2
-- "ATC" = 1
-
-Another way to say this is that the sum of the counts
-of all kmers in a sequence must be equal to
-the length of the sequence minus `k` plus 1.
-
-@@colbox-orange
-@@title
- "Checking questions"
-@@
-1. How many 4mers are in the sequence "ATTCCGTCA"
-    (the length of the sequence is 9)
-2. All of the 5mers in the above sequence are unique.
-    What are they? 
-    Answer below[^1], but don't peek until you've tried it!
+Be sure to use single quotes -
+the reason will become clear shortly.
 @@
 
-## A Brief Introduction to Dictionaries
+### Combinatorial logic
 
-Earlier, when we wanted to calculate GC content of a DNA sequence,
-we looped through a sequence, counted anything that was a `G` or `C`,
-and then divided that number by the length of the sequence.
+In many cases,
+we want to test the truth of multiple statements at once.
+Combining boolean values has rules and precedence,
+and it's possible to string many of them together.
 
-If we want to know the composition of all of the bases in DNA
-that would be easy to write out by hand,
-because there are only 4 options.
-You'll do this for real in Assignment04,
-but the [psedocode](https://en.wikipedia.org/wiki/Pseudocode) might look something like this:
+If your statements get too long, it can be challenging to reason about them.
+For example, what's the truth of the following statement?
+(remember, `||` means "or" and `&&` means "and"):
 
+```julia
+true && false || true && true
 ```
-set variables a,c,g,t to 0
-for each base in the sequence
-    if the base is 'A', add one to `a`
-    or if the base is 'C', add one to `c`
-    or if the base is 'G', add one to `g`
-    or if the base is 'T', add one to `t`
+
+You might figure it out, but personally, my head hurts.
+In my experience, though, I am typically only comparing two things,
+so the rules are easy, or I'm using the same logic opperators throughout (all `&&` or all `||`).
+
+```julia
+function basetype(base)
+    if base == 'A' || base == 'G'
+        println("That's a purine!")
+    elseif base == 'T' || base == 'C'
+        println("That's a pyrimidine!")
+    else
+        error("Base $base not supported")
+    end
 end
-return a,c,g,t
+
+basetype('C')
 ```
 
-But doing something like this for proteins,
-where each amino acid might be one of 20 options,
-or for kmers where the number of possibilities
-increases exponentially with `k`
-(there are 16 possible DNA 2mers, 64 possible DNA 3mers, etc)
-that would be untenable. 
+Another, likely less obvious place where combinatorial logic is at play
+is in the behavior of `elseif`.
+It's important to remember that the first statement in a conditional block
+that evaluates to `true` will be executed,
+and nothing else will.
+For example,
 
-Another option is to use a data structure called a "Dictionary."
-What follows is a very brief introduction to dictionaries,
-we'll learn more about them next week. 
+```julia oddhalf
+function oddhalf(num)
+    if iseven(num)
+        println("That's an even number, you should get an Int, but you won't.")
+    elseif num == 42
+        println("Life, the Universe, and Everything!")
+    else
+        println("That's an odd number, expect a Float!")
+    end
+    return num / 2
+end
 
-Dictionaries store data as `key => value` pairs,
-where the `key` can by (almost) any type and is used to access
-or alter the `value`.
-This is probably confusing, but may be clearer with some examples.
-
-```julia dicts
-my_dict = Dict("apples"=> 4, "bananas" => 1, "strawberries"=>10)
+oddhalf(42)
 ```
 
-Here, the fruits are the `key`s,
-and the `Int64s` are the `value`s.
-We can access values using the `keys` as the index:
+Here, there's no way for `elseif num == 42` to ever be true,
+since when `num` is 42, the `iseven(num)` gets hit first,
+and that part of the block is evaluated.
 
-```julia dicts
-my_dict["bananas"]
-my_dict["strawberries"] * 2
-```
+@@colbox-blue
+@@title
+Note
+@@
 
-We can check if a dictionary has a particular key
-with the boolean function `haskey()`. 
+    The julia logic operators `&&` and `||`
+    are "short circuiting", which means that
+    if the answer can be known before the right-hand side is evaluated,
+    then the right-hand side **won't** be evaluated. 
+    This feature can be used to introduce
+    a more concise conditional evaluation than an `if` block.
 
-```julia dicts
-haskey(my_dict, "apples")
-haskey(my_dict, "kumquat")
-```
+    For example,
 
-If we try to access the dictionary with a key that doesn't exist,
-we'll get an error.
+    ```julia
+    julia> function verbosehalf(x)
+           iseven(x) && println("That's an even number!")
+           iseven(x) || println("That's an odd number!")
+           x / 2
+       end
+    verbosehalf (generic function with 1 method)
 
-```julia
-julia> my_dict["kumquat"]
-```
-```
-ERROR: KeyError: key "kumquat" not found
-```
+    julia> verbosehalf(42)
+    That's an even number!
+    21.0
 
-But we can add new entries to the dictionary if we
-assign them to new values.
+    julia> verbosehalf(43)
+    That's an odd number!
+    21.5
+    ```
 
-```julia dicts
-my_dict["kumquat"] = 0
-haskey(my_dict, "kumquat")
-```
+    When `43` is passed as an argument, `iseven(x)` evaluates to `false`.
+    And because `false && <anything>` is always false,
+    that line just evaluates to false without ever getting to the `println()` call.
+    But `false || <anything>` depends on the right hand statement
+    (`false || true` is different than `false || false`),
+    the right hand statement must be evaluated.
+    
+    In this case, those lines are equivalent to
 
-And we can update entries by reassigning them,
-as if they are variables.
+    ```julia
+    if iseven(x)
+        println("That's an even number!")
+    else
+        println("That's an odd number!")
+    end
+    ```
 
-```julia dicts
-my_dict["apples"] = my_dict["apples"] + 1;
-my_dict["apples"]
-```
+    But be aware, chaining these short-circuit expressions is NOT like `if/elseif/else` since,
+    regardless of the outcome of the expression, the following lines _are_ evaluated.
+    Eg, if I try to write the `oddhalf()` function from above like this:
 
-In the assignment,
-we'll use dictionaries where the keys are the kmers,
-and the values are the counts.
-Let's get started!
+    ```julia
+    function oddhalf(num)
+        iseven(num) && println("That's an even number, you should get an Int, but you won't.")
+        num == 42 && println("Life, the Universe, and Everything!")
+        println("That's an odd number, expect a Float!")
+        return num / 2
+    end
 
-[^1]: There are 6 kmers of length 4 (9 - 4 + 1),
-      ["ATTC", "TTCC", "TCCG", "CCGT", "CGTC", "GTCA"]
+    oddhalf(42)
+    ```
+    ```
+    That's an even number, you should get an Int, but you won't.
+    Life, the Universe, and Everything!
+    That's an odd number, expect a Float!
+    21.0
+    ```
+
+    Not exactly what we wanted...
+@@
+
+@@colbox-orange
+@@title
+ "Checking Questions"
+@@
+
+    1. Referring back to our `compliment` function,
+       What happens if you try to pass `"G"` as an argument
+       (note the double quotes)?
+       Can you explain this behavior?
+
+    2. Evaluate `'G' == "G"` - did you expect it to be `true` or `false`?
+    3. What are the types of `'G'` and `"G"`?
+    4. Use the `||` operator to modify the `if`/`elseif` statements
+       in your [`compliment()` function](@ref booleans) from above
+       so that it works with either single-quoted or double-quoted ACGT.
+
+       Note: you should have no more than 3 `elseif`s in your function,
+       and you should always return a single-quoted version of the compliment.
+@@
+
+## Some notes on recursion
+
+I find recursion difficult to wrap my head around.
+To be honest,
+I almost told you skip those sections of chapters 5 and 6.
+But I think it is valuable to encounter the concept
+so that you know it exists,
+even if we don't explore the concept in great detail.
+
+In the years I've been programming,
+I think I've only written 2 recursive functions.
+But there are areas of biology where they can be quite valuable,
+and actually easier to understand,
+especially those involving phylogenetic trees or
+other graph structures, such as those used in genome assembly.
+
+In these cases, we often want to perform and action on a node,
+and all the children of that node, which are also nodes,
+also with children... and so on.
+In fact, this is similar to how many shell programs
+interact with your file system
+(which is also like a tree).
+
+But beyond noting that it has its uses,
+we won't spend much time on recursive functions in this course.
+

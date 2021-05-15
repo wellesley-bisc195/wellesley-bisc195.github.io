@@ -1,461 +1,575 @@
-# Lesson 2 - Data Types and Functions
++++
+number = 2
+title = "Using git for version control"
+lectures = [2]
+assignments = [1]
+concepts = [
+    "Explain the use of 'version control' in the context of a coding project"
+]
+skills = [
+    "Clone, commit to, and push from a git repository",
+    "Use the `julia` REPL to do basic arithmatic"
+]
++++
 
-[![Lecture 2 - slides](https://img.shields.io/badge/Lecture02-Slides-purple?style=for-the-badge)](@ref lecture2)
-![Lecture 2 - date](https://img.shields.io/badge/Date-6%2F11%2F2020-orange?style=for-the-badge)
+{{lesson_preamble}}
 
-[![Assignment 02 - Invitation](https://img.shields.io/badge/Assignment02-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/kCXCpki4)
-[![Assignment 02 - Description](https://img.shields.io/badge/02-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment02)
-[![Assignment 02 - Rendered](https://img.shields.io/badge/02-Script-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment02)
-[![Assignment 02 - Due](https://img.shields.io/badge/Due-6%2F14%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment02)
+##
 
-## Learning Objectives
+If you've ever worked on an assignment
+and ended up with a list of files like
 
-**Concepts** - After completing this lesson, students will be able to:
+- `assignment1.docx`
+- `assignment1_v2.docx`
+- `assignment1_v2_kevins_comments.docx`
+- `assignment1_v3_fix_final.docx`
+- `assignment1_v3_fix_final_for_real_this_time.docx`
 
-- Distinguish between variables and function arguments
-- Identify functions that operate on or modify data
-- Compare and contrast common scalar and container data types
-- Recognize errors resulting from using functions on datatypes
-  that do not have appropriate methods
+... you'll understand the importance of version control.
 
-**Skills** - After completing this lesson, students will be able to:
+It goes well beyond naming of course.
+How can you tell what changed between version 1 and version2?
+Does version 3 take the comments Kevin made on v2 into account?
+Is `...fix_final_for_real_this_time` _really_ the last version?
 
-- Use a plain text editor (VS Code) to modify source code
-- Execute functions on different types of arguments in the `julia` REPL
-- Use print statements and type introspection methods to
-  investigate a data type
-- Assign, modify, and copy variables
-- Use github and github CI to check answers to homework
+It's even worse if multiple people are working on the same document.
+If you and your lab partner are editing a document at the same time,
+How can you gracefully merge the changes?
+What if the changes you make and the changes she makes are incompatible?
 
-**Assignments** - This lesson is complete when students have:
+Software like Google Docs can address some of these issues,
+but incompatible changes can still occur.
+Imagine you're writing an essay about a dog.
+At the beginning of the essay, you've written
 
-- Read [Chapter 2](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap02)
-  and [Chapter 3](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03)
-  of Think Julia.
-- Cloned the Assignment 2 repository with github classroom.
-- Completed assignment 2 with all tests passing.
-- Run all code examples from Lesson 2 on their own computers
+> The quick brown fox jumped over the lazy dog
 
-## Data Types
+You and your partner are both refining this epic story at the same time,
+and further on you write,
 
-Programming can be thought of as consiting of 2 things:
+> Because of how lazy the dog was, she didn't chase the fox.
 
-1. Data
-2. Operations on data
+But your partner decided the first line needed some more detail
+and changes it to
 
-Everything else is just sugar. 
+> The quick brown fox jumped over the lazy male dog.
 
-Before continuing,
-be sure to read [chapter 2](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap02) of _Think Julia_,
-which introduces you to different kinds of values.
+so your pronouns are out of step.
 
-The next section will expect you do have read 
-[chapter 3](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03),
-which introduces you to the operations part (functions).
+In writing, a mistake like this might just look silly,
+but in programming, it can mean your code doesn't run
+or generates the wrong answer.
+Even more critically,
+code often involves many files working together,
+and keeping track of the versions of multiple files at the same time is necessary.
 
-These chapters also introduce a number of important concepts like
-variable assignment, expressions, flow of execution, and arguments.
-All of these concepts will come up again and again,
-so if you're still a bit fuzzy on them,
-that's ok.
+## `git` is a program for version control
 
-### Practice
+`git` is a distributed version control system (DVCS).
+That is, it helps one keep track of one's code,
+and the information about versions is distributed among many systems.
 
-The following examples are intended to reinforce and extend what you've learned.
-In many cases, they are intended to expose behavior that may be unintuitive,
-or lead to errors that are worth understanding.
+@@colbox-blue
+@@title
+Note
+@@
+Early version control systems were centralized -
+there was a single server that kept track of
+all of the information about a code repository.
+Users could "checkout" individual files to edit them,
+and the central repository would lock that file to prevent conflicting changes.
+This makes it easy to prevent conflicts,
+but is also a bit impractical.
+
+By contrast, git is distributed -
+each user's system contains the entire revision history,
+and conflicts between versions are explicitly managed when
+two different edits to the code are brought together.
+Don't worry if this isn't super clear at this stage -
+we'll get into some practical examples in a sec.
+@@
+
+You can think of a `git` "repository" (usually shortened to "repo")
+as a directory with super powers.
+If you're looking at the directory using Finder or Explorer,
+it might not look any different,
+but it's much more powerful.
+Before we get into that, though,
+we need to get `git` installed.
+
+## Installing git
+
+If you are using Windows Subsystem for linux,
+or a linux operation system, `git` should already be installed.
+
+But lets check - if `git` is installed, you can execute `git --help` in the terminal.
+
+```sh
+$ git --help
+usage: git [--version] [--help] [-C <path>] [-c <name>=<value>]
+        [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
+        [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--bare]
+        [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+        <command> [<args>]
+
+These are common Git commands used in various situations:
+
+start a working area (see also: git help tutorial)
+clone      Clone a repository into a new directory
+init       Create an empty Git repository or reinitialize an existing one
+# ... output truncated
+```
+
+If you're using a Mac, git might not be installed.
+Executing the command above will probably result in an error message:
+
+```
+bash: git: command not found...
+```
+
+So you need to install it.
+If the `git` help message appeared, you can skip [to here](#configuring_git)).
+
+The easiest way to install git on a mac is using [`homebrew`](http://brew.sh).
+
+If you're using a mac and don't have git installed,
+enter the following commands into your terminal (excluding the `$`),
+then press `enter` to execute.
+
+```sh
+$ xcode-select --install
+```
+
+This may prompt you to download and install "command line developer tools"
+from the app store.
+If it does, click install and follow the prompts.
+When that's finished, and you see the command prompt (`$`) again, run the following command.
+Note: this is a case when you should probably use copy/paste.
+
+```
+$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+==> This script will install:
+/usr/local/bin/brew
+/usr/local/share/doc/homebrew
+/usr/local/share/man/man1/brew.1
+/usr/local/share/zsh/site-functions/_brew
+/usr/local/etc/bash_completion.d/brew
+/usr/local/Homebrew
+==> The following new directories will be created:
+/usr/local/sbin
+# ...
+```
+
+And follow the prompts.
+If you are asked for your password,
+use the one you use to log into your computer.
+Note that you will not see anything appear as you type,
+just type the password and hit `enter`.
+
+## Configuring git
+
+The next step is to tell git your name and email address,
+so that you are credited with the changes you make to repositories.
+Enter the following commands,
+changing the name and e-mail address to yours.
+
+```sh
+$ git config --global user.name "Kevin Bonham, PhD"
+$ git config --global user.email kbonham@wellesley.edu
+```
+
+### Practice: Create your first git repository
+
+**Step 1:** In your terminal,
+change your working directory to your `Documents` folder (`~/Documents`)
+
+@@colbox-aqua
+@@title
+Windows Users
+@@
+You can perform the following steps either in
+the `Documents/` folder of your linux filesystem found at `~/Documents`,
+or of your Windows filesystem, which is found at `/mnt/c/Users/<your_username>  Documents`
+@@
+
+**Step 2:** Next, create a new directory called `my_repo`.
+
+@@colbox-green
+@@title
+Reminders
+@@
+- `cd` is the command for changing working directory
+- `mkdir` is the command for making a directory
+
+Look back at [Lesson 1](../Lesson01) for more information,
+and don't worry if you need to keep looking up stuff like this.
+The stuff you do regularly will become second nature,
+and the other stuff is always a Google search away.
+@@
+
+**Step 3:** Now, change your working directory into the newly created `my_repo/`
+and initialize a git repository using the command `git init`
+
+```sh
+my_repo $ git init
+Initialized empty Git repository in /home/kevin/Documents/my_repo/.git/
+```
 
 @@colbox-orange
 @@title
- "Checking Questions"
+Checking Questions
+@@
+Is the path shown in the output a *relative* or *absolute* path?
+
+If you use the command `ls` to list the contents of the current directory,
+can you see the `.git/` directory that was created?
+Why or why not?
 @@
 
-    1. For each of the following expressions,
-       What is the `type` of the value that gets returned after execution?
-       
-       ```julia
-       julia> 1+2
-       3
+**Step 4:** Open the folder in your operating system's file system navigator
+(Finder on a Mac, Explorer in Windows).
+This folder appears empty right now,
+but in fact, there's a hidden `.git` folder
+that will include all of the version information
+for all of the files that you track.
 
-       julia> 3 / 2
-       1.5
-
-       julia> "42 * 6"
-       "42 * 6"
-
-       julia> "42" * "6"
-       "426"
-       ```
-    
-    2. Assign each of these values to a different variable (eg `my_sum = 1+2`).
-       And use the `typeof()` function to test your answers above.
-       For example   
-       
-       ```julia
-       julia> x = "42" * "6"
-       "426"   
-       
-       julia> typeof(x)
-       String
-       ```
-    
-    3. What is the difference between the following expressions?
-
-       ```julia
-       julia> "AATTCC"^2
-       "AATTCCAATTCC"
-
-       julia> println("AATTCC"^2)
-       AATTCCAATTCC
-       ```
-
-       What happens if you assign each of these expressions to a variable?
-
-    4. What is the difference between `Float64` and `Int64`?
-       
-       Are there situations where one is obviously preferred over the other
-       in a math problem?
-
-    5. Without evaluating the following expressions,
-       try to guess what the return type will be, `Int64` or `Float64`.
-
-       ```julia
-       julia> 1 + 1
-
-       julia> 2. - 2.
-
-       julia> 3 * 3.
-
-       julia> 4. * 4
-
-       julia> 5 / 5
-
-       julia> "6" + "6.0"
-
-       julia> 1e7 + 1
-       ```
-
-       Now evaluate them - did you get them right?
-       use `typeof()` if you're not sure.
+@@colbox-aqua
+@@title
+"Windows Users"
 @@
 
+If you created the repository in the linux filesystem,
+the easiest way to do this is to execute `explorer.exe ./`
+from the command line.
+[See here](https://devblogs.microsoft.com/commandline/whats-new-for-wsl-in-windows-10-version-1903/)
+for more information about how the Windows and Linux filesystems interact.
+@@
+
+Let's see how this works.
+
+**Step 5:** Open the [`VS Code`](https://code.visualstudio.com/) text editor and create a new file,
+then save it in your repository directory as `fox.txt`.
+
+**Step 6:** In your terminal, list the contents of the directory
+to be sure the file was created.
+
+```sh
+my_repo $ ls
+fox.txt
+```
+
+When you create new files, git does not track them automatically.
+Let's see what git sees at the moment:
+
+```sh
+$ git status
+On branch master
+
+No commits yet
+
+Untracked files:
+(use "git add <file>..." to include in what will be committed)
+
+    fox.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+So `git` sees the file exists,
+but it tells you it's not being tracked.
+
+**Step 7:** Let's fix that (the `status` message helpfully tells you how):
+
+```sh
+my_repo $ git add fox.txt
+my_repo $ git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+(use "git rm --cached <file>..." to unstage)
+
+    new file:   fox.txt
+```
+
+The file is now "staged"[^stage] -
+that is ready to be "committed."
+In git, a "commit"[^commit] is used to register a specific version of a repository.
+The current state of all of the tracked files in the repository
+will be recorded.
+
+We don't really need to track an empty file,
+let's add some text to it.
+
+**Step 8:** In VS Code, add the following line to `fox.txt` **and save**.
+
+```
+The quick fox jumped.
+```
+
+Now, back in the terminal, what's the status?
+
+```sh
+$ git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+(use "git rm --cached <file>..." to unstage)
+
+    new file:   fox.txt
+
+Changes not staged for commit:
+(use "git add <file>..." to update what will be committed)
+(use "git checkout -- <file>..." to discard changes in working directory)
+
+    modified:   fox.txt
+```
+
+Notice that `fox.txt` now appears under both
+"Changes to be committed" and
+"Changes not staged for commit".
+
+Why?
+Because you initially staged an empty file,
+and now there's a modified version of the file that has not been staged.
+You can see the difference between the current state of the file
+and what's staged using `git diff`
+
+```sh
+$ git diff fox.txt | cat
+diff --git a/fox.txt b/fox.txt
+index e69de29..395235f 100644
+--- a/fox.txt
++++ b/fox.txt
+@@ -0,0 +1 @@
++The quick fox jumped.
+```
+
+The syntax of this output is perhaps a bit confusing,
+but it's saying that a line was added to `fox.txt`.
+
+**Step 9:**
+Let's go ahead and stage this change,
+and then make our first commit.
+
+```sh
+$ git add fox.txt
+$ git commit -m "my first commit"
+[master (root-commit) b183d56] my first commit
+1 file changed, 1 insertion(+)
+create mode 100644 fox.txt
+```
+
+```sh
+$ git status
+On branch master
+nothing to commit, working tree clean
+```
+
+Congratulations! You have a git repository.
+
+### Just keep committing
+
+@@colbox-purple
+@@title
+Practice
+@@
+
+Try making some more changes to this file,
+make some new files,
+and use `git add`,
+`git commit`, and
+`git status`
+to keep track of those changes.
+@@
+
+@@colbox-red
+@@title
+Danger!
+@@
+If you enter `git commit` without including a commit message
+with the `-m` flag,
+your terminal may transform into a text editor.
+If this happens,
+you may find it difficult to return to the command prompt.
+Try typing (don't copy/paste) `:q!` then `enter`.
+
+If this doesn't work, ask for assistance.
+If Kevin or the TAs are unavailable,
+you can always close and re-open your terminal.
+
+In either case, your commit will be aborted.
+@@
+
+### Using git in this course
+
+It might not be clear to you yet why
+using a version control system is worthwhile.
+If you don't trust me,
+the fact that almost every software company uses git (or something similar)
+should give you some confidence that it's important.
+
+In any case, this entire course will use git and github.com
+(a website for managing and collaborating on git repositories).
+In the [first assignment](/assignments/Assignment01),
+you'll learn how to do this.
+
+## Running julia code
+
+For a lot of this course,
+we will be using the julia programming language
+rather than the command line.
+
+There are a few different ways to run julia code,
+and this section will get you acquaninted with a couple of them.
+
+### The julia REPL
+
+Open julia, which you [should have installed](@ref install_julia)
+in the [first lesson](../lessons/Lesson01/#install_julia).
+
+Your terminal application should open, running julia:
+
+```
+               _
+   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+  (_)     | (_) (_)    |
+   _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
+  | | | | | | |/ _` |  |
+  | | |_| | | | (_| |  |  Version 1.4.0 (2020-03-21)
+ _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
+|__/                   |
+
+julia>
+```
+
+Technically speaking,
+this is the julia "Read, evaluate, print, loop", or "REPL".
+
+When you enter text at the `julia>` prompt,
+the REPL **read**s it,
+**evaluate**s it as julia code,
+**print**s the result,
+and then **loop**s back to the prompt.
+
+Let's try it! Type `println("Hello, World!")` at the prompt and hit enter.
+
+```julia
+println("Hello, World!")
+```
+
+Don't worry if you don't understand all of the components of this command - 
+we'll get there.
 
 @@colbox-green
 @@title
 Tip
 @@
+As much as possible, try typing out the commands in these lessons,
+rather than copy-pasting.
+It's important to build the muscle memory,
+and to see the errors that appear when you have typos!
 
-When you are working with really big numbers such as `1,000,000`, do not include the commas if you want `julia` to recognize it as an integer. For example, if you were to run this code:
-
-```julia
-julia> 1,000,000
-(1, 0, 0)
-```
-
-you can see that `julia` thinks that `1,000,000` is a group of 3 integers (`1`, `0`, and `0`)!
-Instead, `julia` allows you to use underscores to break up large integers.
+For example, what did I miss here:
 
 ```julia
-julia> 1_000_000
-1000000
+println(Hello, World!)
 ```
-
-    @@colbox-blue
-    @@title
-    Note
-    @@
-    But be careful! ["Overflow"](https://en.wikipedia.org/wiki/Integer_overflow)
-    can occur when you try to use giant numbers.
-    Watch:
-
-    ```julia
-    julia> 2^61
-    2305843009213693952
-
-    julia> 2^62
-    4611686018427387904
-
-    julia> 2^63
-    -9223372036854775808
-
-    julia> 2^64
-    0
-    ```
-    
-    What happened?
-    Integers, like all types of data,
-    are stored in memory as bits -
-    sequences of `1`s and `0`s.
-    In julia, the primary integer type is `Int64`,
-    which uses 64 bits,
-    63 of which are used for the magnitude,
-    and one for the sign (`+` or `-`).
-
-    The value `2^63` would require 65 bits
-    to hold in memory.
-    @@
 @@
 
-## Functions
+### Running julia from the command line
 
-Before continuing,
-be sure to read 
-[chapter 3](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03)
+You can also execute short snippets of code from the command line.
+But first, you need to tell the terminal where to look for the julia program.
 
-Functions are the parts of a program that do things.
-Without functions, all you have is data.
-Actually, most of the time if you want data,
-you need functions too,
-unless you're writing literally everything by hand.
-
-### Recognizing functions
-
-Functions are bits of code that do things.
-Remember the [video from Lesson 1](@ref first-steps)?
-(seriously, go back and watch it if you didn't before).
-The kids are providing dad a list of functions.
+Mac users, execute the following in your terminal:
 
 ```
-get(peanut_butter)
-get(jelly)
-get(toast)
-spread(toast, peanut_butter)
-spread(toast, jelly)
+$ echo 'export PATH=$PATH:/Applications/Julia-1.4.app/Contents/Resources/julia/bin/' >> ~/.bash_profile
 ```
 
-In julia, it's typically easy to recognize functions because they have the structure:
-
-1. `function_name`
-2. `(`
-3. `arguments, separated, by, commas`
-4. `)`
-
-So in the expression
-
-```julia
-println("Hello", " ", "world!")
-```
-
-The `function_name` is `println`
-and there are 3 arguments (in this case, all `String`s).
-
-But functions show up in other ways too. 
-All of the math you were doing in the previous section
-was calling functions.
-In julia, `1 + 1` is just a convenient syntax[^1] for `+(1,1)`
-
-```julia
-+(42,7)
-*("BISC", "195")
-```
-
-When you do even simple things like type something in the REPL,
-there are functions being called
-to evaluate the expression and print the result.
-
-### [Variables, arguments, and scope]@id scope
-
-In chapter 3 of _Think Julia_, you read that
-[variables and parameters are local](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_variables_and_parameters_are_local)
-to functions. 
-
-The more technical way to say that is that the inside of functions
-have their own "scope"[^2].
-This will start to become familiar as you write more code,
-but it can be confusing at first.
-
-Also potentially confusing is the difference between a `variable`
-and an `argument`.
-They are similar in various ways,
-but treating them in the same way,
-_especially naming them the same thing_,
-is an easy way to get yourself confused.
-
-Let's see an example:
-
-```julia args
-function newprint(my_arg)
-    println(my_arg, ", students!")
-end
-
-newprint("Hello there")
-```
-
-This should seem pretty straightforward.
-The function `newprint()` takes a single argument,
-and prints that, appending `", students!"`.
-Inside the function,
-the value passed as an argument - `"Hello there"` -
-is passed in everywhere you see `my_arg`,
-but `my_arg` doesn't exist outside the function.
-
-```julia args
-my_arg
-```
-
-We could also have passed a _variable_ as the argument.
-
-```julia args
-gb = "Goodbye"
-
-newprint(gb)
-```
-
-Same thing - the _variable_ `gb` refers to the _value_ `"Goodbye"`,
-and will be substituted everywhere that `my_arg` lives in the function.
-
-Let's look at a slightly more confusing example.
-
-```julia
-some_arg = "Woah"
-other_arg = "Huzzah"
-
-function nelly(some_arg)
-    println(some_arg, ", Nelly!")
-end
-
-nelly(other_arg)
-``` 
-
-What do you expect?
-Try it out and see if you're right.
-
-When we call `nelly(other_arg)`,
-we're passing the value `"Huzzah"` as the argument.
-So inside the scope of the function,
-`some_arg` is `"Huzzah"`.
-
-What about `some_arg` outside of the function?
-
-```julia args2
-some_arg
-```
-
-Here, we're outside of the function scope,
-so `some_arg` is `"Woah"`.
-
-Because of this possibility for confusion,
-it's usually a good idea to name your function arguments
-and your variables different things. 
-
-@@colbox-green
+@@colbox-aqua
 @@title
-Tip
+Windows Users
+@@
+Your situation is a bit more complicated.
+You'll need a separate julia installation
+for your linux operating system in order to run julia
+from the command line.
+
+I will write up complete instructions soon.
 @@
 
-    Just to reiterate,
-    use different names for variables that refer to data
-    and function arguments.
+Then restart the terminal.
+Don't worry if you don't understand what that command is doing -
+it's not worth it to understand it at this moment. 
 
-    And typically, it's also good practice to make your code "self-documenting",
-    which means that the names of functions, variables, and arguments
-    tells you something about what they're used for.
+@@colbox-purple
+@@title
+ "To Do"
+@@
+Open your terminal and enter the following:
+
+```sh
+$ julia -e 'println("Hello, World!")'
+Hello, World!
+```
 @@
 
-### Practice
-
-The following examples are intended to reinforce and extend what you've learned.
-In many cases, they are intended to expose behavior that may be unintuitive,
-or lead to errors that are worth understanding.
+The `-e` is a command-line flag that tells julia to just execute the next command as julia code.
+Note the use of single quotes (`'`) surrounding the command.
 
 @@colbox-orange
 @@title
- "Checking Questions"
+Checking Questions
 @@
 
-    1. For each of the expressions ending with `# ?`,
-       try to predict what the output will be.
-       Then, run them in the REPL and see if you were correct.
-
-       ```julia
-       julia> x = 4; # putting `;` prevents the "print" part "read-eval-print-loop"
-       
-       julia> x # ?
-       ```
-       ```julia
-       julia> y = 2.0;
-
-       julia> y + x # ?
-       ```
-       ```julia
-       julia> z = y * 2;
-
-       julia> z # ?
-       ```
-    2. Write a function called `multisquare()` that
-
-       - takes **2 arguments**
-       - multiplies them together
-       - returns the product raised to the second power
-
-       Once you've defined the function,
-       you should be able to run
-
-       ```julia
-       julia> multisquare(2, 5)
-       100
-
-       julia> multisquare("2","5")
-       "2525"
-
-       julia> multisquare(1,2.0,3.0)
-       ERROR: MethodError: no method matching multisquare(::Int64, ::Float64, ::Float64)
-       # ... stack trace
-
-       julia> multisquare(1,"2")
-       ERROR: MethodError: no method matching *(::Int64, ::String)
-       # ... stack trace
-       ```
-       
-       Your output will also contain "stack traces"[^3] for each error.
-       Don't worry about trying to understand it right now
-       (though it will be very helpful later on).
-
-    3. Both `multisquare(1,2.0,3.0)` and `multisquare(1,"2")` raise `MethodError`s.
-       Notice that the former says "no method matching `multisquare(`...",
-       while the later says "no method matching `*(`..."
-       What accounts for this difference?
-
-    4. Everything we've done here so far is using `julia`,
-       but the same concepts are applicable on the command line too,
-       just with different syntax.
-
-       When you change directories with 
-       
-       ```sh
-       $ cd ~/Desktop 
-       ```
-
-       `cd` is a function and `~/Desktop` is the argument
-
-       Can you identify the function and the argument(s)
-       in the following shell commands?
-
-       ```sh
-       $ ls -l ~/Documents
-       ```
-       ```sh
-       $ mv ace-ventura1.mov /home/kevin/Movies
-       ```
+1. What happens if you just enter `julia` at the command line without additional arguments?
+2. What happens if you use double quotes instead of single quotes? 
+   Why do you think that is?
 @@
 
-## Key Terms
+### Running julia scripts
 
-[^1]: **Syntax** - The rules that govern how characters in your code files
-      are translated into instructions that the computer understands.
-      Julia has one kind of syntax, and the shell has another.
-      One of my great hopes for this course is that you'll come to recognize that,
-      though you will learn some syntax for these specific languages,
-      most of the skills you're learning are transferrable
-      to learning any programming language.
-[^2]: **Scope** - The region of a program in which assigned variables are available.
-      In julia, scopes tend to be much more restrictive by default than in other languages.
-      If you ever get an `UndefVarError` when you think that you've actually defined the variable,
-      it's probably not in the right scope.
-[^3]: **Stack trace** - This part of error messages can be super daunting at first,
-      especially as your programs get more complicated,
-      but can also be incredibly helpful when debugging.
-      Essentially, they are displaying the [stack diagram](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#stack_diagrams)
-      for your program where the error occured,
-      including pointing to the specific line in the code files
-      (or REPL block number) where the error occurred.
+Our code is often going to be much more complicated than what we've done so far.
+In those cases, and in order to keep a record of what we're doing,
+it's useful to put our julia code in a file.
+
+@@colbox-purple
+@@title
+To Do
+@@
+
+1. Open up VS Code, and create a new file called `hello.jl`.
+2. Type `println("Hello, World!")` into the file and save it.
+   Note the path to the directory where you saved the file!
+3. run:
+
+   ```sh
+   $ julia <path_to_directory>/hello.jl
+   ```
+   ```
+   Hello, World!
+   ```
+@@
+
+When code is saved into a file that can be run from the commandline,
+it's called a "script."
+All of your assigments will be julia code written into files
+and commited to code repositories using `git`.
+
+But it's important to realize that all of this code is the same;
+it's just text.
+That text has specific requirements in order to be parsed
+by the julia interpreter,
+but whether you run code in the REPL,
+from the command line,
+or in a script,
+it has the same behavior.
+
+[^stage]: **stage** - Files with changes that are ready to be committed.
+
+[^commit]: **commit** - A unique reference to a specific state of a repository.

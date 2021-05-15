@@ -1,2863 +1,671 @@
 /*
-  Highlight.js 10.3.99 (5855fb9c)
+  Highlight.js 10.7.1 (421b23b0)
   License: BSD-3-Clause
-  Copyright (c) 2006-2020, Ivan Sagalaev
+  Copyright (c) 2006-2021, Ivan Sagalaev
 */
-var hljs = (function () {
-  'use strict';
-
-  // https://github.com/substack/deep-freeze/blob/master/index.js
-  
-  function deepFreeze(obj) {
-    Object.freeze(obj);
-
-    var objIsFunction = typeof obj === 'function';
-
-    Object.getOwnPropertyNames(obj).forEach(function(prop) {
-      if (Object.hasOwnProperty.call(obj, prop)
-      && obj[prop] !== null
-      && (typeof obj[prop] === "object" || typeof obj[prop] === "function")
-      // IE11 fix: https://github.com/highlightjs/highlight.js/issues/2318
-      // TODO: remove in the future
-      && (objIsFunction ? prop !== 'caller' && prop !== 'callee' && prop !== 'arguments' : true)
-      && !Object.isFrozen(obj[prop])) {
-        deepFreeze(obj[prop]);
-      }
-    });
-
-    return obj;
-  }
-
-  class Response {
-    /**
-     * @param {CompiledMode} mode
-     */
-    constructor(mode) {
-      // eslint-disable-next-line no-undefined
-      if (mode.data === undefined) mode.data = {};
-
-      this.data = mode.data;
-    }
-
-    ignoreMatch() {
-      this.ignore = true;
-    }
-  }
-
-  /**
-   * @param {string} value
-   * @returns {string}
-   */
-  function escapeHTML(value) {
-    return value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;');
-  }
-
-  /**
-   * performs a shallow merge of multiple objects into one
-   *
-   * @template T
-   * @param {T} original
-   * @param {Record<string,any>[]} objects
-   * @returns {T} a single new object
-   */
-  function inherit(original, ...objects) {
-    /** @type Record<string,any> */
-    var result = {};
-
-    for (const key in original) {
-      result[key] = original[key];
-    }
-    objects.forEach(function(obj) {
-      for (const key in obj) {
-        result[key] = obj[key];
-      }
-    });
-    return /** @type {T} */ (result);
-  }
-
-  /* Stream merging */
-
-  /**
-   * @typedef Event
-   * @property {'start'|'stop'} event
-   * @property {number} offset
-   * @property {Node} node
-   */
-
-  /**
-   * @param {Node} node
-   */
-  function tag(node) {
-    return node.nodeName.toLowerCase();
-  }
-
-  /**
-   * @param {Node} node
-   */
-  function nodeStream(node) {
-    /** @type Event[] */
-    var result = [];
-    (function _nodeStream(node, offset) {
-      for (var child = node.firstChild; child; child = child.nextSibling) {
-        if (child.nodeType === 3) {
-          offset += child.nodeValue.length;
-        } else if (child.nodeType === 1) {
-          result.push({
-            event: 'start',
-            offset: offset,
-            node: child
-          });
-          offset = _nodeStream(child, offset);
-          // Prevent void elements from having an end tag that would actually
-          // double them in the output. There are more void elements in HTML
-          // but we list only those realistically expected in code display.
-          if (!tag(child).match(/br|hr|img|input/)) {
-            result.push({
-              event: 'stop',
-              offset: offset,
-              node: child
-            });
-          }
-        }
-      }
-      return offset;
-    })(node, 0);
-    return result;
-  }
-
-  /**
-   * @param {any} original - the original stream
-   * @param {any} highlighted - stream of the highlighted source
-   * @param {string} value - the original source itself
-   */
-  function mergeStreams(original, highlighted, value) {
-    var processed = 0;
-    var result = '';
-    var nodeStack = [];
-
-    function selectStream() {
-      if (!original.length || !highlighted.length) {
-        return original.length ? original : highlighted;
-      }
-      if (original[0].offset !== highlighted[0].offset) {
-        return (original[0].offset < highlighted[0].offset) ? original : highlighted;
-      }
-
-      /*
-      To avoid starting the stream just before it should stop the order is
-      ensured that original always starts first and closes last:
-
-      if (event1 == 'start' && event2 == 'start')
-        return original;
-      if (event1 == 'start' && event2 == 'stop')
-        return highlighted;
-      if (event1 == 'stop' && event2 == 'start')
-        return original;
-      if (event1 == 'stop' && event2 == 'stop')
-        return highlighted;
-
-      ... which is collapsed to:
-      */
-      return highlighted[0].event === 'start' ? original : highlighted;
-    }
-
-    /**
-     * @param {Node} node
-     */
-    function open(node) {
-      /** @param {Attr} attr */
-      function attributeString(attr) {
-        return ' ' + attr.nodeName + '="' + escapeHTML(attr.value) + '"';
-      }
-      // @ts-ignore
-      result += '<' + tag(node) + [].map.call(node.attributes, attributeString).join('') + '>';
-    }
-
-    /**
-     * @param {Node} node
-     */
-    function close(node) {
-      result += '</' + tag(node) + '>';
-    }
-
-    /**
-     * @param {Event} event
-     */
-    function render(event) {
-      (event.event === 'start' ? open : close)(event.node);
-    }
-
-    while (original.length || highlighted.length) {
-      var stream = selectStream();
-      result += escapeHTML(value.substring(processed, stream[0].offset));
-      processed = stream[0].offset;
-      if (stream === original) {
-        /*
-        On any opening or closing tag of the original markup we first close
-        the entire highlighted node stack, then render the original tag along
-        with all the following original tags at the same offset and then
-        reopen all the tags on the highlighted stack.
-        */
-        nodeStack.reverse().forEach(close);
-        do {
-          render(stream.splice(0, 1)[0]);
-          stream = selectStream();
-        } while (stream === original && stream.length && stream[0].offset === processed);
-        nodeStack.reverse().forEach(open);
-      } else {
-        if (stream[0].event === 'start') {
-          nodeStack.push(stream[0].node);
-        } else {
-          nodeStack.pop();
-        }
-        render(stream.splice(0, 1)[0]);
-      }
-    }
-    return result + escapeHTML(value.substr(processed));
-  }
-
-  var utils = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    escapeHTML: escapeHTML,
-    inherit: inherit,
-    nodeStream: nodeStream,
-    mergeStreams: mergeStreams
-  });
-
-  /**
-   * @typedef {object} Renderer
-   * @property {(text: string) => void} addText
-   * @property {(node: Node) => void} openNode
-   * @property {(node: Node) => void} closeNode
-   * @property {() => string} value
-   */
-
-  /** @typedef {{kind?: string, sublanguage?: boolean}} Node */
-  /** @typedef {{walk: (r: Renderer) => void}} Tree */
-  /** */
-
-  const SPAN_CLOSE = '</span>';
-
-  /**
-   * Determines if a node needs to be wrapped in <span>
-   *
-   * @param {Node} node */
-  const emitsWrappingTags = (node) => {
-    return !!node.kind;
-  };
-
-  /** @type {Renderer} */
-  class HTMLRenderer {
-    /**
-     * Creates a new HTMLRenderer
-     *
-     * @param {Tree} parseTree - the parse tree (must support `walk` API)
-     * @param {{classPrefix: string}} options
-     */
-    constructor(parseTree, options) {
-      this.buffer = "";
-      this.classPrefix = options.classPrefix;
-      parseTree.walk(this);
-    }
-
-    /**
-     * Adds texts to the output stream
-     *
-     * @param {string} text */
-    addText(text) {
-      this.buffer += escapeHTML(text);
-    }
-
-    /**
-     * Adds a node open to the output stream (if needed)
-     *
-     * @param {Node} node */
-    openNode(node) {
-      if (!emitsWrappingTags(node)) return;
-
-      let className = node.kind;
-      if (!node.sublanguage) {
-        className = `${this.classPrefix}${className}`;
-      }
-      this.span(className);
-    }
-
-    /**
-     * Adds a node close to the output stream (if needed)
-     *
-     * @param {Node} node */
-    closeNode(node) {
-      if (!emitsWrappingTags(node)) return;
-
-      this.buffer += SPAN_CLOSE;
-    }
-
-    /**
-     * returns the accumulated buffer
-    */
-    value() {
-      return this.buffer;
-    }
-
-    // helpers
-
-    /**
-     * Builds a span element
-     *
-     * @param {string} className */
-    span(className) {
-      this.buffer += `<span class="${className}">`;
-    }
-  }
-
-  /** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} | string} Node */
-  /** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} } DataNode */
-  /**  */
-
-  class TokenTree {
-    constructor() {
-      /** @type DataNode */
-      this.rootNode = { children: [] };
-      this.stack = [this.rootNode];
-    }
-
-    get top() {
-      return this.stack[this.stack.length - 1];
-    }
-
-    get root() { return this.rootNode; }
-
-    /** @param {Node} node */
-    add(node) {
-      this.top.children.push(node);
-    }
-
-    /** @param {string} kind */
-    openNode(kind) {
-      /** @type Node */
-      const node = { kind, children: [] };
-      this.add(node);
-      this.stack.push(node);
-    }
-
-    closeNode() {
-      if (this.stack.length > 1) {
-        return this.stack.pop();
-      }
-      // eslint-disable-next-line no-undefined
-      return undefined;
-    }
-
-    closeAllNodes() {
-      while (this.closeNode());
-    }
-
-    toJSON() {
-      return JSON.stringify(this.rootNode, null, 4);
-    }
-
-    /**
-     * @typedef { import("./html_renderer").Renderer } Renderer
-     * @param {Renderer} builder
-     */
-    walk(builder) {
-      // this does not
-      return this.constructor._walk(builder, this.rootNode);
-      // this works
-      // return TokenTree._walk(builder, this.rootNode);
-    }
-
-    /**
-     * @param {Renderer} builder
-     * @param {Node} node
-     */
-    static _walk(builder, node) {
-      if (typeof node === "string") {
-        builder.addText(node);
-      } else if (node.children) {
-        builder.openNode(node);
-        node.children.forEach((child) => this._walk(builder, child));
-        builder.closeNode(node);
-      }
-      return builder;
-    }
-
-    /**
-     * @param {Node} node
-     */
-    static _collapse(node) {
-      if (typeof node === "string") return;
-      if (!node.children) return;
-
-      if (node.children.every(el => typeof el === "string")) {
-        // node.text = node.children.join("");
-        // delete node.children;
-        node.children = [node.children.join("")];
-      } else {
-        node.children.forEach((child) => {
-          TokenTree._collapse(child);
-        });
-      }
-    }
-  }
-
-  /**
-    Currently this is all private API, but this is the minimal API necessary
-    that an Emitter must implement to fully support the parser.
-
-    Minimal interface:
-
-    - addKeyword(text, kind)
-    - addText(text)
-    - addSublanguage(emitter, subLanguageName)
-    - finalize()
-    - openNode(kind)
-    - closeNode()
-    - closeAllNodes()
-    - toHTML()
-
-  */
-
-  /**
-   * @implements {Emitter}
-   */
-  class TokenTreeEmitter extends TokenTree {
-    /**
-     * @param {*} options
-     */
-    constructor(options) {
-      super();
-      this.options = options;
-    }
-
-    /**
-     * @param {string} text
-     * @param {string} kind
-     */
-    addKeyword(text, kind) {
-      if (text === "") { return; }
-
-      this.openNode(kind);
-      this.addText(text);
-      this.closeNode();
-    }
-
-    /**
-     * @param {string} text
-     */
-    addText(text) {
-      if (text === "") { return; }
-
-      this.add(text);
-    }
-
-    /**
-     * @param {Emitter & {root: DataNode}} emitter
-     * @param {string} name
-     */
-    addSublanguage(emitter, name) {
-      /** @type DataNode */
-      const node = emitter.root;
-      node.kind = name;
-      node.sublanguage = true;
-      this.add(node);
-    }
-
-    toHTML() {
-      const renderer = new HTMLRenderer(this, this.options);
-      return renderer.value();
-    }
-
-    finalize() {
-      return true;
-    }
-  }
-
-  /**
-   * @param {string} value
-   * @returns {RegExp}
-   * */
-  function escape(value) {
-    return new RegExp(value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'm');
-  }
-
-  /**
-   * @param {RegExp | string } re
-   * @returns {string}
-   */
-  function source(re) {
-    if (!re) return null;
-    if (typeof re === "string") return re;
-
-    return re.source;
-  }
-
-  /**
-   * @param {...(RegExp | string) } args
-   * @returns {string}
-   */
-  function concat(...args) {
-    const joined = args.map((x) => source(x)).join("");
-    return joined;
-  }
-
-  /**
-   * @param {RegExp} re
-   * @returns {number}
-   */
-  function countMatchGroups(re) {
-    return (new RegExp(re.toString() + '|')).exec('').length - 1;
-  }
-
-  /**
-   * Does lexeme start with a regular expression match at the beginning
-   * @param {RegExp} re
-   * @param {string} lexeme
-   */
-  function startsWith(re, lexeme) {
-    var match = re && re.exec(lexeme);
-    return match && match.index === 0;
-  }
-
-  // join logically computes regexps.join(separator), but fixes the
-  // backreferences so they continue to match.
-  // it also places each individual regular expression into it's own
-  // match group, keeping track of the sequencing of those match groups
-  // is currently an exercise for the caller. :-)
-  /**
-   * @param {(string | RegExp)[]} regexps
-   * @param {string} separator
-   * @returns {string}
-   */
-  function join(regexps, separator = "|") {
-    // backreferenceRe matches an open parenthesis or backreference. To avoid
-    // an incorrect parse, it additionally matches the following:
-    // - [...] elements, where the meaning of parentheses and escapes change
-    // - other escape sequences, so we do not misparse escape sequences as
-    //   interesting elements
-    // - non-matching or lookahead parentheses, which do not capture. These
-    //   follow the '(' with a '?'.
-    var backreferenceRe = /\[(?:[^\\\]]|\\.)*\]|\(\??|\\([1-9][0-9]*)|\\./;
-    var numCaptures = 0;
-    var ret = '';
-    for (var i = 0; i < regexps.length; i++) {
-      numCaptures += 1;
-      var offset = numCaptures;
-      var re = source(regexps[i]);
-      if (i > 0) {
-        ret += separator;
-      }
-      ret += "(";
-      while (re.length > 0) {
-        var match = backreferenceRe.exec(re);
-        if (match == null) {
-          ret += re;
-          break;
-        }
-        ret += re.substring(0, match.index);
-        re = re.substring(match.index + match[0].length);
-        if (match[0][0] === '\\' && match[1]) {
-          // Adjust the backreference.
-          ret += '\\' + String(Number(match[1]) + offset);
-        } else {
-          ret += match[0];
-          if (match[0] === '(') {
-            numCaptures++;
-          }
-        }
-      }
-      ret += ")";
-    }
-    return ret;
-  }
-
-  // Common regexps
-  const IDENT_RE = '[a-zA-Z]\\w*';
-  const UNDERSCORE_IDENT_RE = '[a-zA-Z_]\\w*';
-  const NUMBER_RE = '\\b\\d+(\\.\\d+)?';
-  const C_NUMBER_RE = '(-?)(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)'; // 0x..., 0..., decimal, float
-  const BINARY_NUMBER_RE = '\\b(0b[01]+)'; // 0b...
-  const RE_STARTERS_RE = '!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~';
-
-  /**
-  * @param { Partial<Mode> & {binary?: string | RegExp} } opts
-  */
-  const SHEBANG = (opts = {}) => {
-    const beginShebang = /^#![ ]*\//;
-    if (opts.binary) {
-      opts.begin = concat(
-        beginShebang,
-        /.*\b/,
-        opts.binary,
-        /\b.*/);
-    }
-    return inherit({
-      className: 'meta',
-      begin: beginShebang,
-      end: /$/,
-      relevance: 0,
-      /** @type {ModeCallback} */
-      "on:begin": (m, resp) => {
-        if (m.index !== 0) resp.ignoreMatch();
-      }
-    }, opts);
-  };
-
-  // Common modes
-  const BACKSLASH_ESCAPE = {
-    begin: '\\\\[\\s\\S]', relevance: 0
-  };
-  const APOS_STRING_MODE = {
-    className: 'string',
-    begin: '\'',
-    end: '\'',
-    illegal: '\\n',
-    contains: [BACKSLASH_ESCAPE]
-  };
-  const QUOTE_STRING_MODE = {
-    className: 'string',
-    begin: '"',
-    end: '"',
-    illegal: '\\n',
-    contains: [BACKSLASH_ESCAPE]
-  };
-  const PHRASAL_WORDS_MODE = {
-    begin: /\b(a|an|the|are|I'm|isn't|don't|doesn't|won't|but|just|should|pretty|simply|enough|gonna|going|wtf|so|such|will|you|your|they|like|more)\b/
-  };
-  /**
-   * Creates a comment mode
-   *
-   * @param {string | RegExp} begin
-   * @param {string | RegExp} end
-   * @param {Mode | {}} [modeOptions]
-   * @returns {Partial<Mode>}
-   */
-  const COMMENT = function(begin, end, modeOptions = {}) {
-    var mode = inherit(
-      {
-        className: 'comment',
-        begin,
-        end,
-        contains: []
-      },
-      modeOptions
-    );
-    mode.contains.push(PHRASAL_WORDS_MODE);
-    mode.contains.push({
-      className: 'doctag',
-      begin: '(?:TODO|FIXME|NOTE|BUG|OPTIMIZE|HACK|XXX):',
-      relevance: 0
-    });
-    return mode;
-  };
-  const C_LINE_COMMENT_MODE = COMMENT('//', '$');
-  const C_BLOCK_COMMENT_MODE = COMMENT('/\\*', '\\*/');
-  const HASH_COMMENT_MODE = COMMENT('#', '$');
-  const NUMBER_MODE = {
-    className: 'number',
-    begin: NUMBER_RE,
-    relevance: 0
-  };
-  const C_NUMBER_MODE = {
-    className: 'number',
-    begin: C_NUMBER_RE,
-    relevance: 0
-  };
-  const BINARY_NUMBER_MODE = {
-    className: 'number',
-    begin: BINARY_NUMBER_RE,
-    relevance: 0
-  };
-  const CSS_NUMBER_MODE = {
-    className: 'number',
-    begin: NUMBER_RE + '(' +
-      '%|em|ex|ch|rem' +
-      '|vw|vh|vmin|vmax' +
-      '|cm|mm|in|pt|pc|px' +
-      '|deg|grad|rad|turn' +
-      '|s|ms' +
-      '|Hz|kHz' +
-      '|dpi|dpcm|dppx' +
-      ')?',
-    relevance: 0
-  };
-  const REGEXP_MODE = {
-    // this outer rule makes sure we actually have a WHOLE regex and not simply
-    // an expression such as:
-    //
-    //     3 / something
-    //
-    // (which will then blow up when regex's `illegal` sees the newline)
-    begin: /(?=\/[^/\n]*\/)/,
-    contains: [{
-      className: 'regexp',
-      begin: /\//,
-      end: /\/[gimuy]*/,
-      illegal: /\n/,
-      contains: [
-        BACKSLASH_ESCAPE,
-        {
-          begin: /\[/,
-          end: /\]/,
-          relevance: 0,
-          contains: [BACKSLASH_ESCAPE]
-        }
-      ]
-    }]
-  };
-  const TITLE_MODE = {
-    className: 'title',
-    begin: IDENT_RE,
-    relevance: 0
-  };
-  const UNDERSCORE_TITLE_MODE = {
-    className: 'title',
-    begin: UNDERSCORE_IDENT_RE,
-    relevance: 0
-  };
-  const METHOD_GUARD = {
-    // excludes method names from keyword processing
-    begin: '\\.\\s*' + UNDERSCORE_IDENT_RE,
-    relevance: 0
-  };
-
-  /**
-   * Adds end same as begin mechanics to a mode
-   *
-   * Your mode must include at least a single () match group as that first match
-   * group is what is used for comparison
-   * @param {Partial<Mode>} mode
-   */
-  const END_SAME_AS_BEGIN = function(mode) {
-    return Object.assign(mode,
-      {
-        /** @type {ModeCallback} */
-        'on:begin': (m, resp) => { resp.data._beginMatch = m[1]; },
-        /** @type {ModeCallback} */
-        'on:end': (m, resp) => { if (resp.data._beginMatch !== m[1]) resp.ignoreMatch(); }
-      });
-  };
-
-  var MODES = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    IDENT_RE: IDENT_RE,
-    UNDERSCORE_IDENT_RE: UNDERSCORE_IDENT_RE,
-    NUMBER_RE: NUMBER_RE,
-    C_NUMBER_RE: C_NUMBER_RE,
-    BINARY_NUMBER_RE: BINARY_NUMBER_RE,
-    RE_STARTERS_RE: RE_STARTERS_RE,
-    SHEBANG: SHEBANG,
-    BACKSLASH_ESCAPE: BACKSLASH_ESCAPE,
-    APOS_STRING_MODE: APOS_STRING_MODE,
-    QUOTE_STRING_MODE: QUOTE_STRING_MODE,
-    PHRASAL_WORDS_MODE: PHRASAL_WORDS_MODE,
-    COMMENT: COMMENT,
-    C_LINE_COMMENT_MODE: C_LINE_COMMENT_MODE,
-    C_BLOCK_COMMENT_MODE: C_BLOCK_COMMENT_MODE,
-    HASH_COMMENT_MODE: HASH_COMMENT_MODE,
-    NUMBER_MODE: NUMBER_MODE,
-    C_NUMBER_MODE: C_NUMBER_MODE,
-    BINARY_NUMBER_MODE: BINARY_NUMBER_MODE,
-    CSS_NUMBER_MODE: CSS_NUMBER_MODE,
-    REGEXP_MODE: REGEXP_MODE,
-    TITLE_MODE: TITLE_MODE,
-    UNDERSCORE_TITLE_MODE: UNDERSCORE_TITLE_MODE,
-    METHOD_GUARD: METHOD_GUARD,
-    END_SAME_AS_BEGIN: END_SAME_AS_BEGIN
-  });
-
-  // keywords that should have no default relevance value
-  var COMMON_KEYWORDS = 'of and for in not or if then'.split(' ');
-
-  // compilation
-
-  /**
-   * Compiles a language definition result
-   *
-   * Given the raw result of a language definition (Language), compiles this so
-   * that it is ready for highlighting code.
-   * @param {Language} language
-   * @returns {CompiledLanguage}
-   */
-  function compileLanguage(language) {
-    /**
-     * Builds a regex with the case sensativility of the current language
-     *
-     * @param {RegExp | string} value
-     * @param {boolean} [global]
-     */
-    function langRe(value, global) {
-      return new RegExp(
-        source(value),
-        'm' + (language.case_insensitive ? 'i' : '') + (global ? 'g' : '')
-      );
-    }
-
-    /**
-      Stores multiple regular expressions and allows you to quickly search for
-      them all in a string simultaneously - returning the first match.  It does
-      this by creating a huge (a|b|c) regex - each individual item wrapped with ()
-      and joined by `|` - using match groups to track position.  When a match is
-      found checking which position in the array has content allows us to figure
-      out which of the original regexes / match groups triggered the match.
-
-      The match object itself (the result of `Regex.exec`) is returned but also
-      enhanced by merging in any meta-data that was registered with the regex.
-      This is how we keep track of which mode matched, and what type of rule
-      (`illegal`, `begin`, end, etc).
-    */
-    class MultiRegex {
-      constructor() {
-        this.matchIndexes = {};
-        // @ts-ignore
-        this.regexes = [];
-        this.matchAt = 1;
-        this.position = 0;
-      }
-
-      // @ts-ignore
-      addRule(re, opts) {
-        opts.position = this.position++;
-        // @ts-ignore
-        this.matchIndexes[this.matchAt] = opts;
-        this.regexes.push([opts, re]);
-        this.matchAt += countMatchGroups(re) + 1;
-      }
-
-      compile() {
-        if (this.regexes.length === 0) {
-          // avoids the need to check length every time exec is called
-          // @ts-ignore
-          this.exec = () => null;
-        }
-        const terminators = this.regexes.map(el => el[1]);
-        this.matcherRe = langRe(join(terminators), true);
-        this.lastIndex = 0;
-      }
-
-      /** @param {string} s */
-      exec(s) {
-        this.matcherRe.lastIndex = this.lastIndex;
-        const match = this.matcherRe.exec(s);
-        if (!match) { return null; }
-
-        // eslint-disable-next-line no-undefined
-        const i = match.findIndex((el, i) => i > 0 && el !== undefined);
-        // @ts-ignore
-        const matchData = this.matchIndexes[i];
-        // trim off any earlier non-relevant match groups (ie, the other regex
-        // match groups that make up the multi-matcher)
-        match.splice(0, i);
-
-        return Object.assign(match, matchData);
-      }
-    }
-
-    /*
-      Created to solve the key deficiently with MultiRegex - there is no way to
-      test for multiple matches at a single location.  Why would we need to do
-      that?  In the future a more dynamic engine will allow certain matches to be
-      ignored.  An example: if we matched say the 3rd regex in a large group but
-      decided to ignore it - we'd need to started testing again at the 4th
-      regex... but MultiRegex itself gives us no real way to do that.
-
-      So what this class creates MultiRegexs on the fly for whatever search
-      position they are needed.
-
-      NOTE: These additional MultiRegex objects are created dynamically.  For most
-      grammars most of the time we will never actually need anything more than the
-      first MultiRegex - so this shouldn't have too much overhead.
-
-      Say this is our search group, and we match regex3, but wish to ignore it.
-
-        regex1 | regex2 | regex3 | regex4 | regex5    ' ie, startAt = 0
-
-      What we need is a new MultiRegex that only includes the remaining
-      possibilities:
-
-        regex4 | regex5                               ' ie, startAt = 3
-
-      This class wraps all that complexity up in a simple API... `startAt` decides
-      where in the array of expressions to start doing the matching. It
-      auto-increments, so if a match is found at position 2, then startAt will be
-      set to 3.  If the end is reached startAt will return to 0.
-
-      MOST of the time the parser will be setting startAt manually to 0.
-    */
-    class ResumableMultiRegex {
-      constructor() {
-        // @ts-ignore
-        this.rules = [];
-        // @ts-ignore
-        this.multiRegexes = [];
-        this.count = 0;
-
-        this.lastIndex = 0;
-        this.regexIndex = 0;
-      }
-
-      // @ts-ignore
-      getMatcher(index) {
-        if (this.multiRegexes[index]) return this.multiRegexes[index];
-
-        const matcher = new MultiRegex();
-        this.rules.slice(index).forEach(([re, opts]) => matcher.addRule(re, opts));
-        matcher.compile();
-        this.multiRegexes[index] = matcher;
-        return matcher;
-      }
-
-      resumingScanAtSamePosition() {
-        return this.regexIndex !== 0;
-      }
-
-      considerAll() {
-        this.regexIndex = 0;
-      }
-
-      // @ts-ignore
-      addRule(re, opts) {
-        this.rules.push([re, opts]);
-        if (opts.type === "begin") this.count++;
-      }
-
-      /** @param {string} s */
-      exec(s) {
-        const m = this.getMatcher(this.regexIndex);
-        m.lastIndex = this.lastIndex;
-        let result = m.exec(s);
-
-        // The following is because we have no easy way to say "resume scanning at the
-        // existing position but also skip the current rule ONLY". What happens is
-        // all prior rules are also skipped which can result in matching the wrong
-        // thing. Example of matching "booger":
-
-        // our matcher is [string, "booger", number]
-        //
-        // ....booger....
-
-        // if "booger" is ignored then we'd really need a regex to scan from the
-        // SAME position for only: [string, number] but ignoring "booger" (if it
-        // was the first match), a simple resume would scan ahead who knows how
-        // far looking only for "number", ignoring potential string matches (or
-        // future "booger" matches that might be valid.)
-
-        // So what we do: We execute two matchers, one resuming at the same
-        // position, but the second full matcher starting at the position after:
-
-        //     /--- resume first regex match here (for [number])
-        //     |/---- full match here for [string, "booger", number]
-        //     vv
-        // ....booger....
-
-        // Which ever results in a match first is then used. So this 3-4 step
-        // process essentially allows us to say "match at this position, excluding
-        // a prior rule that was ignored".
-        //
-        // 1. Match "booger" first, ignore. Also proves that [string] does non match.
-        // 2. Resume matching for [number]
-        // 3. Match at index + 1 for [string, "booger", number]
-        // 4. If #2 and #3 result in matches, which came first?
-        if (this.resumingScanAtSamePosition()) {
-          if (result && result.index === this.lastIndex) ; else { // use the second matcher result
-            const m2 = this.getMatcher(0);
-            m2.lastIndex = this.lastIndex + 1;
-            result = m2.exec(s);
-          }
-        }
-
-        if (result) {
-          this.regexIndex += result.position + 1;
-          if (this.regexIndex === this.count) {
-            // wrap-around to considering all matches again
-            this.considerAll();
-          }
-        }
-
-        return result;
-      }
-    }
-
-    /**
-     * Given a mode, builds a huge ResumableMultiRegex that can be used to walk
-     * the content and find matches.
-     *
-     * @param {CompiledMode} mode
-     * @returns {ResumableMultiRegex}
-     */
-    function buildModeRegex(mode) {
-      const mm = new ResumableMultiRegex();
-
-      mode.contains.forEach(term => mm.addRule(term.begin, { rule: term, type: "begin" }));
-
-      if (mode.terminator_end) {
-        mm.addRule(mode.terminator_end, { type: "end" });
-      }
-      if (mode.illegal) {
-        mm.addRule(mode.illegal, { type: "illegal" });
-      }
-
-      return mm;
-    }
-
-    // TODO: We need negative look-behind support to do this properly
-    /**
-     * Skip a match if it has a preceding or trailing dot
-     *
-     * This is used for `beginKeywords` to prevent matching expressions such as
-     * `bob.keyword.do()`. The mode compiler automatically wires this up as a
-     * special _internal_ 'on:begin' callback for modes with `beginKeywords`
-     * @param {RegExpMatchArray} match
-     * @param {CallbackResponse} response
-     */
-    function skipIfhasPrecedingOrTrailingDot(match, response) {
-      const before = match.input[match.index - 1];
-      const after = match.input[match.index + match[0].length];
-      if (before === "." || after === ".") {
-        response.ignoreMatch();
-      }
-    }
-
-    /** skip vs abort vs ignore
-     *
-     * @skip   - The mode is still entered and exited normally (and contains rules apply),
-     *           but all content is held and added to the parent buffer rather than being
-     *           output when the mode ends.  Mostly used with `sublanguage` to build up
-     *           a single large buffer than can be parsed by sublanguage.
-     *
-     *             - The mode begin ands ends normally.
-     *             - Content matched is added to the parent mode buffer.
-     *             - The parser cursor is moved forward normally.
-     *
-     * @abort  - A hack placeholder until we have ignore.  Aborts the mode (as if it
-     *           never matched) but DOES NOT continue to match subsequent `contains`
-     *           modes.  Abort is bad/suboptimal because it can result in modes
-     *           farther down not getting applied because an earlier rule eats the
-     *           content but then aborts.
-     *
-     *             - The mode does not begin.
-     *             - Content matched by `begin` is added to the mode buffer.
-     *             - The parser cursor is moved forward accordingly.
-     *
-     * @ignore - Ignores the mode (as if it never matched) and continues to match any
-     *           subsequent `contains` modes.  Ignore isn't technically possible with
-     *           the current parser implementation.
-     *
-     *             - The mode does not begin.
-     *             - Content matched by `begin` is ignored.
-     *             - The parser cursor is not moved forward.
-     */
-
-    /**
-     * Compiles an individual mode
-     *
-     * This can raise an error if the mode contains certain detectable known logic
-     * issues.
-     * @param {Mode} mode
-     * @param {CompiledMode | null} [parent]
-     * @returns {CompiledMode | never}
-     */
-    function compileMode(mode, parent) {
-      const cmode = /** @type CompiledMode */ (mode);
-      if (mode.compiled) return cmode;
-      mode.compiled = true;
-
-      // __beforeBegin is considered private API, internal use only
-      mode.__beforeBegin = null;
-
-      mode.keywords = mode.keywords || mode.beginKeywords;
-
-      let keywordPattern = null;
-      if (typeof mode.keywords === "object") {
-        keywordPattern = mode.keywords.$pattern;
-        delete mode.keywords.$pattern;
-      }
-
-      if (mode.keywords) {
-        mode.keywords = compileKeywords(mode.keywords, language.case_insensitive);
-      }
-
-      // both are not allowed
-      if (mode.lexemes && keywordPattern) {
-        throw new Error("ERR: Prefer `keywords.$pattern` to `mode.lexemes`, BOTH are not allowed. (see mode reference) ");
-      }
-
-      // `mode.lexemes` was the old standard before we added and now recommend
-      // using `keywords.$pattern` to pass the keyword pattern
-      cmode.keywordPatternRe = langRe(mode.lexemes || keywordPattern || /\w+/, true);
-
-      if (parent) {
-        if (mode.beginKeywords) {
-          // for languages with keywords that include non-word characters checking for
-          // a word boundary is not sufficient, so instead we check for a word boundary
-          // or whitespace - this does no harm in any case since our keyword engine
-          // doesn't allow spaces in keywords anyways and we still check for the boundary
-          // first
-          mode.begin = '\\b(' + mode.beginKeywords.split(' ').join('|') + ')(?=\\b|\\s)';
-          mode.__beforeBegin = skipIfhasPrecedingOrTrailingDot;
-        }
-        if (!mode.begin) mode.begin = /\B|\b/;
-        cmode.beginRe = langRe(mode.begin);
-        if (mode.endSameAsBegin) mode.end = mode.begin;
-        if (!mode.end && !mode.endsWithParent) mode.end = /\B|\b/;
-        if (mode.end) cmode.endRe = langRe(mode.end);
-        cmode.terminator_end = source(mode.end) || '';
-        if (mode.endsWithParent && parent.terminator_end) {
-          cmode.terminator_end += (mode.end ? '|' : '') + parent.terminator_end;
-        }
-      }
-      if (mode.illegal) cmode.illegalRe = langRe(mode.illegal);
-      // eslint-disable-next-line no-undefined
-      if (mode.relevance === undefined) mode.relevance = 1;
-      if (!mode.contains) mode.contains = [];
-
-      mode.contains = [].concat(...mode.contains.map(function(c) {
-        return expandOrCloneMode(c === 'self' ? mode : c);
-      }));
-      mode.contains.forEach(function(c) { compileMode(/** @type Mode */ (c), cmode); });
-
-      if (mode.starts) {
-        compileMode(mode.starts, parent);
-      }
-
-      cmode.matcher = buildModeRegex(cmode);
-      return cmode;
-    }
-
-    // self is not valid at the top-level
-    if (language.contains && language.contains.includes('self')) {
-      throw new Error("ERR: contains `self` is not supported at the top-level of a language.  See documentation.");
-    }
-    return compileMode(/** @type Mode */ (language));
-  }
-
-  /**
-   * Determines if a mode has a dependency on it's parent or not
-   *
-   * If a mode does have a parent dependency then often we need to clone it if
-   * it's used in multiple places so that each copy points to the correct parent,
-   * where-as modes without a parent can often safely be re-used at the bottom of
-   * a mode chain.
-   *
-   * @param {Mode | null} mode
-   * @returns {boolean} - is there a dependency on the parent?
-   * */
-  function dependencyOnParent(mode) {
-    if (!mode) return false;
-
-    return mode.endsWithParent || dependencyOnParent(mode.starts);
-  }
-
-  /**
-   * Expands a mode or clones it if necessary
-   *
-   * This is necessary for modes with parental dependenceis (see notes on
-   * `dependencyOnParent`) and for nodes that have `variants` - which must then be
-   * exploded into their own individual modes at compile time.
-   *
-   * @param {Mode} mode
-   * @returns {Mode | Mode[]}
-   * */
-  function expandOrCloneMode(mode) {
-    if (mode.variants && !mode.cached_variants) {
-      mode.cached_variants = mode.variants.map(function(variant) {
-        return inherit(mode, { variants: null }, variant);
-      });
-    }
-
-    // EXPAND
-    // if we have variants then essentially "replace" the mode with the variants
-    // this happens in compileMode, where this function is called from
-    if (mode.cached_variants) {
-      return mode.cached_variants;
-    }
-
-    // CLONE
-    // if we have dependencies on parents then we need a unique
-    // instance of ourselves, so we can be reused with many
-    // different parents without issue
-    if (dependencyOnParent(mode)) {
-      return inherit(mode, { starts: mode.starts ? inherit(mode.starts) : null });
-    }
-
-    if (Object.isFrozen(mode)) {
-      return inherit(mode);
-    }
-
-    // no special dependency issues, just return ourselves
-    return mode;
-  }
-
-  /***********************************************
-    Keywords
-  ***********************************************/
-
-  /**
-   * Given raw keywords from a language definition, compile them.
-   *
-   * @param {string | Record<string,string>} rawKeywords
-   * @param {boolean} caseInsensitive
-   */
-  function compileKeywords(rawKeywords, caseInsensitive) {
-    /** @type KeywordDict */
-    var compiledKeywords = {};
-
-    if (typeof rawKeywords === 'string') { // string
-      splitAndCompile('keyword', rawKeywords);
-    } else {
-      Object.keys(rawKeywords).forEach(function(className) {
-        splitAndCompile(className, rawKeywords[className]);
-      });
-    }
-    return compiledKeywords;
-
-    // ---
-
-    /**
-     * Compiles an individual list of keywords
-     *
-     * Ex: "for if when while|5"
-     *
-     * @param {string} className
-     * @param {string} keywordList
-     */
-    function splitAndCompile(className, keywordList) {
-      if (caseInsensitive) {
-        keywordList = keywordList.toLowerCase();
-      }
-      keywordList.split(' ').forEach(function(keyword) {
-        var pair = keyword.split('|');
-        compiledKeywords[pair[0]] = [className, scoreForKeyword(pair[0], pair[1])];
-      });
-    }
-  }
-
-  /**
-   * Returns the proper score for a given keyword
-   *
-   * Also takes into account comment keywords, which will be scored 0 UNLESS
-   * another score has been manually assigned.
-   * @param {string} keyword
-   * @param {string} [providedScore]
-   */
-  function scoreForKeyword(keyword, providedScore) {
-    // manual scores always win over common keywords
-    // so you can force a score of 1 if you really insist
-    if (providedScore) {
-      return Number(providedScore);
-    }
-
-    return commonKeyword(keyword) ? 0 : 1;
-  }
-
-  /**
-   * Determines if a given keyword is common or not
-   *
-   * @param {string} keyword */
-  function commonKeyword(keyword) {
-    return COMMON_KEYWORDS.includes(keyword.toLowerCase());
-  }
-
-  var version = "10.3.99";
-
-  // @ts-nocheck
-
-  function hasValueOrEmptyAttribute(value) {
-    return Boolean(value || value === "");
-  }
-
-  const Component = {
-    props: ["language", "code", "autodetect"],
-    data: function() {
-      return {
-        detectedLanguage: "",
-        unknownLanguage: false
-      };
-    },
-    computed: {
-      className() {
-        if (this.unknownLanguage) return "";
-
-        return "hljs " + this.detectedLanguage;
-      },
-      highlighted() {
-        // no idea what language to use, return raw code
-        if (!this.autoDetect && !hljs.getLanguage(this.language)) {
-          console.warn(`The language "${this.language}" you specified could not be found.`);
-          this.unknownLanguage = true;
-          return escapeHTML(this.code);
-        }
-
-        let result;
-        if (this.autoDetect) {
-          result = hljs.highlightAuto(this.code);
-          this.detectedLanguage = result.language;
-        } else {
-          result = hljs.highlight(this.language, this.code, this.ignoreIllegals);
-          this.detectectLanguage = this.language;
-        }
-        return result.value;
-      },
-      autoDetect() {
-        return !this.language || hasValueOrEmptyAttribute(this.autodetect);
-      },
-      ignoreIllegals() {
-        return true;
-      }
-    },
-    // this avoids needing to use a whole Vue compilation pipeline just
-    // to build Highlight.js
-    render(createElement) {
-      return createElement("pre", {}, [
-        createElement("code", {
-          class: this.className,
-          domProps: { innerHTML: this.highlighted }})
-      ]);
-    }
-    // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`
-  };
-
-  const VuePlugin = {
-    install(Vue) {
-      Vue.component('highlightjs', Component);
-    }
-  };
-
-  /*
-  Syntax highlighting with language autodetection.
-  https://highlightjs.org/
-  */
-
-  const escape$1 = escapeHTML;
-  const inherit$1 = inherit;
-
-  const { nodeStream: nodeStream$1, mergeStreams: mergeStreams$1 } = utils;
-  const NO_MATCH = Symbol("nomatch");
-
-  /**
-   * @param {any} hljs - object that is extended (legacy)
-   * @returns {HLJSApi}
-   */
-  const HLJS = function(hljs) {
-    // Convenience variables for build-in objects
-    /** @type {unknown[]} */
-    var ArrayProto = [];
-
-    // Global internal variables used within the highlight.js library.
-    /** @type {Record<string, Language>} */
-    var languages = Object.create(null);
-    /** @type {Record<string, string>} */
-    var aliases = Object.create(null);
-    /** @type {HLJSPlugin[]} */
-    var plugins = [];
-
-    // safe/production mode - swallows more errors, tries to keep running
-    // even if a single syntax or parse hits a fatal error
-    var SAFE_MODE = true;
-    var fixMarkupRe = /(^(<[^>]+>|\t|)+|\n)/gm;
-    var LANGUAGE_NOT_FOUND = "Could not find the language '{}', did you forget to load/include a language module?";
-    /** @type {Language} */
-    const PLAINTEXT_LANGUAGE = { disableAutodetect: true, name: 'Plain text', contains: [] };
-
-    // Global options used when within external APIs. This is modified when
-    // calling the `hljs.configure` function.
-    /** @type HLJSOptions */
-    var options = {
-      noHighlightRe: /^(no-?highlight)$/i,
-      languageDetectRe: /\blang(?:uage)?-([\w-]+)\b/i,
-      classPrefix: 'hljs-',
-      tabReplace: null,
-      useBR: false,
-      languages: null,
-      // beta configuration options, subject to change, welcome to discuss
-      // https://github.com/highlightjs/highlight.js/issues/1086
-      __emitter: TokenTreeEmitter
-    };
-
-    /* Utility functions */
-
-    /**
-     * Tests a language name to see if highlighting should be skipped
-     * @param {string} languageName
-     */
-    function shouldNotHighlight(languageName) {
-      return options.noHighlightRe.test(languageName);
-    }
-
-    /**
-     * @param {HighlightedHTMLElement} block - the HTML element to determine language for
-     */
-    function blockLanguage(block) {
-      var classes = block.className + ' ';
-
-      classes += block.parentNode ? block.parentNode.className : '';
-
-      // language-* takes precedence over non-prefixed class names.
-      const match = options.languageDetectRe.exec(classes);
-      if (match) {
-        var language = getLanguage(match[1]);
-        if (!language) {
-          console.warn(LANGUAGE_NOT_FOUND.replace("{}", match[1]));
-          console.warn("Falling back to no-highlight mode for this block.", block);
-        }
-        return language ? match[1] : 'no-highlight';
-      }
-
-      return classes
-        .split(/\s+/)
-        .find((_class) => shouldNotHighlight(_class) || getLanguage(_class));
-    }
-
-    /**
-     * Core highlighting function.
-     *
-     * @param {string} languageName - the language to use for highlighting
-     * @param {string} code - the code to highlight
-     * @param {boolean} [ignoreIllegals] - whether to ignore illegal matches, default is to bail
-     * @param {Mode} [continuation] - current continuation mode, if any
-     *
-     * @returns {HighlightResult} Result - an object that represents the result
-     * @property {string} language - the language name
-     * @property {number} relevance - the relevance score
-     * @property {string} value - the highlighted HTML code
-     * @property {string} code - the original raw code
-     * @property {Mode} top - top of the current mode stack
-     * @property {boolean} illegal - indicates whether any illegal matches were found
-    */
-    function highlight(languageName, code, ignoreIllegals, continuation) {
-      /** @type {{ code: string, language: string, result?: any }} */
-      var context = {
-        code,
-        language: languageName
-      };
-      // the plugin can change the desired language or the code to be highlighted
-      // just be changing the object it was passed
-      fire("before:highlight", context);
-
-      // a before plugin can usurp the result completely by providing it's own
-      // in which case we don't even need to call highlight
-      var result = context.result ?
-        context.result :
-        _highlight(context.language, context.code, ignoreIllegals, continuation);
-
-      result.code = context.code;
-      // the plugin can change anything in result to suite it
-      fire("after:highlight", result);
-
-      return result;
-    }
-
-    /**
-     * private highlight that's used internally and does not fire callbacks
-     *
-     * @param {string} languageName - the language to use for highlighting
-     * @param {string} code - the code to highlight
-     * @param {boolean} [ignoreIllegals] - whether to ignore illegal matches, default is to bail
-     * @param {Mode} [continuation] - current continuation mode, if any
-    */
-    function _highlight(languageName, code, ignoreIllegals, continuation) {
-      var codeToHighlight = code;
-
-      /**
-       * Return keyword data if a match is a keyword
-       * @param {CompiledMode} mode - current mode
-       * @param {RegExpMatchArray} match - regexp match data
-       * @returns {KeywordData | false}
-       */
-      function keywordData(mode, match) {
-        var matchText = language.case_insensitive ? match[0].toLowerCase() : match[0];
-        return Object.prototype.hasOwnProperty.call(mode.keywords, matchText) && mode.keywords[matchText];
-      }
-
-      function processKeywords() {
-        if (!top.keywords) {
-          emitter.addText(modeBuffer);
-          return;
-        }
-
-        let lastIndex = 0;
-        top.keywordPatternRe.lastIndex = 0;
-        let match = top.keywordPatternRe.exec(modeBuffer);
-        let buf = "";
-
-        while (match) {
-          buf += modeBuffer.substring(lastIndex, match.index);
-          const data = keywordData(top, match);
-          if (data) {
-            const [kind, keywordRelevance] = data;
-            emitter.addText(buf);
-            buf = "";
-
-            relevance += keywordRelevance;
-            emitter.addKeyword(match[0], kind);
-          } else {
-            buf += match[0];
-          }
-          lastIndex = top.keywordPatternRe.lastIndex;
-          match = top.keywordPatternRe.exec(modeBuffer);
-        }
-        buf += modeBuffer.substr(lastIndex);
-        emitter.addText(buf);
-      }
-
-      function processSubLanguage() {
-        if (modeBuffer === "") return;
-        /** @type HighlightResult */
-        var result = null;
-
-        if (typeof top.subLanguage === 'string') {
-          if (!languages[top.subLanguage]) {
-            emitter.addText(modeBuffer);
-            return;
-          }
-          result = _highlight(top.subLanguage, modeBuffer, true, continuations[top.subLanguage]);
-          continuations[top.subLanguage] = result.top;
-        } else {
-          result = highlightAuto(modeBuffer, top.subLanguage.length ? top.subLanguage : null);
-        }
-
-        // Counting embedded language score towards the host language may be disabled
-        // with zeroing the containing mode relevance. Use case in point is Markdown that
-        // allows XML everywhere and makes every XML snippet to have a much larger Markdown
-        // score.
-        if (top.relevance > 0) {
-          relevance += result.relevance;
-        }
-        emitter.addSublanguage(result.emitter, result.language);
-      }
-
-      function processBuffer() {
-        if (top.subLanguage != null) {
-          processSubLanguage();
-        } else {
-          processKeywords();
-        }
-        modeBuffer = '';
-      }
-
-      /**
-       * @param {Mode} mode - new mode to start
-       */
-      function startNewMode(mode) {
-        if (mode.className) {
-          emitter.openNode(mode.className);
-        }
-        top = Object.create(mode, { parent: { value: top } });
-        return top;
-      }
-
-      /**
-       * @param {CompiledMode } mode - the mode to potentially end
-       * @param {RegExpMatchArray} match - the latest match
-       * @param {string} matchPlusRemainder - match plus remainder of content
-       * @returns {CompiledMode | void} - the next mode, or if void continue on in current mode
-       */
-      function endOfMode(mode, match, matchPlusRemainder) {
-        let matched = startsWith(mode.endRe, matchPlusRemainder);
-
-        if (matched) {
-          if (mode["on:end"]) {
-            const resp = new Response(mode);
-            mode["on:end"](match, resp);
-            if (resp.ignore) matched = false;
-          }
-
-          if (matched) {
-            while (mode.endsParent && mode.parent) {
-              mode = mode.parent;
-            }
-            return mode;
-          }
-        }
-        // even if on:end fires an `ignore` it's still possible
-        // that we might trigger the end node because of a parent mode
-        if (mode.endsWithParent) {
-          return endOfMode(mode.parent, match, matchPlusRemainder);
-        }
-      }
-
-      /**
-       * Handle matching but then ignoring a sequence of text
-       *
-       * @param {string} lexeme - string containing full match text
-       */
-      function doIgnore(lexeme) {
-        if (top.matcher.regexIndex === 0) {
-          // no more regexs to potentially match here, so we move the cursor forward one
-          // space
-          modeBuffer += lexeme[0];
-          return 1;
-        } else {
-          // no need to move the cursor, we still have additional regexes to try and
-          // match at this very spot
-          resumeScanAtSamePosition = true;
-          return 0;
-        }
-      }
-
-      /**
-       * Handle the start of a new potential mode match
-       *
-       * @param {EnhancedMatch} match - the current match
-       * @returns {number} how far to advance the parse cursor
-       */
-      function doBeginMatch(match) {
-        var lexeme = match[0];
-        var newMode = match.rule;
-
-        const resp = new Response(newMode);
-        // first internal before callbacks, then the public ones
-        const beforeCallbacks = [newMode.__beforeBegin, newMode["on:begin"]];
-        for (const cb of beforeCallbacks) {
-          if (!cb) continue;
-          cb(match, resp);
-          if (resp.ignore) return doIgnore(lexeme);
-        }
-
-        if (newMode && newMode.endSameAsBegin) {
-          newMode.endRe = escape(lexeme);
-        }
-
-        if (newMode.skip) {
-          modeBuffer += lexeme;
-        } else {
-          if (newMode.excludeBegin) {
-            modeBuffer += lexeme;
-          }
-          processBuffer();
-          if (!newMode.returnBegin && !newMode.excludeBegin) {
-            modeBuffer = lexeme;
-          }
-        }
-        startNewMode(newMode);
-        // if (mode["after:begin"]) {
-        //   let resp = new Response(mode);
-        //   mode["after:begin"](match, resp);
-        // }
-        return newMode.returnBegin ? 0 : lexeme.length;
-      }
-
-      /**
-       * Handle the potential end of mode
-       *
-       * @param {RegExpMatchArray} match - the current match
-       */
-      function doEndMatch(match) {
-        var lexeme = match[0];
-        var matchPlusRemainder = codeToHighlight.substr(match.index);
-
-        var endMode = endOfMode(top, match, matchPlusRemainder);
-        if (!endMode) { return NO_MATCH; }
-
-        var origin = top;
-        if (origin.skip) {
-          modeBuffer += lexeme;
-        } else {
-          if (!(origin.returnEnd || origin.excludeEnd)) {
-            modeBuffer += lexeme;
-          }
-          processBuffer();
-          if (origin.excludeEnd) {
-            modeBuffer = lexeme;
-          }
-        }
-        do {
-          if (top.className) {
-            emitter.closeNode();
-          }
-          if (!top.skip && !top.subLanguage) {
-            relevance += top.relevance;
-          }
-          top = top.parent;
-        } while (top !== endMode.parent);
-        if (endMode.starts) {
-          if (endMode.endSameAsBegin) {
-            endMode.starts.endRe = endMode.endRe;
-          }
-          startNewMode(endMode.starts);
-        }
-        return origin.returnEnd ? 0 : lexeme.length;
-      }
-
-      function processContinuations() {
-        var list = [];
-        for (var current = top; current !== language; current = current.parent) {
-          if (current.className) {
-            list.unshift(current.className);
-          }
-        }
-        list.forEach(item => emitter.openNode(item));
-      }
-
-      /** @type {{type?: MatchType, index?: number, rule?: Mode}}} */
-      var lastMatch = {};
-
-      /**
-       *  Process an individual match
-       *
-       * @param {string} textBeforeMatch - text preceeding the match (since the last match)
-       * @param {EnhancedMatch} [match] - the match itself
-       */
-      function processLexeme(textBeforeMatch, match) {
-        var lexeme = match && match[0];
-
-        // add non-matched text to the current mode buffer
-        modeBuffer += textBeforeMatch;
-
-        if (lexeme == null) {
-          processBuffer();
-          return 0;
-        }
-
-        // we've found a 0 width match and we're stuck, so we need to advance
-        // this happens when we have badly behaved rules that have optional matchers to the degree that
-        // sometimes they can end up matching nothing at all
-        // Ref: https://github.com/highlightjs/highlight.js/issues/2140
-        if (lastMatch.type === "begin" && match.type === "end" && lastMatch.index === match.index && lexeme === "") {
-          // spit the "skipped" character that our regex choked on back into the output sequence
-          modeBuffer += codeToHighlight.slice(match.index, match.index + 1);
-          if (!SAFE_MODE) {
-            /** @type {AnnotatedError} */
-            const err = new Error('0 width match regex');
-            err.languageName = languageName;
-            err.badRule = lastMatch.rule;
-            throw err;
-          }
-          return 1;
-        }
-        lastMatch = match;
-
-        if (match.type === "begin") {
-          return doBeginMatch(match);
-        } else if (match.type === "illegal" && !ignoreIllegals) {
-          // illegal match, we do not continue processing
-          /** @type {AnnotatedError} */
-          const err = new Error('Illegal lexeme "' + lexeme + '" for mode "' + (top.className || '<unnamed>') + '"');
-          err.mode = top;
-          throw err;
-        } else if (match.type === "end") {
-          var processed = doEndMatch(match);
-          if (processed !== NO_MATCH) {
-            return processed;
-          }
-        }
-
-        // edge case for when illegal matches $ (end of line) which is technically
-        // a 0 width match but not a begin/end match so it's not caught by the
-        // first handler (when ignoreIllegals is true)
-        if (match.type === "illegal" && lexeme === "") {
-          // advance so we aren't stuck in an infinite loop
-          return 1;
-        }
-
-        // infinite loops are BAD, this is a last ditch catch all. if we have a
-        // decent number of iterations yet our index (cursor position in our
-        // parsing) still 3x behind our index then something is very wrong
-        // so we bail
-        if (iterations > 100000 && iterations > match.index * 3) {
-          const err = new Error('potential infinite loop, way more iterations than matches');
-          throw err;
-        }
-
-        /*
-        Why might be find ourselves here?  Only one occasion now.  An end match that was
-        triggered but could not be completed.  When might this happen?  When an `endSameasBegin`
-        rule sets the end rule to a specific match.  Since the overall mode termination rule that's
-        being used to scan the text isn't recompiled that means that any match that LOOKS like
-        the end (but is not, because it is not an exact match to the beginning) will
-        end up here.  A definite end match, but when `doEndMatch` tries to "reapply"
-        the end rule and fails to match, we wind up here, and just silently ignore the end.
-
-        This causes no real harm other than stopping a few times too many.
-        */
-
-        modeBuffer += lexeme;
-        return lexeme.length;
-      }
-
-      var language = getLanguage(languageName);
-      if (!language) {
-        console.error(LANGUAGE_NOT_FOUND.replace("{}", languageName));
-        throw new Error('Unknown language: "' + languageName + '"');
-      }
-
-      var md = compileLanguage(language);
-      var result = '';
-      /** @type {CompiledMode} */
-      var top = continuation || md;
-      /** @type Record<string,Mode> */
-      var continuations = {}; // keep continuations for sub-languages
-      var emitter = new options.__emitter(options);
-      processContinuations();
-      var modeBuffer = '';
-      var relevance = 0;
-      var index = 0;
-      var iterations = 0;
-      var resumeScanAtSamePosition = false;
-
-      try {
-        top.matcher.considerAll();
-
-        for (;;) {
-          iterations++;
-          if (resumeScanAtSamePosition) {
-            // only regexes not matched previously will now be
-            // considered for a potential match
-            resumeScanAtSamePosition = false;
-          } else {
-            top.matcher.considerAll();
-          }
-          top.matcher.lastIndex = index;
-
-          const match = top.matcher.exec(codeToHighlight);
-          // console.log("match", match[0], match.rule && match.rule.begin)
-
-          if (!match) break;
-
-          const beforeMatch = codeToHighlight.substring(index, match.index);
-          const processedCount = processLexeme(beforeMatch, match);
-          index = match.index + processedCount;
-        }
-        processLexeme(codeToHighlight.substr(index));
-        emitter.closeAllNodes();
-        emitter.finalize();
-        result = emitter.toHTML();
-
-        return {
-          relevance: relevance,
-          value: result,
-          language: languageName,
-          illegal: false,
-          emitter: emitter,
-          top: top
-        };
-      } catch (err) {
-        if (err.message && err.message.includes('Illegal')) {
-          return {
-            illegal: true,
-            illegalBy: {
-              msg: err.message,
-              context: codeToHighlight.slice(index - 100, index + 100),
-              mode: err.mode
-            },
-            sofar: result,
-            relevance: 0,
-            value: escape$1(codeToHighlight),
-            emitter: emitter
-          };
-        } else if (SAFE_MODE) {
-          return {
-            illegal: false,
-            relevance: 0,
-            value: escape$1(codeToHighlight),
-            emitter: emitter,
-            language: languageName,
-            top: top,
-            errorRaised: err
-          };
-        } else {
-          throw err;
-        }
-      }
-    }
-
-    /**
-     * returns a valid highlight result, without actually doing any actual work,
-     * auto highlight starts with this and it's possible for small snippets that
-     * auto-detection may not find a better match
-     * @param {string} code
-     * @returns {HighlightResult}
-     */
-    function justTextHighlightResult(code) {
-      const result = {
-        relevance: 0,
-        emitter: new options.__emitter(options),
-        value: escape$1(code),
-        illegal: false,
-        top: PLAINTEXT_LANGUAGE
-      };
-      result.emitter.addText(code);
-      return result;
-    }
-
-    /**
-    Highlighting with language detection. Accepts a string with the code to
-    highlight. Returns an object with the following properties:
-
-    - language (detected language)
-    - relevance (int)
-    - value (an HTML string with highlighting markup)
-    - second_best (object with the same structure for second-best heuristically
-      detected language, may be absent)
-
-      @param {string} code
-      @param {Array<string>} [languageSubset]
-      @returns {AutoHighlightResult}
-    */
-    function highlightAuto(code, languageSubset) {
-      languageSubset = languageSubset || options.languages || Object.keys(languages);
-      var result = justTextHighlightResult(code);
-      var secondBest = result;
-      languageSubset.filter(getLanguage).filter(autoDetection).forEach(function(name) {
-        var current = _highlight(name, code, false);
-        current.language = name;
-        if (current.relevance > secondBest.relevance) {
-          secondBest = current;
-        }
-        if (current.relevance > result.relevance) {
-          secondBest = result;
-          result = current;
-        }
-      });
-      if (secondBest.language) {
-        // second_best (with underscore) is the expected API
-        result.second_best = secondBest;
-      }
-      return result;
-    }
-
-    /**
-    Post-processing of the highlighted markup:
-
-    - replace TABs with something more useful
-    - replace real line-breaks with '<br>' for non-pre containers
-
-      @param {string} html
-      @returns {string}
-    */
-    function fixMarkup(html) {
-      if (!(options.tabReplace || options.useBR)) {
-        return html;
-      }
-
-      return html.replace(fixMarkupRe, match => {
-        if (match === '\n') {
-          return options.useBR ? '<br>' : match;
-        } else if (options.tabReplace) {
-          return match.replace(/\t/g, options.tabReplace);
-        }
-        return match;
-      });
-    }
-
-    /**
-     * Builds new class name for block given the language name
-     *
-     * @param {string} prevClassName
-     * @param {string} [currentLang]
-     * @param {string} [resultLang]
-     */
-    function buildClassName(prevClassName, currentLang, resultLang) {
-      var language = currentLang ? aliases[currentLang] : resultLang;
-      var result = [prevClassName.trim()];
-
-      if (!prevClassName.match(/\bhljs\b/)) {
-        result.push('hljs');
-      }
-
-      if (!prevClassName.includes(language)) {
-        result.push(language);
-      }
-
-      return result.join(' ').trim();
-    }
-
-    /**
-     * Applies highlighting to a DOM node containing code. Accepts a DOM node and
-     * two optional parameters for fixMarkup.
-     *
-     * @param {HighlightedHTMLElement} element - the HTML element to highlight
-    */
-    function highlightBlock(element) {
-      /** @type HTMLElement */
-      let node = null;
-      const language = blockLanguage(element);
-
-      if (shouldNotHighlight(language)) return;
-
-      fire("before:highlightBlock",
-        { block: element, language: language });
-
-      if (options.useBR) {
-        node = document.createElement('div');
-        node.innerHTML = element.innerHTML.replace(/\n/g, '').replace(/<br[ /]*>/g, '\n');
-      } else {
-        node = element;
-      }
-      const text = node.textContent;
-      const result = language ? highlight(language, text, true) : highlightAuto(text);
-
-      const originalStream = nodeStream$1(node);
-      if (originalStream.length) {
-        const resultNode = document.createElement('div');
-        resultNode.innerHTML = result.value;
-        result.value = mergeStreams$1(originalStream, nodeStream$1(resultNode), text);
-      }
-      result.value = fixMarkup(result.value);
-
-      fire("after:highlightBlock", { block: element, result: result });
-
-      element.innerHTML = result.value;
-      element.className = buildClassName(element.className, language, result.language);
-      element.result = {
-        language: result.language,
-        // TODO: remove with version 11.0
-        re: result.relevance,
-        relavance: result.relevance
-      };
-      if (result.second_best) {
-        element.second_best = {
-          language: result.second_best.language,
-          // TODO: remove with version 11.0
-          re: result.second_best.relevance,
-          relavance: result.second_best.relevance
-        };
-      }
-    }
-
-    /**
-     * Updates highlight.js global options with the passed options
-     *
-     * @param {{}} userOptions
-     */
-    function configure(userOptions) {
-      if (userOptions.useBR) {
-        console.warn("'useBR' option is deprecated and will be removed entirely in v11.0");
-        console.warn("Please see https://github.com/highlightjs/highlight.js/issues/2559");
-      }
-      options = inherit$1(options, userOptions);
-    }
-
-    /**
-     * Highlights to all <pre><code> blocks on a page
-     *
-     * @type {Function & {called?: boolean}}
-     */
-    const initHighlighting = () => {
-      if (initHighlighting.called) return;
-      initHighlighting.called = true;
-
-      var blocks = document.querySelectorAll('pre code');
-      ArrayProto.forEach.call(blocks, highlightBlock);
-    };
-
-    // Higlights all when DOMContentLoaded fires
-    function initHighlightingOnLoad() {
-      // @ts-ignore
-      window.addEventListener('DOMContentLoaded', initHighlighting, false);
-    }
-
-    /**
-     * Register a language grammar module
-     *
-     * @param {string} languageName
-     * @param {LanguageFn} languageDefinition
-     */
-    function registerLanguage(languageName, languageDefinition) {
-      var lang = null;
-      try {
-        lang = languageDefinition(hljs);
-      } catch (error) {
-        console.error("Language definition for '{}' could not be registered.".replace("{}", languageName));
-        // hard or soft error
-        if (!SAFE_MODE) { throw error; } else { console.error(error); }
-        // languages that have serious errors are replaced with essentially a
-        // "plaintext" stand-in so that the code blocks will still get normal
-        // css classes applied to them - and one bad language won't break the
-        // entire highlighter
-        lang = PLAINTEXT_LANGUAGE;
-      }
-      // give it a temporary name if it doesn't have one in the meta-data
-      if (!lang.name) lang.name = languageName;
-      languages[languageName] = lang;
-      lang.rawDefinition = languageDefinition.bind(null, hljs);
-
-      if (lang.aliases) {
-        registerAliases(lang.aliases, { languageName });
-      }
-    }
-
-    /**
-     * @returns {string[]} List of language internal names
-     */
-    function listLanguages() {
-      return Object.keys(languages);
-    }
-
-    /**
-      intended usage: When one language truly requires another
-
-      Unlike `getLanguage`, this will throw when the requested language
-      is not available.
-
-      @param {string} name - name of the language to fetch/require
-      @returns {Language | never}
-    */
-    function requireLanguage(name) {
-      var lang = getLanguage(name);
-      if (lang) { return lang; }
-
-      var err = new Error('The \'{}\' language is required, but not loaded.'.replace('{}', name));
-      throw err;
-    }
-
-    /**
-     * @param {string} name - name of the language to retrieve
-     * @returns {Language | undefined}
-     */
-    function getLanguage(name) {
-      name = (name || '').toLowerCase();
-      return languages[name] || languages[aliases[name]];
-    }
-
-    /**
-     *
-     * @param {string|string[]} aliasList - single alias or list of aliases
-     * @param {{languageName: string}} opts
-     */
-    function registerAliases(aliasList, { languageName }) {
-      if (typeof aliasList === 'string') {
-        aliasList = [aliasList];
-      }
-      aliasList.forEach(alias => { aliases[alias] = languageName; });
-    }
-
-    /**
-     * Determines if a given language has auto-detection enabled
-     * @param {string} name - name of the language
-     */
-    function autoDetection(name) {
-      var lang = getLanguage(name);
-      return lang && !lang.disableAutodetect;
-    }
-
-    /**
-     * @param {HLJSPlugin} plugin
-     */
-    function addPlugin(plugin) {
-      plugins.push(plugin);
-    }
-
-    /**
-     *
-     * @param {PluginEvent} event
-     * @param {any} args
-     */
-    function fire(event, args) {
-      var cb = event;
-      plugins.forEach(function(plugin) {
-        if (plugin[cb]) {
-          plugin[cb](args);
-        }
-      });
-    }
-
-    /**
-    Note: fixMarkup is deprecated and will be removed entirely in v11
-
-    @param {string} arg
-    @returns {string}
-    */
-    function deprecateFixMarkup(arg) {
-      console.warn("fixMarkup is deprecated and will be removed entirely in v11.0");
-      console.warn("Please see https://github.com/highlightjs/highlight.js/issues/2534");
-
-      return fixMarkup(arg);
-    }
-
-    /* Interface definition */
-    Object.assign(hljs, {
-      highlight,
-      highlightAuto,
-      fixMarkup: deprecateFixMarkup,
-      highlightBlock,
-      configure,
-      initHighlighting,
-      initHighlightingOnLoad,
-      registerLanguage,
-      listLanguages,
-      getLanguage,
-      registerAliases,
-      requireLanguage,
-      autoDetection,
-      inherit: inherit$1,
-      addPlugin,
-      // plugins for frameworks
-      vuePlugin: VuePlugin
-    });
-
-    hljs.debugMode = function() { SAFE_MODE = false; };
-    hljs.safeMode = function() { SAFE_MODE = true; };
-    hljs.versionString = version;
-
-    for (const key in MODES) {
-      // @ts-ignore
-      if (typeof MODES[key] === "object") {
-        // @ts-ignore
-        deepFreeze(MODES[key]);
-      }
-    }
-
-    // merge all the modes/regexs into our main object
-    Object.assign(hljs, MODES);
-
-    return hljs;
-  };
-
-  // export an "instance" of the highlighter
-  var highlight = HLJS({});
-
-  return highlight;
-
-}());
-if (typeof exports === 'object' && typeof module !== 'undefined') { module.exports = hljs; }
-
-hljs.registerLanguage('julia', function () {
-  'use strict';
-
-  /*
-  Language: Julia
-  Description: Julia is a high-level, high-performance, dynamic programming language.
-  Author: Kenta Sato <bicycle1885@gmail.com>
-  Contributors: Alex Arslan <ararslan@comcast.net>, Fredrik Ekre <ekrefredrik@gmail.com>
-  Website: https://julialang.org
-  */
-
-  function julia(hljs) {
-    // Since there are numerous special names in Julia, it is too much trouble
-    // to maintain them by hand. Hence these names (i.e. keywords, literals and
-    // built-ins) are automatically generated from Julia 1.5.2 itself through
-    // the following scripts for each.
-
-    // ref: https://docs.julialang.org/en/v1/manual/variables/#Allowed-Variable-Names
-    var VARIABLE_NAME_RE = '(?:[A-Za-z_\\u00A1-\\uFFFF][A-Za-z_0-9\\u00A1-\\uFFFF!]*)';
-
-    // # keyword generator, multi-word keywords handled manually below (Julia 1.5.2)
-    // import REPL.REPLCompletions
-    // res = String["in", "isa", "where"]
-    // for kw in collect(x.keyword for x in REPLCompletions.complete_keyword(""))
-    //     if !(contains(kw, " ") || kw == "struct")
-    //         push!(res, kw)
-    //     end
-    // end
-    // sort!(unique!(res))
-    // foreach(x -> println("\'", x, "\',"), res)
-    var KEYWORD_LIST = [
-      'baremodule',
-      'begin',
-      'break',
-      'catch',
-      'ccall',
-      'const',
-      'continue',
-      'do',
-      'else',
-      'elseif',
-      'end',
-      'export',
-      'false',
-      'finally',
-      'for',
-      'function',
-      'global',
-      'if',
-      'import',
-      'in',
-      'isa',
-      'let',
-      'local',
-      'macro',
-      'module',
-      'quote',
-      'return',
-      'true',
-      'try',
-      'using',
-      'where',
-      'while',
-    ];
-
-    // # literal generator (Julia 1.5.2)
-    // import REPL.REPLCompletions
-    // res = String["true", "false"]
-    // for compl in filter!(x -> isa(x, REPLCompletions.ModuleCompletion) && (x.parent === Base || x.parent === Core),
-    //                     REPLCompletions.completions("", 0)[1])
-    //     try
-    //         v = eval(Symbol(compl.mod))
-    //         if !(v isa Function || v isa Type || v isa TypeVar || v isa Module || v isa Colon)
-    //             push!(res, compl.mod)
-    //         end
-    //     catch e
-    //     end
-    // end
-    // sort!(unique!(res))
-    // foreach(x -> println("\'", x, "\',"), res)
-    var LITERAL_LIST = [
-      'ARGS',
-      'C_NULL',
-      'DEPOT_PATH',
-      'ENDIAN_BOM',
-      'ENV',
-      'Inf',
-      'Inf16',
-      'Inf32',
-      'Inf64',
-      'InsertionSort',
-      'LOAD_PATH',
-      'MergeSort',
-      'NaN',
-      'NaN16',
-      'NaN32',
-      'NaN64',
-      'PROGRAM_FILE',
-      'QuickSort',
-      'RoundDown',
-      'RoundFromZero',
-      'RoundNearest',
-      'RoundNearestTiesAway',
-      'RoundNearestTiesUp',
-      'RoundToZero',
-      'RoundUp',
-      'VERSION|0',
-      'devnull',
-      'false',
-      'im',
-      'missing',
-      'nothing',
-      'pi',
-      'stderr',
-      'stdin',
-      'stdout',
-      'true',
-      'undef',
-      'π',
-      'ℯ',
-    ];
-
-    // # built_in generator (Julia 1.5.2)
-    // import REPL.REPLCompletions
-    // res = String[]
-    // for compl in filter!(x -> isa(x, REPLCompletions.ModuleCompletion) && (x.parent === Base || x.parent === Core),
-    //                     REPLCompletions.completions("", 0)[1])
-    //     try
-    //         v = eval(Symbol(compl.mod))
-    //         if (v isa Type || v isa TypeVar) && (compl.mod != "=>")
-    //             push!(res, compl.mod)
-    //         end
-    //     catch e
-    //     end
-    // end
-    // sort!(unique!(res))
-    // foreach(x -> println("\'", x, "\',"), res)
-    var BUILT_IN_LIST = [
-      'AbstractArray',
-      'AbstractChannel',
-      'AbstractChar',
-      'AbstractDict',
-      'AbstractDisplay',
-      'AbstractFloat',
-      'AbstractIrrational',
-      'AbstractMatrix',
-      'AbstractRange',
-      'AbstractSet',
-      'AbstractString',
-      'AbstractUnitRange',
-      'AbstractVecOrMat',
-      'AbstractVector',
-      'Any',
-      'ArgumentError',
-      'Array',
-      'AssertionError',
-      'BigFloat',
-      'BigInt',
-      'BitArray',
-      'BitMatrix',
-      'BitSet',
-      'BitVector',
-      'Bool',
-      'BoundsError',
-      'CapturedException',
-      'CartesianIndex',
-      'CartesianIndices',
-      'Cchar',
-      'Cdouble',
-      'Cfloat',
-      'Channel',
-      'Char',
-      'Cint',
-      'Cintmax_t',
-      'Clong',
-      'Clonglong',
-      'Cmd',
-      'Colon',
-      'Complex',
-      'ComplexF16',
-      'ComplexF32',
-      'ComplexF64',
-      'CompositeException',
-      'Condition',
-      'Cptrdiff_t',
-      'Cshort',
-      'Csize_t',
-      'Cssize_t',
-      'Cstring',
-      'Cuchar',
-      'Cuint',
-      'Cuintmax_t',
-      'Culong',
-      'Culonglong',
-      'Cushort',
-      'Cvoid',
-      'Cwchar_t',
-      'Cwstring',
-      'DataType',
-      'DenseArray',
-      'DenseMatrix',
-      'DenseVecOrMat',
-      'DenseVector',
-      'Dict',
-      'DimensionMismatch',
-      'Dims',
-      'DivideError',
-      'DomainError',
-      'EOFError',
-      'Enum',
-      'ErrorException',
-      'Exception',
-      'ExponentialBackOff',
-      'Expr',
-      'Float16',
-      'Float32',
-      'Float64',
-      'Function',
-      'GlobalRef',
-      'HTML',
-      'IO',
-      'IOBuffer',
-      'IOContext',
-      'IOStream',
-      'IdDict',
-      'IndexCartesian',
-      'IndexLinear',
-      'IndexStyle',
-      'InexactError',
-      'InitError',
-      'Int',
-      'Int128',
-      'Int16',
-      'Int32',
-      'Int64',
-      'Int8',
-      'Integer',
-      'InterruptException',
-      'InvalidStateException',
-      'Irrational',
-      'KeyError',
-      'LinRange',
-      'LineNumberNode',
-      'LinearIndices',
-      'LoadError',
-      'MIME',
-      'Matrix',
-      'Method',
-      'MethodError',
-      'Missing',
-      'MissingException',
-      'Module',
-      'NTuple',
-      'NamedTuple',
-      'Nothing',
-      'Number',
-      'OrdinalRange',
-      'OutOfMemoryError',
-      'OverflowError',
-      'Pair',
-      'PartialQuickSort',
-      'PermutedDimsArray',
-      'Pipe',
-      'ProcessFailedException',
-      'Ptr',
-      'QuoteNode',
-      'Rational',
-      'RawFD',
-      'ReadOnlyMemoryError',
-      'Real',
-      'ReentrantLock',
-      'Ref',
-      'Regex',
-      'RegexMatch',
-      'RoundingMode',
-      'SegmentationFault',
-      'Set',
-      'Signed',
-      'Some',
-      'StackOverflowError',
-      'StepRange',
-      'StepRangeLen',
-      'StridedArray',
-      'StridedMatrix',
-      'StridedVecOrMat',
-      'StridedVector',
-      'String',
-      'StringIndexError',
-      'SubArray',
-      'SubString',
-      'SubstitutionString',
-      'Symbol',
-      'SystemError',
-      'Task',
-      'TaskFailedException',
-      'Text',
-      'TextDisplay',
-      'Timer',
-      'Tuple',
-      'Type',
-      'TypeError',
-      'TypeVar',
-      'UInt',
-      'UInt128',
-      'UInt16',
-      'UInt32',
-      'UInt64',
-      'UInt8',
-      'UndefInitializer',
-      'UndefKeywordError',
-      'UndefRefError',
-      'UndefVarError',
-      'Union',
-      'UnionAll',
-      'UnitRange',
-      'Unsigned',
-      'Val',
-      'Vararg',
-      'VecElement',
-      'VecOrMat',
-      'Vector',
-      'VersionNumber',
-      'WeakKeyDict',
-      'WeakRef',
-    ];
-
-    var KEYWORDS = {
-      $pattern: VARIABLE_NAME_RE,
-      keyword: KEYWORD_LIST.join(" "),
-      literal: LITERAL_LIST.join(" "),
-      type: BUILT_IN_LIST.join(" "),
-    };
-
-    // placeholder for recursive self-reference
-    var DEFAULT = {
-      keywords: KEYWORDS, illegal: /<\//
-    };
-
-    // ref: https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/
-    var NUMBER = {
-      className: 'number',
-      // supported numeric literals:
-      //  * binary literal (e.g. 0x10)
-      //  * octal literal (e.g. 0o76543210)
-      //  * hexadecimal literal (e.g. 0xfedcba876543210)
-      //  * hexadecimal floating point literal (e.g. 0x1p0, 0x1.2p2)
-      //  * decimal literal (e.g. 9876543210, 100_000_000)
-      //  * floating point literal (e.g. 1.2, 1.2f, .2, 1., 1.2e10, 1.2e-10)
-      begin: /(\b0x[\d_]*(\.[\d_]*)?|0x\.\d[\d_]*)p[-+]?\d+|\b0[box][a-fA-F0-9][a-fA-F0-9_]*|(\b\d[\d_]*(\.[\d_]*)?|\.\d[\d_]*)([eEfF][-+]?\d+)?/,
-      relevance: 0
-    };
-
-    // Assignment and control-flow operators && and ||
-    var KEYWORDLIKE_OPERATORS = {
-      className: 'keyword',
-      begin: '&&|\\|\\||=',
-    };
-
-    var BUILTIN_OPERATORS = {
-      className: 'built_in',
-      variants: [
-        // Multi-character operators
-        {begin: '::|<:|>:|[=!]?==|[<>!]=|//|=>|\\/\\/|<<|>>>|>>|->'},
-        // Unicode operators (https://github.com/JuliaLang/julia/blob/master/src/julia-parser.scm)
-        {begin: /[≤≥¬←→↔↚↛↠↣↦↮⇎⇏⇒⇔⇴⇶⇷⇸⇹⇺⇻⇼⇽⇾⇿⟵⟶⟷⟷⟹⟺⟻⟼⟽⟾⟿⤀⤁⤂⤃⤄⤅⤆⤇⤌⤍⤎⤏⤐⤑⤔⤕⤖⤗⤘⤝⤞⤟⤠⥄⥅⥆⥇⥈⥊⥋⥎⥐⥒⥓⥖⥗⥚⥛⥞⥟⥢⥤⥦⥧⥨⥩⥪⥫⥬⥭⥰⧴⬱⬰⬲⬳⬴⬵⬶⬷⬸⬹⬺⬻⬼⬽⬾⬿⭀⭁⭂⭃⭄⭇⭈⭉⭊⭋⭌￩￫≡≠≢∈∉∋∌⊆⊈⊂⊄⊊∝∊∍∥∦∷∺∻∽∾≁≃≄≅≆≇≈≉≊≋≌≍≎≐≑≒≓≔≕≖≗≘≙≚≛≜≝≞≟≣≦≧≨≩≪≫≬≭≮≯≰≱≲≳≴≵≶≷≸≹≺≻≼≽≾≿⊀⊁⊃⊅⊇⊉⊋⊏⊐⊑⊒⊜⊩⊬⊮⊰⊱⊲⊳⊴⊵⊶⊷⋍⋐⋑⋕⋖⋗⋘⋙⋚⋛⋜⋝⋞⋟⋠⋡⋢⋣⋤⋥⋦⋧⋨⋩⋪⋫⋬⋭⋲⋳⋴⋵⋶⋷⋸⋹⋺⋻⋼⋽⋾⋿⟈⟉⟒⦷⧀⧁⧡⧣⧤⧥⩦⩧⩪⩫⩬⩭⩮⩯⩰⩱⩲⩳⩴⩵⩶⩷⩸⩹⩺⩻⩼⩽⩾⩿⪀⪁⪂⪃⪄⪅⪆⪇⪈⪉⪊⪋⪌⪍⪎⪏⪐⪑⪒⪓⪔⪕⪖⪗⪘⪙⪚⪛⪜⪝⪞⪟⪠⪡⪢⪣⪤⪥⪦⪧⪨⪩⪪⪫⪬⪭⪮⪯⪰⪱⪲⪳⪴⪵⪶⪷⪸⪹⪺⪻⪼⪽⪾⪿⫀⫁⫂⫃⫄⫅⫆⫇⫈⫉⫊⫋⫌⫍⫎⫏⫐⫑⫒⫓⫔⫕⫖⫗⫘⫙⫷⫸⫹⫺⊢⊣⊕⊖⊞⊟∪∨⊔±∓∔∸≂≏⊎⊻⊽⋎⋓⧺⧻⨈⨢⨣⨤⨥⨦⨧⨨⨩⨪⨫⨬⨭⨮⨹⨺⩁⩂⩅⩊⩌⩏⩐⩒⩔⩖⩗⩛⩝⩡⩢⩣÷⋅∘×∩∧⊗⊘⊙⊚⊛⊠⊡⊓∗∙∤⅋≀⊼⋄⋆⋇⋉⋊⋋⋌⋏⋒⟑⦸⦼⦾⦿⧶⧷⨇⨰⨱⨲⨳⨴⨵⨶⨷⨸⨻⨼⨽⩀⩃⩄⩋⩍⩎⩑⩓⩕⩘⩚⩜⩞⩟⩠⫛⊍▷⨝⟕⟖⟗↑↓⇵⟰⟱⤈⤉⤊⤋⤒⤓⥉⥌⥍⥏⥑⥔⥕⥘⥙⥜⥝⥠⥡⥣⥥⥮⥯￪￬]/},
-        // ASCII operators
-        {begin: /[-+*/\\^:<>~?$%.]/},
-        // | and & (unless they are really || and && in disguise)
-        {begin: '&(?!&)|\\|(?!\\|)'},
-        // ! is an operator unless it is used in a variable
-        {begin: '(?<!' + VARIABLE_NAME_RE + ')!'}
-      ]
-    };
-
-    // Match for types in unambiguous contexts, such as ::T, <:T etc.
-    var TYPE_CONTEXT = {
-      className: 'type',
-      variants: [
-        // Match Base in Base.Union{...}
-        {begin: VARIABLE_NAME_RE + '(?=\\.' + VARIABLE_NAME_RE + '{)', end: '}'},
-        // Match Union{...}
-        {begin: VARIABLE_NAME_RE + '{', end: '}'},
-        // Match T in e.g. ::Q.T, S<:Q.T, S>:Q.T
-        {begin: '(?<=[<>:]:\\s?' + VARIABLE_NAME_RE + '\\.)' + VARIABLE_NAME_RE},
-        // Match T in e.g. ::T, S<:T, S>:T
-        {begin: '(?<=[<>:]:\\s?)' + VARIABLE_NAME_RE},
-        // Match S in e.g. S.Q<:T, S.Q>:T
-        {begin: VARIABLE_NAME_RE + '(?=\\.' + VARIABLE_NAME_RE + '\\s?[<>]:)'},
-        // Match S in e.g. S<:T, S>:T
-        {begin: VARIABLE_NAME_RE + '(?=\\s?[<>]:)'},
-      ],
-      contains: [
-        BUILTIN_OPERATORS,
-        KEYWORDLIKE_OPERATORS,
-        'self',
-      ]
-    };
-
-    // Match where ... constructs
-    var WHERE_CLAUSE = {
-      className: '',
-      variants: [
-        // Match where {...}
-        {begin: '(?<=where\\s+){' + '', end: '}', excludeBegin:true, excludeEnd:true},
-        // Match where T
-        {className: 'type', begin: '(?<=where\\s+)' + VARIABLE_NAME_RE},
-      ],
-      contains: [
-        TYPE_CONTEXT,
-        BUILTIN_OPERATORS,
-        KEYWORDLIKE_OPERATORS,
-        // Match single identifier, e.g. where {T}
-        {begin: VARIABLE_NAME_RE, className:'type'}
-      ]
-    };
-
-    var CHAR = {
-      className: 'string',
-      variants: [
-        {begin: /'(.|\\[xXuU][a-zA-Z0-9]+)'/},
-        {begin: /'\\[rn\\$]'/},
-      ]
-    };
-
-    var INTERPOLATION = {
-      className: 'subst',
-      begin: /\$\(/, end: /\)/,
-      keywords: KEYWORDS
-    };
-
-    var INTERPOLATED_VARIABLE = {
-      className: 'variable',
-      begin: '\\$' + VARIABLE_NAME_RE
-    };
-
-    // Literal String, Regex and Cmd strings
-    // TODO: neatly escape normal code in string literal
-    // TODO: mark docstrings as doctag
-    var STRING_REGEX_CMD = {
-      className: 'string',
-      contains: [hljs.BACKSLASH_ESCAPE, INTERPOLATION, INTERPOLATED_VARIABLE],
-      variants: [
-        { begin: /r"""/, end: /"""\w*/, relevance: 10, className: 'regexp', contains: [hljs.BACKSLASH_ESCAPE] },
-        { begin: /\w*"""/, end: /"""\w*/, relevance: 10 },
-        { begin: '```', end: '```' },
-        { begin: /r"/, end: /"\w*/, className: 'regexp', contains: [hljs.BACKSLASH_ESCAPE] },
-        { begin: /\w*"/, end: /"\w*/ },
-        { begin: '`', end: '`'},
-      ]
-    };
-
-    // Conservative matching of symbol as identifier after :, unless there is a
-    // valid identifier/number just before; e.g. a:b, 1:b is not a symbol
-    var SYMBOL = {
-      className: 'symbol',
-      begin: '(?<!(' + VARIABLE_NAME_RE + '|[\\d\\.]+|[:<>]+)\\s*)(:' + VARIABLE_NAME_RE + ')',
-    };
-
-    var MACROCALL = {
-      className: 'meta',
-      begin: '@' + VARIABLE_NAME_RE
-    };
-
-    // Useful group of "atoms" used later
-    var ATOMS = [
-      NUMBER,
-      CHAR,
-      STRING_REGEX_CMD,
-      SYMBOL,
-      MACROCALL
-    ];
-
-    var COMMENT = {
-      className: 'comment',
-      variants: [
-        { begin: '#=', end: '=#', relevance: 10 },
-        { begin: '#', end: '$' }
-      ]
-    };
-
-
-    var FUNCTION_CALL = {
-      className: '',
-      // Match fun(... and fun.(...
-      begin: '(\\b' + VARIABLE_NAME_RE + '({.*?}|\\.)?\\()',
-      end: '\\)',
-      returnBegin:true,
-      keywords: KEYWORDS,
-      contains: [
-        // Cheating a bit -- not all functions are builtins, but who cares in julia!
-        {begin:'\\b(ccall|new({.*?})?)(?=\\()', className: 'keyword'}, // Non-standard functions
-        {begin:'\\b' + VARIABLE_NAME_RE + '({.*?})?(?=\\.?\\()', className: 'built_in'},
-        ...ATOMS,
-        'self',
-        TYPE_CONTEXT,
-        BUILTIN_OPERATORS,
-        KEYWORDLIKE_OPERATORS,
-        COMMENT,
-      ]
-    };
-
-    var FUNCTION_DEFINITION_PARAMETERS = {
-      begin: '(?<=' + VARIABLE_NAME_RE + '({.*?})?)\\(',
-      end: '\\)',
-      className: '',
-      keywords: KEYWORDS,
-      contains: [
-        ...ATOMS,
-        TYPE_CONTEXT,
-        FUNCTION_CALL,
-        BUILTIN_OPERATORS,
-        KEYWORDLIKE_OPERATORS,
-        {begin: '(?<!=\\s?)\\b' + VARIABLE_NAME_RE + '\\b', className: 'params'},
-      ]
-    };
-
-    var FUNCTION_DEFINITION = {
-      className: '',
-      begin: '\\bfunction[ \\t]+' + '(' + VARIABLE_NAME_RE + '\\.)*' + VARIABLE_NAME_RE + '({.*})?\\(.*\\)([ \\t]+where\\s+({.*?}|' + VARIABLE_NAME_RE + '([ \\t]+[<>]:\\s+' + VARIABLE_NAME_RE + '({.*})?)?))*',
-      returnBegin:true,
-      contains: [
-          // Function keyword
-          {begin: '\\bfunction\\s', className: 'keyword'},
-          // Skip over leading A.B.
-          {begin: '(' + VARIABLE_NAME_RE + ')(?=\\.)', end: '(?=' + VARIABLE_NAME_RE+'({.*?})?\\()', contains:[
-            {begin: '\\.', className: 'built_in'}
-          ]},
-          // Function name
-          {begin: VARIABLE_NAME_RE + '({.*?})?(?=\\()', className: 'title'},
-          // Parameters
-          FUNCTION_DEFINITION_PARAMETERS,
-          // Possibly where-clauses
-          WHERE_CLAUSE,
-      ]
-    };
-
-    var SHORT_FUNCTION_DEFINITION = {
-      className: '',
-      begin: VARIABLE_NAME_RE + '\\(.*\\)(\\s+where.*?)?\\s*(?==(?!=))',
-      returnBegin:true,
-      contains: [
-          {begin: VARIABLE_NAME_RE + '(?=\\()', className: 'title'},
-          FUNCTION_DEFINITION_PARAMETERS,
-          WHERE_CLAUSE
-      ]
-    };
-
-    var TYPEDEF = {
-      className: 'class',
-      variants: [
-        { begin: '(?<=primitive[ \\t]+type[ \\t]+)' + VARIABLE_NAME_RE },
-        { begin: '(?<=abstract[ \\t]+type[ \\t]+)' + VARIABLE_NAME_RE + '({.*?})?' },
-        { begin: '(?<=(mutable[ \\t]+)?struct[ \\t]+)' + VARIABLE_NAME_RE + '({.*?})?' },
-      ]
-    };
-
-    DEFAULT.name = 'Julia';
-    DEFAULT.contains = [
-      ...ATOMS,
-      FUNCTION_DEFINITION,
-      SHORT_FUNCTION_DEFINITION,
-      FUNCTION_CALL,
-      TYPEDEF,
-      WHERE_CLAUSE,
-      TYPE_CONTEXT,
-      COMMENT,
-      hljs.HASH_COMMENT_MODE,
-      {
-        className: 'keyword',
-        begin:
-          '\\b(((abstract|primitive)[ \\t]+)type|(mutable[ \\t]+)?struct)\\b'
-      },
-      BUILTIN_OPERATORS,
-      KEYWORDLIKE_OPERATORS,
-      {begin: /<:/}  // relevance booster
-    ];
-    INTERPOLATION.contains = DEFAULT.contains;
-
-    return DEFAULT;
-  }
-
-  return julia;
-
-  return module.exports.definer || module.exports;
-
-}());
-
-hljs.registerLanguage('julia-repl', function () {
-  'use strict';
-
-  /*
-  Language: Julia REPL
-  Description: Julia REPL sessions
-  Author: Morten Piibeleht <morten.piibeleht@gmail.com>
-  Website: https://julialang.org
-  Requires: julia.js
-
-  The Julia REPL code blocks look something like the following:
-
-    julia> function foo(x)
-               x + 1
-           end
-    foo (generic function with 1 method)
-
-  They start on a new line with "julia>". Usually there should also be a space after this, but
-  we also allow the code to start right after the > character. The code may run over multiple
-  lines, but the additional lines must start with six spaces (i.e. be indented to match
-  "julia>"). The rest of the code is assumed to be output from the executed code and will be
-  left un-highlighted.
-
-  Using simply spaces to identify line continuations may get a false-positive if the output
-  also prints out six spaces, but such cases should be rare.
-  */
-
-  function juliaRepl(hljs) {
-    return {
-      name: 'Julia REPL',
-      contains: [
-        {
-          className: 'meta',
-          begin: /^julia>/,
-          relevance: 10,
-          starts: {
-            // end the highlighting if we are on a new line and the line does not have at
-            // least six spaces in the beginning
-            end: /^(?![ ]{6})/,
-            subLanguage: 'julia'
-        },
-        // jldoctest Markdown blocks are used in the Julia manual and package docs indicate
-        // code snippets that should be verified when the documentation is built. They can be
-        // either REPL-like or script-like, but are usually REPL-like and therefore we apply
-        // julia-repl highlighting to them. More information can be found in Documenter's
-        // manual: https://juliadocs.github.io/Documenter.jl/latest/man/doctests.html
-        aliases: ['jldoctest']
-        }
-      ]
-    }
-  }
-
-  return juliaRepl;
-
-  return module.exports.definer || module.exports;
-
-}());
+var hljs=function(){"use strict";function e(t){
+  return t instanceof Map?t.clear=t.delete=t.set=()=>{
+  throw Error("map is read-only")}:t instanceof Set&&(t.add=t.clear=t.delete=()=>{
+  throw Error("set is read-only")
+  }),Object.freeze(t),Object.getOwnPropertyNames(t).forEach((n=>{var i=t[n]
+  ;"object"!=typeof i||Object.isFrozen(i)||e(i)})),t}var t=e,n=e;t.default=n
+  ;class i{constructor(e){
+  void 0===e.data&&(e.data={}),this.data=e.data,this.isMatchIgnored=!1}
+  ignoreMatch(){this.isMatchIgnored=!0}}function s(e){
+  return e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#x27;")
+  }function a(e,...t){const n=Object.create(null);for(const t in e)n[t]=e[t]
+  ;return t.forEach((e=>{for(const t in e)n[t]=e[t]})),n}const r=e=>!!e.kind
+  ;class l{constructor(e,t){
+  this.buffer="",this.classPrefix=t.classPrefix,e.walk(this)}addText(e){
+  this.buffer+=s(e)}openNode(e){if(!r(e))return;let t=e.kind
+  ;e.sublanguage||(t=`${this.classPrefix}${t}`),this.span(t)}closeNode(e){
+  r(e)&&(this.buffer+="</span>")}value(){return this.buffer}span(e){
+  this.buffer+=`<span class="${e}">`}}class o{constructor(){this.rootNode={
+  children:[]},this.stack=[this.rootNode]}get top(){
+  return this.stack[this.stack.length-1]}get root(){return this.rootNode}add(e){
+  this.top.children.push(e)}openNode(e){const t={kind:e,children:[]}
+  ;this.add(t),this.stack.push(t)}closeNode(){
+  if(this.stack.length>1)return this.stack.pop()}closeAllNodes(){
+  for(;this.closeNode(););}toJSON(){return JSON.stringify(this.rootNode,null,4)}
+  walk(e){return this.constructor._walk(e,this.rootNode)}static _walk(e,t){
+  return"string"==typeof t?e.addText(t):t.children&&(e.openNode(t),
+  t.children.forEach((t=>this._walk(e,t))),e.closeNode(t)),e}static _collapse(e){
+  "string"!=typeof e&&e.children&&(e.children.every((e=>"string"==typeof e))?e.children=[e.children.join("")]:e.children.forEach((e=>{
+  o._collapse(e)})))}}class c extends o{constructor(e){super(),this.options=e}
+  addKeyword(e,t){""!==e&&(this.openNode(t),this.addText(e),this.closeNode())}
+  addText(e){""!==e&&this.add(e)}addSublanguage(e,t){const n=e.root
+  ;n.kind=t,n.sublanguage=!0,this.add(n)}toHTML(){
+  return new l(this,this.options).value()}finalize(){return!0}}function g(e){
+  return e?"string"==typeof e?e:e.source:null}
+  const u=/\[(?:[^\\\]]|\\.)*\]|\(\??|\\([1-9][0-9]*)|\\./,h="[a-zA-Z]\\w*",d="[a-zA-Z_]\\w*",f="\\b\\d+(\\.\\d+)?",p="(-?)(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)",m="\\b(0b[01]+)",b={
+  begin:"\\\\[\\s\\S]",relevance:0},E={className:"string",begin:"'",end:"'",
+  illegal:"\\n",contains:[b]},x={className:"string",begin:'"',end:'"',
+  illegal:"\\n",contains:[b]},v={
+  begin:/\b(a|an|the|are|I'm|isn't|don't|doesn't|won't|but|just|should|pretty|simply|enough|gonna|going|wtf|so|such|will|you|your|they|like|more)\b/
+  },w=(e,t,n={})=>{const i=a({className:"comment",begin:e,end:t,contains:[]},n)
+  ;return i.contains.push(v),i.contains.push({className:"doctag",
+  begin:"(?:TODO|FIXME|NOTE|BUG|OPTIMIZE|HACK|XXX):",relevance:0}),i
+  },y=w("//","$"),N=w("/\\*","\\*/"),R=w("#","$");var _=Object.freeze({
+  __proto__:null,MATCH_NOTHING_RE:/\b\B/,IDENT_RE:h,UNDERSCORE_IDENT_RE:d,
+  NUMBER_RE:f,C_NUMBER_RE:p,BINARY_NUMBER_RE:m,
+  RE_STARTERS_RE:"!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~",
+  SHEBANG:(e={})=>{const t=/^#![ ]*\//
+  ;return e.binary&&(e.begin=((...e)=>e.map((e=>g(e))).join(""))(t,/.*\b/,e.binary,/\b.*/)),
+  a({className:"meta",begin:t,end:/$/,relevance:0,"on:begin":(e,t)=>{
+  0!==e.index&&t.ignoreMatch()}},e)},BACKSLASH_ESCAPE:b,APOS_STRING_MODE:E,
+  QUOTE_STRING_MODE:x,PHRASAL_WORDS_MODE:v,COMMENT:w,C_LINE_COMMENT_MODE:y,
+  C_BLOCK_COMMENT_MODE:N,HASH_COMMENT_MODE:R,NUMBER_MODE:{className:"number",
+  begin:f,relevance:0},C_NUMBER_MODE:{className:"number",begin:p,relevance:0},
+  BINARY_NUMBER_MODE:{className:"number",begin:m,relevance:0},CSS_NUMBER_MODE:{
+  className:"number",
+  begin:f+"(%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)?",
+  relevance:0},REGEXP_MODE:{begin:/(?=\/[^/\n]*\/)/,contains:[{className:"regexp",
+  begin:/\//,end:/\/[gimuy]*/,illegal:/\n/,contains:[b,{begin:/\[/,end:/\]/,
+  relevance:0,contains:[b]}]}]},TITLE_MODE:{className:"title",begin:h,relevance:0
+  },UNDERSCORE_TITLE_MODE:{className:"title",begin:d,relevance:0},METHOD_GUARD:{
+  begin:"\\.\\s*[a-zA-Z_]\\w*",relevance:0},END_SAME_AS_BEGIN:e=>Object.assign(e,{
+  "on:begin":(e,t)=>{t.data._beginMatch=e[1]},"on:end":(e,t)=>{
+  t.data._beginMatch!==e[1]&&t.ignoreMatch()}})});function k(e,t){
+  "."===e.input[e.index-1]&&t.ignoreMatch()}function M(e,t){
+  t&&e.beginKeywords&&(e.begin="\\b("+e.beginKeywords.split(" ").join("|")+")(?!\\.)(?=\\b|\\s)",
+  e.__beforeBegin=k,e.keywords=e.keywords||e.beginKeywords,delete e.beginKeywords,
+  void 0===e.relevance&&(e.relevance=0))}function O(e,t){
+  Array.isArray(e.illegal)&&(e.illegal=((...e)=>"("+e.map((e=>g(e))).join("|")+")")(...e.illegal))
+  }function A(e,t){if(e.match){
+  if(e.begin||e.end)throw Error("begin & end are not supported with match")
+  ;e.begin=e.match,delete e.match}}function L(e,t){
+  void 0===e.relevance&&(e.relevance=1)}
+  const I=["of","and","for","in","not","or","if","then","parent","list","value"]
+  ;function j(e,t,n="keyword"){const i={}
+  ;return"string"==typeof e?s(n,e.split(" ")):Array.isArray(e)?s(n,e):Object.keys(e).forEach((n=>{
+  Object.assign(i,j(e[n],t,n))})),i;function s(e,n){
+  t&&(n=n.map((e=>e.toLowerCase()))),n.forEach((t=>{const n=t.split("|")
+  ;i[n[0]]=[e,B(n[0],n[1])]}))}}function B(e,t){
+  return t?Number(t):(e=>I.includes(e.toLowerCase()))(e)?0:1}
+  function T(e,{plugins:t}){function n(t,n){
+  return RegExp(g(t),"m"+(e.case_insensitive?"i":"")+(n?"g":""))}class i{
+  constructor(){
+  this.matchIndexes={},this.regexes=[],this.matchAt=1,this.position=0}
+  addRule(e,t){
+  t.position=this.position++,this.matchIndexes[this.matchAt]=t,this.regexes.push([t,e]),
+  this.matchAt+=(e=>RegExp(e.toString()+"|").exec("").length-1)(e)+1}compile(){
+  0===this.regexes.length&&(this.exec=()=>null)
+  ;const e=this.regexes.map((e=>e[1]));this.matcherRe=n(((e,t="|")=>{let n=0
+  ;return e.map((e=>{n+=1;const t=n;let i=g(e),s="";for(;i.length>0;){
+  const e=u.exec(i);if(!e){s+=i;break}
+  s+=i.substring(0,e.index),i=i.substring(e.index+e[0].length),
+  "\\"===e[0][0]&&e[1]?s+="\\"+(Number(e[1])+t):(s+=e[0],"("===e[0]&&n++)}return s
+  })).map((e=>`(${e})`)).join(t)})(e),!0),this.lastIndex=0}exec(e){
+  this.matcherRe.lastIndex=this.lastIndex;const t=this.matcherRe.exec(e)
+  ;if(!t)return null
+  ;const n=t.findIndex(((e,t)=>t>0&&void 0!==e)),i=this.matchIndexes[n]
+  ;return t.splice(0,n),Object.assign(t,i)}}class s{constructor(){
+  this.rules=[],this.multiRegexes=[],
+  this.count=0,this.lastIndex=0,this.regexIndex=0}getMatcher(e){
+  if(this.multiRegexes[e])return this.multiRegexes[e];const t=new i
+  ;return this.rules.slice(e).forEach((([e,n])=>t.addRule(e,n))),
+  t.compile(),this.multiRegexes[e]=t,t}resumingScanAtSamePosition(){
+  return 0!==this.regexIndex}considerAll(){this.regexIndex=0}addRule(e,t){
+  this.rules.push([e,t]),"begin"===t.type&&this.count++}exec(e){
+  const t=this.getMatcher(this.regexIndex);t.lastIndex=this.lastIndex
+  ;let n=t.exec(e)
+  ;if(this.resumingScanAtSamePosition())if(n&&n.index===this.lastIndex);else{
+  const t=this.getMatcher(0);t.lastIndex=this.lastIndex+1,n=t.exec(e)}
+  return n&&(this.regexIndex+=n.position+1,
+  this.regexIndex===this.count&&this.considerAll()),n}}
+  if(e.compilerExtensions||(e.compilerExtensions=[]),
+  e.contains&&e.contains.includes("self"))throw Error("ERR: contains `self` is not supported at the top-level of a language.  See documentation.")
+  ;return e.classNameAliases=a(e.classNameAliases||{}),function t(i,r){const l=i
+  ;if(i.isCompiled)return l
+  ;[A].forEach((e=>e(i,r))),e.compilerExtensions.forEach((e=>e(i,r))),
+  i.__beforeBegin=null,[M,O,L].forEach((e=>e(i,r))),i.isCompiled=!0;let o=null
+  ;if("object"==typeof i.keywords&&(o=i.keywords.$pattern,
+  delete i.keywords.$pattern),
+  i.keywords&&(i.keywords=j(i.keywords,e.case_insensitive)),
+  i.lexemes&&o)throw Error("ERR: Prefer `keywords.$pattern` to `mode.lexemes`, BOTH are not allowed. (see mode reference) ")
+  ;return o=o||i.lexemes||/\w+/,
+  l.keywordPatternRe=n(o,!0),r&&(i.begin||(i.begin=/\B|\b/),
+  l.beginRe=n(i.begin),i.endSameAsBegin&&(i.end=i.begin),
+  i.end||i.endsWithParent||(i.end=/\B|\b/),
+  i.end&&(l.endRe=n(i.end)),l.terminatorEnd=g(i.end)||"",
+  i.endsWithParent&&r.terminatorEnd&&(l.terminatorEnd+=(i.end?"|":"")+r.terminatorEnd)),
+  i.illegal&&(l.illegalRe=n(i.illegal)),
+  i.contains||(i.contains=[]),i.contains=[].concat(...i.contains.map((e=>(e=>(e.variants&&!e.cachedVariants&&(e.cachedVariants=e.variants.map((t=>a(e,{
+  variants:null},t)))),e.cachedVariants?e.cachedVariants:S(e)?a(e,{
+  starts:e.starts?a(e.starts):null
+  }):Object.isFrozen(e)?a(e):e))("self"===e?i:e)))),i.contains.forEach((e=>{t(e,l)
+  })),i.starts&&t(i.starts,r),l.matcher=(e=>{const t=new s
+  ;return e.contains.forEach((e=>t.addRule(e.begin,{rule:e,type:"begin"
+  }))),e.terminatorEnd&&t.addRule(e.terminatorEnd,{type:"end"
+  }),e.illegal&&t.addRule(e.illegal,{type:"illegal"}),t})(l),l}(e)}function S(e){
+  return!!e&&(e.endsWithParent||S(e.starts))}function P(e){const t={
+  props:["language","code","autodetect"],data:()=>({detectedLanguage:"",
+  unknownLanguage:!1}),computed:{className(){
+  return this.unknownLanguage?"":"hljs "+this.detectedLanguage},highlighted(){
+  if(!this.autoDetect&&!e.getLanguage(this.language))return console.warn(`The language "${this.language}" you specified could not be found.`),
+  this.unknownLanguage=!0,s(this.code);let t={}
+  ;return this.autoDetect?(t=e.highlightAuto(this.code),
+  this.detectedLanguage=t.language):(t=e.highlight(this.language,this.code,this.ignoreIllegals),
+  this.detectedLanguage=this.language),t.value},autoDetect(){
+  return!(this.language&&(e=this.autodetect,!e&&""!==e));var e},
+  ignoreIllegals:()=>!0},render(e){return e("pre",{},[e("code",{
+  class:this.className,domProps:{innerHTML:this.highlighted}})])}};return{
+  Component:t,VuePlugin:{install(e){e.component("highlightjs",t)}}}}const D={
+  "after:highlightElement":({el:e,result:t,text:n})=>{const i=H(e)
+  ;if(!i.length)return;const a=document.createElement("div")
+  ;a.innerHTML=t.value,t.value=((e,t,n)=>{let i=0,a="";const r=[];function l(){
+  return e.length&&t.length?e[0].offset!==t[0].offset?e[0].offset<t[0].offset?e:t:"start"===t[0].event?e:t:e.length?e:t
+  }function o(e){a+="<"+C(e)+[].map.call(e.attributes,(function(e){
+  return" "+e.nodeName+'="'+s(e.value)+'"'})).join("")+">"}function c(e){
+  a+="</"+C(e)+">"}function g(e){("start"===e.event?o:c)(e.node)}
+  for(;e.length||t.length;){let t=l()
+  ;if(a+=s(n.substring(i,t[0].offset)),i=t[0].offset,t===e){r.reverse().forEach(c)
+  ;do{g(t.splice(0,1)[0]),t=l()}while(t===e&&t.length&&t[0].offset===i)
+  ;r.reverse().forEach(o)
+  }else"start"===t[0].event?r.push(t[0].node):r.pop(),g(t.splice(0,1)[0])}
+  return a+s(n.substr(i))})(i,H(a),n)}};function C(e){
+  return e.nodeName.toLowerCase()}function H(e){const t=[];return function e(n,i){
+  for(let s=n.firstChild;s;s=s.nextSibling)3===s.nodeType?i+=s.nodeValue.length:1===s.nodeType&&(t.push({
+  event:"start",offset:i,node:s}),i=e(s,i),C(s).match(/br|hr|img|input/)||t.push({
+  event:"stop",offset:i,node:s}));return i}(e,0),t}const $=e=>{console.error(e)
+  },U=(e,...t)=>{console.log("WARN: "+e,...t)},z=(e,t)=>{
+  console.log(`Deprecated as of ${e}. ${t}`)},K=s,G=a,V=Symbol("nomatch")
+  ;return(e=>{const n=Object.create(null),s=Object.create(null),a=[];let r=!0
+  ;const l=/(^(<[^>]+>|\t|)+|\n)/gm,o="Could not find the language '{}', did you forget to load/include a language module?",g={
+  disableAutodetect:!0,name:"Plain text",contains:[]};let u={
+  noHighlightRe:/^(no-?highlight)$/i,
+  languageDetectRe:/\blang(?:uage)?-([\w-]+)\b/i,classPrefix:"hljs-",
+  tabReplace:null,useBR:!1,languages:null,__emitter:c};function h(e){
+  return u.noHighlightRe.test(e)}function d(e,t,n,i){let s="",a=""
+  ;"object"==typeof t?(s=e,
+  n=t.ignoreIllegals,a=t.language,i=void 0):(z("10.7.0","highlight(lang, code, ...args) has been deprecated."),
+  z("10.7.0","Please use highlight(code, options) instead.\nhttps://github.com/highlightjs/highlight.js/issues/2277"),
+  a=e,s=t);const r={code:s,language:a};M("before:highlight",r)
+  ;const l=r.result?r.result:f(r.language,r.code,n,i)
+  ;return l.code=r.code,M("after:highlight",l),l}function f(e,t,s,l){
+  function c(e,t){const n=v.case_insensitive?t[0].toLowerCase():t[0]
+  ;return Object.prototype.hasOwnProperty.call(e.keywords,n)&&e.keywords[n]}
+  function g(){null!=R.subLanguage?(()=>{if(""===M)return;let e=null
+  ;if("string"==typeof R.subLanguage){
+  if(!n[R.subLanguage])return void k.addText(M)
+  ;e=f(R.subLanguage,M,!0,_[R.subLanguage]),_[R.subLanguage]=e.top
+  }else e=p(M,R.subLanguage.length?R.subLanguage:null)
+  ;R.relevance>0&&(O+=e.relevance),k.addSublanguage(e.emitter,e.language)
+  })():(()=>{if(!R.keywords)return void k.addText(M);let e=0
+  ;R.keywordPatternRe.lastIndex=0;let t=R.keywordPatternRe.exec(M),n="";for(;t;){
+  n+=M.substring(e,t.index);const i=c(R,t);if(i){const[e,s]=i
+  ;if(k.addText(n),n="",O+=s,e.startsWith("_"))n+=t[0];else{
+  const n=v.classNameAliases[e]||e;k.addKeyword(t[0],n)}}else n+=t[0]
+  ;e=R.keywordPatternRe.lastIndex,t=R.keywordPatternRe.exec(M)}
+  n+=M.substr(e),k.addText(n)})(),M=""}function h(e){
+  return e.className&&k.openNode(v.classNameAliases[e.className]||e.className),
+  R=Object.create(e,{parent:{value:R}}),R}function d(e,t,n){let s=((e,t)=>{
+  const n=e&&e.exec(t);return n&&0===n.index})(e.endRe,n);if(s){if(e["on:end"]){
+  const n=new i(e);e["on:end"](t,n),n.isMatchIgnored&&(s=!1)}if(s){
+  for(;e.endsParent&&e.parent;)e=e.parent;return e}}
+  if(e.endsWithParent)return d(e.parent,t,n)}function m(e){
+  return 0===R.matcher.regexIndex?(M+=e[0],1):(I=!0,0)}function b(e){
+  const n=e[0],i=t.substr(e.index),s=d(R,e,i);if(!s)return V;const a=R
+  ;a.skip?M+=n:(a.returnEnd||a.excludeEnd||(M+=n),g(),a.excludeEnd&&(M=n));do{
+  R.className&&k.closeNode(),R.skip||R.subLanguage||(O+=R.relevance),R=R.parent
+  }while(R!==s.parent)
+  ;return s.starts&&(s.endSameAsBegin&&(s.starts.endRe=s.endRe),
+  h(s.starts)),a.returnEnd?0:n.length}let E={};function x(n,a){const l=a&&a[0]
+  ;if(M+=n,null==l)return g(),0
+  ;if("begin"===E.type&&"end"===a.type&&E.index===a.index&&""===l){
+  if(M+=t.slice(a.index,a.index+1),!r){const t=Error("0 width match regex")
+  ;throw t.languageName=e,t.badRule=E.rule,t}return 1}
+  if(E=a,"begin"===a.type)return function(e){
+  const t=e[0],n=e.rule,s=new i(n),a=[n.__beforeBegin,n["on:begin"]]
+  ;for(const n of a)if(n&&(n(e,s),s.isMatchIgnored))return m(t)
+  ;return n&&n.endSameAsBegin&&(n.endRe=RegExp(t.replace(/[-/\\^$*+?.()|[\]{}]/g,"\\$&"),"m")),
+  n.skip?M+=t:(n.excludeBegin&&(M+=t),
+  g(),n.returnBegin||n.excludeBegin||(M=t)),h(n),n.returnBegin?0:t.length}(a)
+  ;if("illegal"===a.type&&!s){
+  const e=Error('Illegal lexeme "'+l+'" for mode "'+(R.className||"<unnamed>")+'"')
+  ;throw e.mode=R,e}if("end"===a.type){const e=b(a);if(e!==V)return e}
+  if("illegal"===a.type&&""===l)return 1
+  ;if(L>1e5&&L>3*a.index)throw Error("potential infinite loop, way more iterations than matches")
+  ;return M+=l,l.length}const v=N(e)
+  ;if(!v)throw $(o.replace("{}",e)),Error('Unknown language: "'+e+'"')
+  ;const w=T(v,{plugins:a});let y="",R=l||w;const _={},k=new u.__emitter(u);(()=>{
+  const e=[];for(let t=R;t!==v;t=t.parent)t.className&&e.unshift(t.className)
+  ;e.forEach((e=>k.openNode(e)))})();let M="",O=0,A=0,L=0,I=!1;try{
+  for(R.matcher.considerAll();;){
+  L++,I?I=!1:R.matcher.considerAll(),R.matcher.lastIndex=A
+  ;const e=R.matcher.exec(t);if(!e)break;const n=x(t.substring(A,e.index),e)
+  ;A=e.index+n}return x(t.substr(A)),k.closeAllNodes(),k.finalize(),y=k.toHTML(),{
+  relevance:Math.floor(O),value:y,language:e,illegal:!1,emitter:k,top:R}}catch(n){
+  if(n.message&&n.message.includes("Illegal"))return{illegal:!0,illegalBy:{
+  msg:n.message,context:t.slice(A-100,A+100),mode:n.mode},sofar:y,relevance:0,
+  value:K(t),emitter:k};if(r)return{illegal:!1,relevance:0,value:K(t),emitter:k,
+  language:e,top:R,errorRaised:n};throw n}}function p(e,t){
+  t=t||u.languages||Object.keys(n);const i=(e=>{const t={relevance:0,
+  emitter:new u.__emitter(u),value:K(e),illegal:!1,top:g}
+  ;return t.emitter.addText(e),t})(e),s=t.filter(N).filter(k).map((t=>f(t,e,!1)))
+  ;s.unshift(i);const a=s.sort(((e,t)=>{
+  if(e.relevance!==t.relevance)return t.relevance-e.relevance
+  ;if(e.language&&t.language){if(N(e.language).supersetOf===t.language)return 1
+  ;if(N(t.language).supersetOf===e.language)return-1}return 0})),[r,l]=a,o=r
+  ;return o.second_best=l,o}const m={"before:highlightElement":({el:e})=>{
+  u.useBR&&(e.innerHTML=e.innerHTML.replace(/\n/g,"").replace(/<br[ /]*>/g,"\n"))
+  },"after:highlightElement":({result:e})=>{
+  u.useBR&&(e.value=e.value.replace(/\n/g,"<br>"))}},b=/^(<[^>]+>|\t)+/gm,E={
+  "after:highlightElement":({result:e})=>{
+  u.tabReplace&&(e.value=e.value.replace(b,(e=>e.replace(/\t/g,u.tabReplace))))}}
+  ;function x(e){let t=null;const n=(e=>{let t=e.className+" "
+  ;t+=e.parentNode?e.parentNode.className:"";const n=u.languageDetectRe.exec(t)
+  ;if(n){const t=N(n[1])
+  ;return t||(U(o.replace("{}",n[1])),U("Falling back to no-highlight mode for this block.",e)),
+  t?n[1]:"no-highlight"}return t.split(/\s+/).find((e=>h(e)||N(e)))})(e)
+  ;if(h(n))return;M("before:highlightElement",{el:e,language:n}),t=e
+  ;const i=t.textContent,a=n?d(i,{language:n,ignoreIllegals:!0}):p(i)
+  ;M("after:highlightElement",{el:e,result:a,text:i
+  }),e.innerHTML=a.value,((e,t,n)=>{const i=t?s[t]:n
+  ;e.classList.add("hljs"),i&&e.classList.add(i)})(e,n,a.language),e.result={
+  language:a.language,re:a.relevance,relavance:a.relevance
+  },a.second_best&&(e.second_best={language:a.second_best.language,
+  re:a.second_best.relevance,relavance:a.second_best.relevance})}const v=()=>{
+  v.called||(v.called=!0,
+  z("10.6.0","initHighlighting() is deprecated.  Use highlightAll() instead."),
+  document.querySelectorAll("pre code").forEach(x))};let w=!1;function y(){
+  "loading"!==document.readyState?document.querySelectorAll("pre code").forEach(x):w=!0
+  }function N(e){return e=(e||"").toLowerCase(),n[e]||n[s[e]]}
+  function R(e,{languageName:t}){"string"==typeof e&&(e=[e]),e.forEach((e=>{
+  s[e.toLowerCase()]=t}))}function k(e){const t=N(e)
+  ;return t&&!t.disableAutodetect}function M(e,t){const n=e;a.forEach((e=>{
+  e[n]&&e[n](t)}))}
+  "undefined"!=typeof window&&window.addEventListener&&window.addEventListener("DOMContentLoaded",(()=>{
+  w&&y()}),!1),Object.assign(e,{highlight:d,highlightAuto:p,highlightAll:y,
+  fixMarkup:e=>{
+  return z("10.2.0","fixMarkup will be removed entirely in v11.0"),z("10.2.0","Please see https://github.com/highlightjs/highlight.js/issues/2534"),
+  t=e,
+  u.tabReplace||u.useBR?t.replace(l,(e=>"\n"===e?u.useBR?"<br>":e:u.tabReplace?e.replace(/\t/g,u.tabReplace):e)):t
+  ;var t},highlightElement:x,
+  highlightBlock:e=>(z("10.7.0","highlightBlock will be removed entirely in v12.0"),
+  z("10.7.0","Please use highlightElement now."),x(e)),configure:e=>{
+  e.useBR&&(z("10.3.0","'useBR' will be removed entirely in v11.0"),
+  z("10.3.0","Please see https://github.com/highlightjs/highlight.js/issues/2559")),
+  u=G(u,e)},initHighlighting:v,initHighlightingOnLoad:()=>{
+  z("10.6.0","initHighlightingOnLoad() is deprecated.  Use highlightAll() instead."),
+  w=!0},registerLanguage:(t,i)=>{let s=null;try{s=i(e)}catch(e){
+  if($("Language definition for '{}' could not be registered.".replace("{}",t)),
+  !r)throw e;$(e),s=g}
+  s.name||(s.name=t),n[t]=s,s.rawDefinition=i.bind(null,e),s.aliases&&R(s.aliases,{
+  languageName:t})},unregisterLanguage:e=>{delete n[e]
+  ;for(const t of Object.keys(s))s[t]===e&&delete s[t]},
+  listLanguages:()=>Object.keys(n),getLanguage:N,registerAliases:R,
+  requireLanguage:e=>{
+  z("10.4.0","requireLanguage will be removed entirely in v11."),
+  z("10.4.0","Please see https://github.com/highlightjs/highlight.js/pull/2844")
+  ;const t=N(e);if(t)return t
+  ;throw Error("The '{}' language is required, but not loaded.".replace("{}",e))},
+  autoDetection:k,inherit:G,addPlugin:e=>{(e=>{
+  e["before:highlightBlock"]&&!e["before:highlightElement"]&&(e["before:highlightElement"]=t=>{
+  e["before:highlightBlock"](Object.assign({block:t.el},t))
+  }),e["after:highlightBlock"]&&!e["after:highlightElement"]&&(e["after:highlightElement"]=t=>{
+  e["after:highlightBlock"](Object.assign({block:t.el},t))})})(e),a.push(e)},
+  vuePlugin:P(e).VuePlugin}),e.debugMode=()=>{r=!1},e.safeMode=()=>{r=!0
+  },e.versionString="10.7.1";for(const e in _)"object"==typeof _[e]&&t(_[e])
+  ;return Object.assign(e,_),e.addPlugin(m),e.addPlugin(D),e.addPlugin(E),e})({})
+  }();"object"==typeof exports&&"undefined"!=typeof module&&(module.exports=hljs);hljs.registerLanguage("bash",(()=>{"use strict";function e(...e){
+  return e.map((e=>{return(s=e)?"string"==typeof s?s:s.source:null;var s
+  })).join("")}return s=>{const n={},t={begin:/\$\{/,end:/\}/,contains:["self",{
+  begin:/:-/,contains:[n]}]};Object.assign(n,{className:"variable",variants:[{
+  begin:e(/\$[\w\d#@][\w\d_]*/,"(?![\\w\\d])(?![$])")},t]});const a={
+  className:"subst",begin:/\$\(/,end:/\)/,contains:[s.BACKSLASH_ESCAPE]},i={
+  begin:/<<-?\s*(?=\w+)/,starts:{contains:[s.END_SAME_AS_BEGIN({begin:/(\w+)/,
+  end:/(\w+)/,className:"string"})]}},c={className:"string",begin:/"/,end:/"/,
+  contains:[s.BACKSLASH_ESCAPE,n,a]};a.contains.push(c);const o={begin:/\$\(\(/,
+  end:/\)\)/,contains:[{begin:/\d+#[0-9a-f]+/,className:"number"},s.NUMBER_MODE,n]
+  },r=s.SHEBANG({binary:"(fish|bash|zsh|sh|csh|ksh|tcsh|dash|scsh)",relevance:10
+  }),l={className:"function",begin:/\w[\w\d_]*\s*\(\s*\)\s*\{/,returnBegin:!0,
+  contains:[s.inherit(s.TITLE_MODE,{begin:/\w[\w\d_]*/})],relevance:0};return{
+  name:"Bash",aliases:["sh","zsh"],keywords:{$pattern:/\b[a-z._-]+\b/,
+  keyword:"if then else elif fi for while in do done case esac function",
+  literal:"true false",
+  built_in:"break cd continue eval exec exit export getopts hash pwd readonly return shift test times trap umask unset alias bind builtin caller command declare echo enable help let local logout mapfile printf read readarray source type typeset ulimit unalias set shopt autoload bg bindkey bye cap chdir clone comparguments compcall compctl compdescribe compfiles compgroups compquote comptags comptry compvalues dirs disable disown echotc echoti emulate fc fg float functions getcap getln history integer jobs kill limit log noglob popd print pushd pushln rehash sched setcap setopt stat suspend ttyctl unfunction unhash unlimit unsetopt vared wait whence where which zcompile zformat zftp zle zmodload zparseopts zprof zpty zregexparse zsocket zstyle ztcp"
+  },contains:[r,s.SHEBANG(),l,o,s.HASH_COMMENT_MODE,i,c,{className:"",begin:/\\"/
+  },{className:"string",begin:/'/,end:/'/},n]}}})());hljs.registerLanguage("plaintext",(()=>{"use strict";return t=>({
+  name:"Plain text",aliases:["text","txt"],disableAutodetect:!0})})());hljs.registerLanguage("ini",(()=>{"use strict";function e(e){
+  return e?"string"==typeof e?e:e.source:null}function n(...n){
+  return n.map((n=>e(n))).join("")}return s=>{const a={className:"number",
+  relevance:0,variants:[{begin:/([+-]+)?[\d]+_[\d_]+/},{begin:s.NUMBER_RE}]
+  },i=s.COMMENT();i.variants=[{begin:/;/,end:/$/},{begin:/#/,end:/$/}];const t={
+  className:"variable",variants:[{begin:/\$[\w\d"][\w\d_]*/},{begin:/\$\{(.*?)\}/
+  }]},r={className:"literal",begin:/\bon|off|true|false|yes|no\b/},l={
+  className:"string",contains:[s.BACKSLASH_ESCAPE],variants:[{begin:"'''",
+  end:"'''",relevance:10},{begin:'"""',end:'"""',relevance:10},{begin:'"',end:'"'
+  },{begin:"'",end:"'"}]},c={begin:/\[/,end:/\]/,contains:[i,r,t,l,a,"self"],
+  relevance:0
+  },g="("+[/[A-Za-z0-9_-]+/,/"(\\"|[^"])*"/,/'[^']*'/].map((n=>e(n))).join("|")+")"
+  ;return{name:"TOML, also INI",aliases:["toml"],case_insensitive:!0,illegal:/\S/,
+  contains:[i,{className:"section",begin:/\[+/,end:/\]+/},{
+  begin:n(g,"(\\s*\\.\\s*",g,")*",n("(?=",/\s*=\s*[^#\s]/,")")),className:"attr",
+  starts:{end:/$/,contains:[i,c,r,t,l,a]}}]}}})());hljs.registerLanguage("julia",(()=>{"use strict";return e=>{
+  var r="[A-Za-z_\\u00A1-\\uFFFF][A-Za-z_0-9\\u00A1-\\uFFFF]*",t={$pattern:r,
+  keyword:["baremodule","begin","break","catch","ccall","const","continue","do","else","elseif","end","export","false","finally","for","function","global","if","import","in","isa","let","local","macro","module","quote","return","true","try","using","where","while"],
+  literal:["ARGS","C_NULL","DEPOT_PATH","ENDIAN_BOM","ENV","Inf","Inf16","Inf32","Inf64","InsertionSort","LOAD_PATH","MergeSort","NaN","NaN16","NaN32","NaN64","PROGRAM_FILE","QuickSort","RoundDown","RoundFromZero","RoundNearest","RoundNearestTiesAway","RoundNearestTiesUp","RoundToZero","RoundUp","VERSION|0","devnull","false","im","missing","nothing","pi","stderr","stdin","stdout","true","undef","\u03c0","\u212f"],
+  built_in:["AbstractArray","AbstractChannel","AbstractChar","AbstractDict","AbstractDisplay","AbstractFloat","AbstractIrrational","AbstractMatrix","AbstractRange","AbstractSet","AbstractString","AbstractUnitRange","AbstractVecOrMat","AbstractVector","Any","ArgumentError","Array","AssertionError","BigFloat","BigInt","BitArray","BitMatrix","BitSet","BitVector","Bool","BoundsError","CapturedException","CartesianIndex","CartesianIndices","Cchar","Cdouble","Cfloat","Channel","Char","Cint","Cintmax_t","Clong","Clonglong","Cmd","Colon","Complex","ComplexF16","ComplexF32","ComplexF64","CompositeException","Condition","Cptrdiff_t","Cshort","Csize_t","Cssize_t","Cstring","Cuchar","Cuint","Cuintmax_t","Culong","Culonglong","Cushort","Cvoid","Cwchar_t","Cwstring","DataType","DenseArray","DenseMatrix","DenseVecOrMat","DenseVector","Dict","DimensionMismatch","Dims","DivideError","DomainError","EOFError","Enum","ErrorException","Exception","ExponentialBackOff","Expr","Float16","Float32","Float64","Function","GlobalRef","HTML","IO","IOBuffer","IOContext","IOStream","IdDict","IndexCartesian","IndexLinear","IndexStyle","InexactError","InitError","Int","Int128","Int16","Int32","Int64","Int8","Integer","InterruptException","InvalidStateException","Irrational","KeyError","LinRange","LineNumberNode","LinearIndices","LoadError","MIME","Matrix","Method","MethodError","Missing","MissingException","Module","NTuple","NamedTuple","Nothing","Number","OrdinalRange","OutOfMemoryError","OverflowError","Pair","PartialQuickSort","PermutedDimsArray","Pipe","ProcessFailedException","Ptr","QuoteNode","Rational","RawFD","ReadOnlyMemoryError","Real","ReentrantLock","Ref","Regex","RegexMatch","RoundingMode","SegmentationFault","Set","Signed","Some","StackOverflowError","StepRange","StepRangeLen","StridedArray","StridedMatrix","StridedVecOrMat","StridedVector","String","StringIndexError","SubArray","SubString","SubstitutionString","Symbol","SystemError","Task","TaskFailedException","Text","TextDisplay","Timer","Tuple","Type","TypeError","TypeVar","UInt","UInt128","UInt16","UInt32","UInt64","UInt8","UndefInitializer","UndefKeywordError","UndefRefError","UndefVarError","Union","UnionAll","UnitRange","Unsigned","Val","Vararg","VecElement","VecOrMat","Vector","VersionNumber","WeakKeyDict","WeakRef"]
+  },n={keywords:t,illegal:/<\//},a={className:"subst",begin:/\$\(/,end:/\)/,
+  keywords:t},i={className:"variable",begin:"\\$"+r},o={className:"string",
+  contains:[e.BACKSLASH_ESCAPE,a,i],variants:[{begin:/\w*"""/,end:/"""\w*/,
+  relevance:10},{begin:/\w*"/,end:/"\w*/}]},s={className:"string",
+  contains:[e.BACKSLASH_ESCAPE,a,i],begin:"`",end:"`"},l={className:"meta",
+  begin:"@"+r};return n.name="Julia",n.contains=[{className:"number",
+  begin:/(\b0x[\d_]*(\.[\d_]*)?|0x\.\d[\d_]*)p[-+]?\d+|\b0[box][a-fA-F0-9][a-fA-F0-9_]*|(\b\d[\d_]*(\.[\d_]*)?|\.\d[\d_]*)([eEfF][-+]?\d+)?/,
+  relevance:0},{className:"string",begin:/'(.|\\[xXuU][a-zA-Z0-9]+)'/},o,s,l,{
+  className:"comment",variants:[{begin:"#=",end:"=#",relevance:10},{begin:"#",
+  end:"$"}]},e.HASH_COMMENT_MODE,{className:"keyword",
+  begin:"\\b(((abstract|primitive)\\s+)type|(mutable\\s+)?struct)\\b"},{begin:/<:/
+  }],a.contains=n.contains,n}})());hljs.registerLanguage("julia-repl",(()=>{"use strict";return a=>({
+  name:"Julia REPL",contains:[{className:"meta",begin:/^julia>/,relevance:10,starts:{end:/^(?![ ]{6})/,subLanguage:"julia"},aliases:["jldoctest"]},
+  {className:"metas",begin:/^shell>/,relevance:10,starts:{end:/^(?![ ]{6})/,subLanguage:"bash"}},
+  {className:"metap",begin:/^\(.*\)\spkg>/,relevance:10,starts:{end:/^(?![ ]{6})/,subLanguage:"julia"}}]})})());
+  hljs.registerLanguage("css",(()=>{"use strict"
+  ;const e=["a","abbr","address","article","aside","audio","b","blockquote","body","button","canvas","caption","cite","code","dd","del","details","dfn","div","dl","dt","em","fieldset","figcaption","figure","footer","form","h1","h2","h3","h4","h5","h6","header","hgroup","html","i","iframe","img","input","ins","kbd","label","legend","li","main","mark","menu","nav","object","ol","p","q","quote","samp","section","span","strong","summary","sup","table","tbody","td","textarea","tfoot","th","thead","time","tr","ul","var","video"],t=["any-hover","any-pointer","aspect-ratio","color","color-gamut","color-index","device-aspect-ratio","device-height","device-width","display-mode","forced-colors","grid","height","hover","inverted-colors","monochrome","orientation","overflow-block","overflow-inline","pointer","prefers-color-scheme","prefers-contrast","prefers-reduced-motion","prefers-reduced-transparency","resolution","scan","scripting","update","width","min-width","max-width","min-height","max-height"],i=["active","any-link","blank","checked","current","default","defined","dir","disabled","drop","empty","enabled","first","first-child","first-of-type","fullscreen","future","focus","focus-visible","focus-within","has","host","host-context","hover","indeterminate","in-range","invalid","is","lang","last-child","last-of-type","left","link","local-link","not","nth-child","nth-col","nth-last-child","nth-last-col","nth-last-of-type","nth-of-type","only-child","only-of-type","optional","out-of-range","past","placeholder-shown","read-only","read-write","required","right","root","scope","target","target-within","user-invalid","valid","visited","where"],o=["after","backdrop","before","cue","cue-region","first-letter","first-line","grammar-error","marker","part","placeholder","selection","slotted","spelling-error"],r=["align-content","align-items","align-self","animation","animation-delay","animation-direction","animation-duration","animation-fill-mode","animation-iteration-count","animation-name","animation-play-state","animation-timing-function","auto","backface-visibility","background","background-attachment","background-clip","background-color","background-image","background-origin","background-position","background-repeat","background-size","border","border-bottom","border-bottom-color","border-bottom-left-radius","border-bottom-right-radius","border-bottom-style","border-bottom-width","border-collapse","border-color","border-image","border-image-outset","border-image-repeat","border-image-slice","border-image-source","border-image-width","border-left","border-left-color","border-left-style","border-left-width","border-radius","border-right","border-right-color","border-right-style","border-right-width","border-spacing","border-style","border-top","border-top-color","border-top-left-radius","border-top-right-radius","border-top-style","border-top-width","border-width","bottom","box-decoration-break","box-shadow","box-sizing","break-after","break-before","break-inside","caption-side","clear","clip","clip-path","color","column-count","column-fill","column-gap","column-rule","column-rule-color","column-rule-style","column-rule-width","column-span","column-width","columns","content","counter-increment","counter-reset","cursor","direction","display","empty-cells","filter","flex","flex-basis","flex-direction","flex-flow","flex-grow","flex-shrink","flex-wrap","float","font","font-display","font-family","font-feature-settings","font-kerning","font-language-override","font-size","font-size-adjust","font-smoothing","font-stretch","font-style","font-variant","font-variant-ligatures","font-variation-settings","font-weight","height","hyphens","icon","image-orientation","image-rendering","image-resolution","ime-mode","inherit","initial","justify-content","left","letter-spacing","line-height","list-style","list-style-image","list-style-position","list-style-type","margin","margin-bottom","margin-left","margin-right","margin-top","marks","mask","max-height","max-width","min-height","min-width","nav-down","nav-index","nav-left","nav-right","nav-up","none","normal","object-fit","object-position","opacity","order","orphans","outline","outline-color","outline-offset","outline-style","outline-width","overflow","overflow-wrap","overflow-x","overflow-y","padding","padding-bottom","padding-left","padding-right","padding-top","page-break-after","page-break-before","page-break-inside","perspective","perspective-origin","pointer-events","position","quotes","resize","right","src","tab-size","table-layout","text-align","text-align-last","text-decoration","text-decoration-color","text-decoration-line","text-decoration-style","text-indent","text-overflow","text-rendering","text-shadow","text-transform","text-underline-position","top","transform","transform-origin","transform-style","transition","transition-delay","transition-duration","transition-property","transition-timing-function","unicode-bidi","vertical-align","visibility","white-space","widows","width","word-break","word-spacing","word-wrap","z-index"].reverse()
+  ;return n=>{const a=(e=>({IMPORTANT:{className:"meta",begin:"!important"},
+  HEXCOLOR:{className:"number",begin:"#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})"},
+  ATTRIBUTE_SELECTOR_MODE:{className:"selector-attr",begin:/\[/,end:/\]/,
+  illegal:"$",contains:[e.APOS_STRING_MODE,e.QUOTE_STRING_MODE]}
+  }))(n),l=[n.APOS_STRING_MODE,n.QUOTE_STRING_MODE];return{name:"CSS",
+  case_insensitive:!0,illegal:/[=|'\$]/,keywords:{keyframePosition:"from to"},
+  classNameAliases:{keyframePosition:"selector-tag"},
+  contains:[n.C_BLOCK_COMMENT_MODE,{begin:/-(webkit|moz|ms|o)-(?=[a-z])/
+  },n.CSS_NUMBER_MODE,{className:"selector-id",begin:/#[A-Za-z0-9_-]+/,relevance:0
+  },{className:"selector-class",begin:"\\.[a-zA-Z-][a-zA-Z0-9_-]*",relevance:0
+  },a.ATTRIBUTE_SELECTOR_MODE,{className:"selector-pseudo",variants:[{
+  begin:":("+i.join("|")+")"},{begin:"::("+o.join("|")+")"}]},{
+  className:"attribute",begin:"\\b("+r.join("|")+")\\b"},{begin:":",end:"[;}]",
+  contains:[a.HEXCOLOR,a.IMPORTANT,n.CSS_NUMBER_MODE,...l,{
+  begin:/(url|data-uri)\(/,end:/\)/,relevance:0,keywords:{built_in:"url data-uri"
+  },contains:[{className:"string",begin:/[^)]/,endsWithParent:!0,excludeEnd:!0}]
+  },{className:"built_in",begin:/[\w-]+(?=\()/}]},{
+  begin:(s=/@/,((...e)=>e.map((e=>(e=>e?"string"==typeof e?e:e.source:null)(e))).join(""))("(?=",s,")")),
+  end:"[{;]",relevance:0,illegal:/:/,contains:[{className:"keyword",
+  begin:/@-?\w[\w]*(-\w+)*/},{begin:/\s/,endsWithParent:!0,excludeEnd:!0,
+  relevance:0,keywords:{$pattern:/[a-z-]+/,keyword:"and or not only",
+  attribute:t.join(" ")},contains:[{begin:/[a-z-]+(?=:)/,className:"attribute"
+  },...l,n.CSS_NUMBER_MODE]}]},{className:"selector-tag",
+  begin:"\\b("+e.join("|")+")\\b"}]};var s}})());hljs.registerLanguage("cpp",(()=>{"use strict";function e(e){
+  return t("(",e,")?")}function t(...e){return e.map((e=>{
+  return(t=e)?"string"==typeof t?t:t.source:null;var t})).join("")}return n=>{
+  const r=n.COMMENT("//","$",{contains:[{begin:/\\\n/}]
+  }),a="[a-zA-Z_]\\w*::",i="(decltype\\(auto\\)|"+e(a)+"[a-zA-Z_]\\w*"+e("<[^<>]+>")+")",s={
+  className:"keyword",begin:"\\b[a-z\\d_]*_t\\b"},c={className:"string",
+  variants:[{begin:'(u8?|U|L)?"',end:'"',illegal:"\\n",
+  contains:[n.BACKSLASH_ESCAPE]},{
+  begin:"(u8?|U|L)?'(\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4,8}|[0-7]{3}|\\S)|.)",
+  end:"'",illegal:"."},n.END_SAME_AS_BEGIN({
+  begin:/(?:u8?|U|L)?R"([^()\\ ]{0,16})\(/,end:/\)([^()\\ ]{0,16})"/})]},o={
+  className:"number",variants:[{begin:"\\b(0b[01']+)"},{
+  begin:"(-?)\\b([\\d']+(\\.[\\d']*)?|\\.[\\d']+)((ll|LL|l|L)(u|U)?|(u|U)(ll|LL|l|L)?|f|F|b|B)"
+  },{
+  begin:"(-?)(\\b0[xX][a-fA-F0-9']+|(\\b[\\d']+(\\.[\\d']*)?|\\.[\\d']+)([eE][-+]?[\\d']+)?)"
+  }],relevance:0},l={className:"meta",begin:/#\s*[a-z]+\b/,end:/$/,keywords:{
+  "meta-keyword":"if else elif endif define undef warning error line pragma _Pragma ifdef ifndef include"
+  },contains:[{begin:/\\\n/,relevance:0},n.inherit(c,{className:"meta-string"}),{
+  className:"meta-string",begin:/<.*?>/},r,n.C_BLOCK_COMMENT_MODE]},d={
+  className:"title",begin:e(a)+n.IDENT_RE,relevance:0
+  },u=e(a)+n.IDENT_RE+"\\s*\\(",m={
+  keyword:"int float while private char char8_t char16_t char32_t catch import module export virtual operator sizeof dynamic_cast|10 typedef const_cast|10 const for static_cast|10 union namespace unsigned long volatile static protected bool template mutable if public friend do goto auto void enum else break extern using asm case typeid wchar_t short reinterpret_cast|10 default double register explicit signed typename try this switch continue inline delete alignas alignof constexpr consteval constinit decltype concept co_await co_return co_yield requires noexcept static_assert thread_local restrict final override atomic_bool atomic_char atomic_schar atomic_uchar atomic_short atomic_ushort atomic_int atomic_uint atomic_long atomic_ulong atomic_llong atomic_ullong new throw return and and_eq bitand bitor compl not not_eq or or_eq xor xor_eq",
+  built_in:"_Bool _Complex _Imaginary",
+  _relevance_hints:["asin","atan2","atan","calloc","ceil","cosh","cos","exit","exp","fabs","floor","fmod","fprintf","fputs","free","frexp","auto_ptr","deque","list","queue","stack","vector","map","set","pair","bitset","multiset","multimap","unordered_set","fscanf","future","isalnum","isalpha","iscntrl","isdigit","isgraph","islower","isprint","ispunct","isspace","isupper","isxdigit","tolower","toupper","labs","ldexp","log10","log","malloc","realloc","memchr","memcmp","memcpy","memset","modf","pow","printf","putchar","puts","scanf","sinh","sin","snprintf","sprintf","sqrt","sscanf","strcat","strchr","strcmp","strcpy","strcspn","strlen","strncat","strncmp","strncpy","strpbrk","strrchr","strspn","strstr","tanh","tan","unordered_map","unordered_multiset","unordered_multimap","priority_queue","make_pair","array","shared_ptr","abort","terminate","abs","acos","vfprintf","vprintf","vsprintf","endl","initializer_list","unique_ptr","complex","imaginary","std","string","wstring","cin","cout","cerr","clog","stdin","stdout","stderr","stringstream","istringstream","ostringstream"],
+  literal:"true false nullptr NULL"},p={className:"function.dispatch",relevance:0,
+  keywords:m,
+  begin:t(/\b/,/(?!decltype)/,/(?!if)/,/(?!for)/,/(?!while)/,n.IDENT_RE,(_=/\s*\(/,
+  t("(?=",_,")")))};var _;const g=[p,l,s,r,n.C_BLOCK_COMMENT_MODE,o,c],b={
+  variants:[{begin:/=/,end:/;/},{begin:/\(/,end:/\)/},{
+  beginKeywords:"new throw return else",end:/;/}],keywords:m,contains:g.concat([{
+  begin:/\(/,end:/\)/,keywords:m,contains:g.concat(["self"]),relevance:0}]),
+  relevance:0},f={className:"function",begin:"("+i+"[\\*&\\s]+)+"+u,
+  returnBegin:!0,end:/[{;=]/,excludeEnd:!0,keywords:m,illegal:/[^\w\s\*&:<>.]/,
+  contains:[{begin:"decltype\\(auto\\)",keywords:m,relevance:0},{begin:u,
+  returnBegin:!0,contains:[d],relevance:0},{begin:/::/,relevance:0},{begin:/:/,
+  endsWithParent:!0,contains:[c,o]},{className:"params",begin:/\(/,end:/\)/,
+  keywords:m,relevance:0,contains:[r,n.C_BLOCK_COMMENT_MODE,c,o,s,{begin:/\(/,
+  end:/\)/,keywords:m,relevance:0,contains:["self",r,n.C_BLOCK_COMMENT_MODE,c,o,s]
+  }]},s,r,n.C_BLOCK_COMMENT_MODE,l]};return{name:"C++",
+  aliases:["cc","c++","h++","hpp","hh","hxx","cxx"],keywords:m,illegal:"</",
+  classNameAliases:{"function.dispatch":"built_in"},
+  contains:[].concat(b,f,p,g,[l,{
+  begin:"\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",
+  end:">",keywords:m,contains:["self",s]},{begin:n.IDENT_RE+"::",keywords:m},{
+  className:"class",beginKeywords:"enum class struct union",end:/[{;:<>=]/,
+  contains:[{beginKeywords:"final class struct"},n.TITLE_MODE]}]),exports:{
+  preprocessor:l,strings:c,keywords:m}}}})());hljs.registerLanguage("xml",(()=>{"use strict";function e(e){
+  return e?"string"==typeof e?e:e.source:null}function n(e){return a("(?=",e,")")}
+  function a(...n){return n.map((n=>e(n))).join("")}function s(...n){
+  return"("+n.map((n=>e(n))).join("|")+")"}return e=>{
+  const t=a(/[A-Z_]/,a("(",/[A-Z0-9_.-]*:/,")?"),/[A-Z0-9_.-]*/),i={
+  className:"symbol",begin:/&[a-z]+;|&#[0-9]+;|&#x[a-f0-9]+;/},r={begin:/\s/,
+  contains:[{className:"meta-keyword",begin:/#?[a-z_][a-z1-9_-]+/,illegal:/\n/}]
+  },c=e.inherit(r,{begin:/\(/,end:/\)/}),l=e.inherit(e.APOS_STRING_MODE,{
+  className:"meta-string"}),g=e.inherit(e.QUOTE_STRING_MODE,{
+  className:"meta-string"}),m={endsWithParent:!0,illegal:/</,relevance:0,
+  contains:[{className:"attr",begin:/[A-Za-z0-9._:-]+/,relevance:0},{begin:/=\s*/,
+  relevance:0,contains:[{className:"string",endsParent:!0,variants:[{begin:/"/,
+  end:/"/,contains:[i]},{begin:/'/,end:/'/,contains:[i]},{begin:/[^\s"'=<>`]+/}]}]
+  }]};return{name:"HTML, XML",
+  aliases:["html","xhtml","rss","atom","xjb","xsd","xsl","plist","wsf","svg"],
+  case_insensitive:!0,contains:[{className:"meta",begin:/<![a-z]/,end:/>/,
+  relevance:10,contains:[r,g,l,c,{begin:/\[/,end:/\]/,contains:[{className:"meta",
+  begin:/<![a-z]/,end:/>/,contains:[r,c,g,l]}]}]},e.COMMENT(/<!--/,/-->/,{
+  relevance:10}),{begin:/<!\[CDATA\[/,end:/\]\]>/,relevance:10},i,{
+  className:"meta",begin:/<\?xml/,end:/\?>/,relevance:10},{className:"tag",
+  begin:/<style(?=\s|>)/,end:/>/,keywords:{name:"style"},contains:[m],starts:{
+  end:/<\/style>/,returnEnd:!0,subLanguage:["css","xml"]}},{className:"tag",
+  begin:/<script(?=\s|>)/,end:/>/,keywords:{name:"script"},contains:[m],starts:{
+  end:/<\/script>/,returnEnd:!0,subLanguage:["javascript","handlebars","xml"]}},{
+  className:"tag",begin:/<>|<\/>/},{className:"tag",
+  begin:a(/</,n(a(t,s(/\/>/,/>/,/\s/)))),end:/\/?>/,contains:[{className:"name",
+  begin:t,relevance:0,starts:m}]},{className:"tag",begin:a(/<\//,n(a(t,/>/))),
+  contains:[{className:"name",begin:t,relevance:0},{begin:/>/,relevance:0,
+  endsParent:!0}]}]}}})());hljs.registerLanguage("r",(()=>{"use strict";function e(...e){return e.map((e=>{
+  return(a=e)?"string"==typeof a?a:a.source:null;var a})).join("")}return a=>{
+  const n=/(?:(?:[a-zA-Z]|\.[._a-zA-Z])[._a-zA-Z0-9]*)|\.(?!\d)/;return{name:"R",
+  illegal:/->/,keywords:{$pattern:n,
+  keyword:"function if in break next repeat else for while",
+  literal:"NULL NA TRUE FALSE Inf NaN NA_integer_|10 NA_real_|10 NA_character_|10 NA_complex_|10",
+  built_in:"LETTERS letters month.abb month.name pi T F abs acos acosh all any anyNA Arg as.call as.character as.complex as.double as.environment as.integer as.logical as.null.default as.numeric as.raw asin asinh atan atanh attr attributes baseenv browser c call ceiling class Conj cos cosh cospi cummax cummin cumprod cumsum digamma dim dimnames emptyenv exp expression floor forceAndCall gamma gc.time globalenv Im interactive invisible is.array is.atomic is.call is.character is.complex is.double is.environment is.expression is.finite is.function is.infinite is.integer is.language is.list is.logical is.matrix is.na is.name is.nan is.null is.numeric is.object is.pairlist is.raw is.recursive is.single is.symbol lazyLoadDBfetch length lgamma list log max min missing Mod names nargs nzchar oldClass on.exit pos.to.env proc.time prod quote range Re rep retracemem return round seq_along seq_len seq.int sign signif sin sinh sinpi sqrt standardGeneric substitute sum switch tan tanh tanpi tracemem trigamma trunc unclass untracemem UseMethod xtfrm"
+  },compilerExtensions:[(a,n)=>{if(!a.beforeMatch)return
+  ;if(a.starts)throw Error("beforeMatch cannot be used with starts")
+  ;const i=Object.assign({},a);Object.keys(a).forEach((e=>{delete a[e]
+  })),a.begin=e(i.beforeMatch,e("(?=",i.begin,")")),a.starts={relevance:0,
+  contains:[Object.assign(i,{endsParent:!0})]},a.relevance=0,delete i.beforeMatch
+  }],contains:[a.COMMENT(/#'/,/$/,{contains:[{className:"doctag",
+  begin:"@examples",starts:{contains:[{begin:/\n/},{begin:/#'\s*(?=@[a-zA-Z]+)/,
+  endsParent:!0},{begin:/#'/,end:/$/,excludeBegin:!0}]}},{className:"doctag",
+  begin:"@param",end:/$/,contains:[{className:"variable",variants:[{begin:n},{
+  begin:/`(?:\\.|[^`\\])+`/}],endsParent:!0}]},{className:"doctag",
+  begin:/@[a-zA-Z]+/},{className:"meta-keyword",begin:/\\[a-zA-Z]+/}]
+  }),a.HASH_COMMENT_MODE,{className:"string",contains:[a.BACKSLASH_ESCAPE],
+  variants:[a.END_SAME_AS_BEGIN({begin:/[rR]"(-*)\(/,end:/\)(-*)"/
+  }),a.END_SAME_AS_BEGIN({begin:/[rR]"(-*)\{/,end:/\}(-*)"/
+  }),a.END_SAME_AS_BEGIN({begin:/[rR]"(-*)\[/,end:/\](-*)"/
+  }),a.END_SAME_AS_BEGIN({begin:/[rR]'(-*)\(/,end:/\)(-*)'/
+  }),a.END_SAME_AS_BEGIN({begin:/[rR]'(-*)\{/,end:/\}(-*)'/
+  }),a.END_SAME_AS_BEGIN({begin:/[rR]'(-*)\[/,end:/\](-*)'/}),{begin:'"',end:'"',
+  relevance:0},{begin:"'",end:"'",relevance:0}]},{className:"number",relevance:0,
+  beforeMatch:/([^a-zA-Z0-9._])/,variants:[{
+  match:/0[xX][0-9a-fA-F]+\.[0-9a-fA-F]*[pP][+-]?\d+i?/},{
+  match:/0[xX][0-9a-fA-F]+([pP][+-]?\d+)?[Li]?/},{
+  match:/(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?[Li]?/}]},{begin:"%",end:"%"},{
+  begin:e(/[a-zA-Z][a-zA-Z_0-9]*/,"\\s+<-\\s+")},{begin:"`",end:"`",contains:[{
+  begin:/\\./}]}]}}})());hljs.registerLanguage("ruby",(()=>{"use strict";function e(...e){
+  return e.map((e=>{return(n=e)?"string"==typeof n?n:n.source:null;var n
+  })).join("")}return n=>{
+  const a="([a-zA-Z_]\\w*[!?=]?|[-+~]@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?)",i={
+  keyword:"and then defined module in return redo if BEGIN retry end for self when next until do begin unless END rescue else break undef not super class case require yield alias while ensure elsif or include attr_reader attr_writer attr_accessor __FILE__",
+  built_in:"proc lambda",literal:"true false nil"},s={className:"doctag",
+  begin:"@[A-Za-z]+"},r={begin:"#<",end:">"},b=[n.COMMENT("#","$",{contains:[s]
+  }),n.COMMENT("^=begin","^=end",{contains:[s],relevance:10
+  }),n.COMMENT("^__END__","\\n$")],c={className:"subst",begin:/#\{/,end:/\}/,
+  keywords:i},t={className:"string",contains:[n.BACKSLASH_ESCAPE,c],variants:[{
+  begin:/'/,end:/'/},{begin:/"/,end:/"/},{begin:/`/,end:/`/},{begin:/%[qQwWx]?\(/,
+  end:/\)/},{begin:/%[qQwWx]?\[/,end:/\]/},{begin:/%[qQwWx]?\{/,end:/\}/},{
+  begin:/%[qQwWx]?</,end:/>/},{begin:/%[qQwWx]?\//,end:/\//},{begin:/%[qQwWx]?%/,
+  end:/%/},{begin:/%[qQwWx]?-/,end:/-/},{begin:/%[qQwWx]?\|/,end:/\|/},{
+  begin:/\B\?(\\\d{1,3})/},{begin:/\B\?(\\x[A-Fa-f0-9]{1,2})/},{
+  begin:/\B\?(\\u\{?[A-Fa-f0-9]{1,6}\}?)/},{
+  begin:/\B\?(\\M-\\C-|\\M-\\c|\\c\\M-|\\M-|\\C-\\M-)[\x20-\x7e]/},{
+  begin:/\B\?\\(c|C-)[\x20-\x7e]/},{begin:/\B\?\\?\S/},{
+  begin:/<<[-~]?'?(\w+)\n(?:[^\n]*\n)*?\s*\1\b/,returnBegin:!0,contains:[{
+  begin:/<<[-~]?'?/},n.END_SAME_AS_BEGIN({begin:/(\w+)/,end:/(\w+)/,
+  contains:[n.BACKSLASH_ESCAPE,c]})]}]},g="[0-9](_?[0-9])*",d={className:"number",
+  relevance:0,variants:[{
+  begin:`\\b([1-9](_?[0-9])*|0)(\\.(${g}))?([eE][+-]?(${g})|r)?i?\\b`},{
+  begin:"\\b0[dD][0-9](_?[0-9])*r?i?\\b"},{begin:"\\b0[bB][0-1](_?[0-1])*r?i?\\b"
+  },{begin:"\\b0[oO][0-7](_?[0-7])*r?i?\\b"},{
+  begin:"\\b0[xX][0-9a-fA-F](_?[0-9a-fA-F])*r?i?\\b"},{
+  begin:"\\b0(_?[0-7])+r?i?\\b"}]},l={className:"params",begin:"\\(",end:"\\)",
+  endsParent:!0,keywords:i},o=[t,{className:"class",beginKeywords:"class module",
+  end:"$|;",illegal:/=/,contains:[n.inherit(n.TITLE_MODE,{
+  begin:"[A-Za-z_]\\w*(::\\w+)*(\\?|!)?"}),{begin:"<\\s*",contains:[{
+  begin:"("+n.IDENT_RE+"::)?"+n.IDENT_RE,relevance:0}]}].concat(b)},{
+  className:"function",begin:e(/def\s+/,(_=a+"\\s*(\\(|;|$)",e("(?=",_,")"))),
+  relevance:0,keywords:"def",end:"$|;",contains:[n.inherit(n.TITLE_MODE,{begin:a
+  }),l].concat(b)},{begin:n.IDENT_RE+"::"},{className:"symbol",
+  begin:n.UNDERSCORE_IDENT_RE+"(!|\\?)?:",relevance:0},{className:"symbol",
+  begin:":(?!\\s)",contains:[t,{begin:a}],relevance:0},d,{className:"variable",
+  begin:"(\\$\\W)|((\\$|@@?)(\\w+))(?=[^@$?])(?![A-Za-z])(?![@$?'])"},{
+  className:"params",begin:/\|/,end:/\|/,relevance:0,keywords:i},{
+  begin:"("+n.RE_STARTERS_RE+"|unless)\\s*",keywords:"unless",contains:[{
+  className:"regexp",contains:[n.BACKSLASH_ESCAPE,c],illegal:/\n/,variants:[{
+  begin:"/",end:"/[a-z]*"},{begin:/%r\{/,end:/\}[a-z]*/},{begin:"%r\\(",
+  end:"\\)[a-z]*"},{begin:"%r!",end:"![a-z]*"},{begin:"%r\\[",end:"\\][a-z]*"}]
+  }].concat(r,b),relevance:0}].concat(r,b);var _;c.contains=o,l.contains=o
+  ;const E=[{begin:/^\s*=>/,starts:{end:"$",contains:o}},{className:"meta",
+  begin:"^([>?]>|[\\w#]+\\(\\w+\\):\\d+:\\d+>|(\\w+-)?\\d+\\.\\d+\\.\\d+(p\\d+)?[^\\d][^>]+>)(?=[ ])",
+  starts:{end:"$",contains:o}}];return b.unshift(r),{name:"Ruby",
+  aliases:["rb","gemspec","podspec","thor","irb"],keywords:i,illegal:/\/\*/,
+  contains:[n.SHEBANG({binary:"ruby"})].concat(E).concat(b).concat(o)}}})());hljs.registerLanguage("yaml",(()=>{"use strict";return e=>{
+  var n="true false yes no null",a="[\\w#;/?:@&=+$,.~*'()[\\]]+",s={
+  className:"string",relevance:0,variants:[{begin:/'/,end:/'/},{begin:/"/,end:/"/
+  },{begin:/\S+/}],contains:[e.BACKSLASH_ESCAPE,{className:"template-variable",
+  variants:[{begin:/\{\{/,end:/\}\}/},{begin:/%\{/,end:/\}/}]}]},i=e.inherit(s,{
+  variants:[{begin:/'/,end:/'/},{begin:/"/,end:/"/},{begin:/[^\s,{}[\]]+/}]}),l={
+  end:",",endsWithParent:!0,excludeEnd:!0,keywords:n,relevance:0},t={begin:/\{/,
+  end:/\}/,contains:[l],illegal:"\\n",relevance:0},g={begin:"\\[",end:"\\]",
+  contains:[l],illegal:"\\n",relevance:0},b=[{className:"attr",variants:[{
+  begin:"\\w[\\w :\\/.-]*:(?=[ \t]|$)"},{begin:'"\\w[\\w :\\/.-]*":(?=[ \t]|$)'},{
+  begin:"'\\w[\\w :\\/.-]*':(?=[ \t]|$)"}]},{className:"meta",begin:"^---\\s*$",
+  relevance:10},{className:"string",
+  begin:"[\\|>]([1-9]?[+-])?[ ]*\\n( +)[^ ][^\\n]*\\n(\\2[^\\n]+\\n?)*"},{
+  begin:"<%[%=-]?",end:"[%-]?%>",subLanguage:"ruby",excludeBegin:!0,excludeEnd:!0,
+  relevance:0},{className:"type",begin:"!\\w+!"+a},{className:"type",
+  begin:"!<"+a+">"},{className:"type",begin:"!"+a},{className:"type",begin:"!!"+a
+  },{className:"meta",begin:"&"+e.UNDERSCORE_IDENT_RE+"$"},{className:"meta",
+  begin:"\\*"+e.UNDERSCORE_IDENT_RE+"$"},{className:"bullet",begin:"-(?=[ ]|$)",
+  relevance:0},e.HASH_COMMENT_MODE,{beginKeywords:n,keywords:{literal:n}},{
+  className:"number",
+  begin:"\\b[0-9]{4}(-[0-9][0-9]){0,2}([Tt \\t][0-9][0-9]?(:[0-9][0-9]){2})?(\\.[0-9]*)?([ \\t])*(Z|[-+][0-9][0-9]?(:[0-9][0-9])?)?\\b"
+  },{className:"number",begin:e.C_NUMBER_RE+"\\b",relevance:0},t,g,s],r=[...b]
+  ;return r.pop(),r.push(i),l.contains=r,{name:"YAML",case_insensitive:!0,
+  aliases:["yml"],contains:b}}})());hljs.registerLanguage("python",(()=>{"use strict";return e=>{const n={
+  $pattern:/[A-Za-z]\w+|__\w+__/,
+  keyword:["and","as","assert","async","await","break","class","continue","def","del","elif","else","except","finally","for","from","global","if","import","in","is","lambda","nonlocal|10","not","or","pass","raise","return","try","while","with","yield"],
+  built_in:["__import__","abs","all","any","ascii","bin","bool","breakpoint","bytearray","bytes","callable","chr","classmethod","compile","complex","delattr","dict","dir","divmod","enumerate","eval","exec","filter","float","format","frozenset","getattr","globals","hasattr","hash","help","hex","id","input","int","isinstance","issubclass","iter","len","list","locals","map","max","memoryview","min","next","object","oct","open","ord","pow","print","property","range","repr","reversed","round","set","setattr","slice","sorted","staticmethod","str","sum","super","tuple","type","vars","zip"],
+  literal:["__debug__","Ellipsis","False","None","NotImplemented","True"],
+  type:["Any","Callable","Coroutine","Dict","List","Literal","Generic","Optional","Sequence","Set","Tuple","Type","Union"]
+  },a={className:"meta",begin:/^(>>>|\.\.\.) /},i={className:"subst",begin:/\{/,
+  end:/\}/,keywords:n,illegal:/#/},s={begin:/\{\{/,relevance:0},t={
+  className:"string",contains:[e.BACKSLASH_ESCAPE],variants:[{
+  begin:/([uU]|[bB]|[rR]|[bB][rR]|[rR][bB])?'''/,end:/'''/,
+  contains:[e.BACKSLASH_ESCAPE,a],relevance:10},{
+  begin:/([uU]|[bB]|[rR]|[bB][rR]|[rR][bB])?"""/,end:/"""/,
+  contains:[e.BACKSLASH_ESCAPE,a],relevance:10},{
+  begin:/([fF][rR]|[rR][fF]|[fF])'''/,end:/'''/,
+  contains:[e.BACKSLASH_ESCAPE,a,s,i]},{begin:/([fF][rR]|[rR][fF]|[fF])"""/,
+  end:/"""/,contains:[e.BACKSLASH_ESCAPE,a,s,i]},{begin:/([uU]|[rR])'/,end:/'/,
+  relevance:10},{begin:/([uU]|[rR])"/,end:/"/,relevance:10},{
+  begin:/([bB]|[bB][rR]|[rR][bB])'/,end:/'/},{begin:/([bB]|[bB][rR]|[rR][bB])"/,
+  end:/"/},{begin:/([fF][rR]|[rR][fF]|[fF])'/,end:/'/,
+  contains:[e.BACKSLASH_ESCAPE,s,i]},{begin:/([fF][rR]|[rR][fF]|[fF])"/,end:/"/,
+  contains:[e.BACKSLASH_ESCAPE,s,i]},e.APOS_STRING_MODE,e.QUOTE_STRING_MODE]
+  },r="[0-9](_?[0-9])*",l=`(\\b(${r}))?\\.(${r})|\\b(${r})\\.`,b={
+  className:"number",relevance:0,variants:[{
+  begin:`(\\b(${r})|(${l}))[eE][+-]?(${r})[jJ]?\\b`},{begin:`(${l})[jJ]?`},{
+  begin:"\\b([1-9](_?[0-9])*|0+(_?0)*)[lLjJ]?\\b"},{
+  begin:"\\b0[bB](_?[01])+[lL]?\\b"},{begin:"\\b0[oO](_?[0-7])+[lL]?\\b"},{
+  begin:"\\b0[xX](_?[0-9a-fA-F])+[lL]?\\b"},{begin:`\\b(${r})[jJ]\\b`}]},o={
+  className:"comment",
+  begin:(d=/# type:/,((...e)=>e.map((e=>(e=>e?"string"==typeof e?e:e.source:null)(e))).join(""))("(?=",d,")")),
+  end:/$/,keywords:n,contains:[{begin:/# type:/},{begin:/#/,end:/\b\B/,
+  endsWithParent:!0}]},c={className:"params",variants:[{className:"",
+  begin:/\(\s*\)/,skip:!0},{begin:/\(/,end:/\)/,excludeBegin:!0,excludeEnd:!0,
+  keywords:n,contains:["self",a,b,t,e.HASH_COMMENT_MODE]}]};var d
+  ;return i.contains=[t,b,a],{name:"Python",aliases:["py","gyp","ipython"],
+  keywords:n,illegal:/(<\/|->|\?)|=>/,contains:[a,b,{begin:/\bself\b/},{
+  beginKeywords:"if",relevance:0},t,o,e.HASH_COMMENT_MODE,{variants:[{
+  className:"function",beginKeywords:"def"},{className:"class",
+  beginKeywords:"class"}],end:/:/,illegal:/[${=;\n,]/,
+  contains:[e.UNDERSCORE_TITLE_MODE,c,{begin:/->/,endsWithParent:!0,keywords:n}]
+  },{className:"meta",begin:/^[\t ]*@/,end:/(?=#)|$/,contains:[b,c,t]}]}}})());hljs.registerLanguage("c",(()=>{"use strict";function e(e){
+  return((...e)=>e.map((e=>(e=>e?"string"==typeof e?e:e.source:null)(e))).join(""))("(",e,")?")
+  }return t=>{const n=t.COMMENT("//","$",{contains:[{begin:/\\\n/}]
+  }),r="[a-zA-Z_]\\w*::",a="(decltype\\(auto\\)|"+e(r)+"[a-zA-Z_]\\w*"+e("<[^<>]+>")+")",i={
+  className:"keyword",begin:"\\b[a-z\\d_]*_t\\b"},s={className:"string",
+  variants:[{begin:'(u8?|U|L)?"',end:'"',illegal:"\\n",
+  contains:[t.BACKSLASH_ESCAPE]},{
+  begin:"(u8?|U|L)?'(\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4,8}|[0-7]{3}|\\S)|.)",
+  end:"'",illegal:"."},t.END_SAME_AS_BEGIN({
+  begin:/(?:u8?|U|L)?R"([^()\\ ]{0,16})\(/,end:/\)([^()\\ ]{0,16})"/})]},o={
+  className:"number",variants:[{begin:"\\b(0b[01']+)"},{
+  begin:"(-?)\\b([\\d']+(\\.[\\d']*)?|\\.[\\d']+)((ll|LL|l|L)(u|U)?|(u|U)(ll|LL|l|L)?|f|F|b|B)"
+  },{
+  begin:"(-?)(\\b0[xX][a-fA-F0-9']+|(\\b[\\d']+(\\.[\\d']*)?|\\.[\\d']+)([eE][-+]?[\\d']+)?)"
+  }],relevance:0},c={className:"meta",begin:/#\s*[a-z]+\b/,end:/$/,keywords:{
+  "meta-keyword":"if else elif endif define undef warning error line pragma _Pragma ifdef ifndef include"
+  },contains:[{begin:/\\\n/,relevance:0},t.inherit(s,{className:"meta-string"}),{
+  className:"meta-string",begin:/<.*?>/},n,t.C_BLOCK_COMMENT_MODE]},l={
+  className:"title",begin:e(r)+t.IDENT_RE,relevance:0
+  },d=e(r)+t.IDENT_RE+"\\s*\\(",u={
+  keyword:"int float while private char char8_t char16_t char32_t catch import module export virtual operator sizeof dynamic_cast|10 typedef const_cast|10 const for static_cast|10 union namespace unsigned long volatile static protected bool template mutable if public friend do goto auto void enum else break extern using asm case typeid wchar_t short reinterpret_cast|10 default double register explicit signed typename try this switch continue inline delete alignas alignof constexpr consteval constinit decltype concept co_await co_return co_yield requires noexcept static_assert thread_local restrict final override atomic_bool atomic_char atomic_schar atomic_uchar atomic_short atomic_ushort atomic_int atomic_uint atomic_long atomic_ulong atomic_llong atomic_ullong new throw return and and_eq bitand bitor compl not not_eq or or_eq xor xor_eq",
+  built_in:"std string wstring cin cout cerr clog stdin stdout stderr stringstream istringstream ostringstream auto_ptr deque list queue stack vector map set pair bitset multiset multimap unordered_set unordered_map unordered_multiset unordered_multimap priority_queue make_pair array shared_ptr abort terminate abs acos asin atan2 atan calloc ceil cosh cos exit exp fabs floor fmod fprintf fputs free frexp fscanf future isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit tolower toupper labs ldexp log10 log malloc realloc memchr memcmp memcpy memset modf pow printf putchar puts scanf sinh sin snprintf sprintf sqrt sscanf strcat strchr strcmp strcpy strcspn strlen strncat strncmp strncpy strpbrk strrchr strspn strstr tanh tan vfprintf vprintf vsprintf endl initializer_list unique_ptr _Bool complex _Complex imaginary _Imaginary",
+  literal:"true false nullptr NULL"},m=[c,i,n,t.C_BLOCK_COMMENT_MODE,o,s],p={
+  variants:[{begin:/=/,end:/;/},{begin:/\(/,end:/\)/},{
+  beginKeywords:"new throw return else",end:/;/}],keywords:u,contains:m.concat([{
+  begin:/\(/,end:/\)/,keywords:u,contains:m.concat(["self"]),relevance:0}]),
+  relevance:0},_={className:"function",begin:"("+a+"[\\*&\\s]+)+"+d,
+  returnBegin:!0,end:/[{;=]/,excludeEnd:!0,keywords:u,illegal:/[^\w\s\*&:<>.]/,
+  contains:[{begin:"decltype\\(auto\\)",keywords:u,relevance:0},{begin:d,
+  returnBegin:!0,contains:[l],relevance:0},{className:"params",begin:/\(/,
+  end:/\)/,keywords:u,relevance:0,contains:[n,t.C_BLOCK_COMMENT_MODE,s,o,i,{
+  begin:/\(/,end:/\)/,keywords:u,relevance:0,
+  contains:["self",n,t.C_BLOCK_COMMENT_MODE,s,o,i]}]
+  },i,n,t.C_BLOCK_COMMENT_MODE,c]};return{name:"C",aliases:["h"],keywords:u,
+  disableAutodetect:!0,illegal:"</",contains:[].concat(p,_,m,[c,{
+  begin:"\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",
+  end:">",keywords:u,contains:["self",i]},{begin:t.IDENT_RE+"::",keywords:u},{
+  className:"class",beginKeywords:"enum class struct union",end:/[{;:<>=]/,
+  contains:[{beginKeywords:"final class struct"},t.TITLE_MODE]}]),exports:{
+  preprocessor:c,strings:s,keywords:u}}}})());hljs.registerLanguage("markdown",(()=>{"use strict";function n(...n){
+  return n.map((n=>{return(e=n)?"string"==typeof e?e:e.source:null;var e
+  })).join("")}return e=>{const a={begin:/<\/?[A-Za-z_]/,end:">",
+  subLanguage:"xml",relevance:0},i={variants:[{begin:/\[.+?\]\[.*?\]/,relevance:0
+  },{begin:/\[.+?\]\(((data|javascript|mailto):|(?:http|ftp)s?:\/\/).*?\)/,
+  relevance:2},{begin:n(/\[.+?\]\(/,/[A-Za-z][A-Za-z0-9+.-]*/,/:\/\/.*?\)/),
+  relevance:2},{begin:/\[.+?\]\([./?&#].*?\)/,relevance:1},{
+  begin:/\[.+?\]\(.*?\)/,relevance:0}],returnBegin:!0,contains:[{
+  className:"string",relevance:0,begin:"\\[",end:"\\]",excludeBegin:!0,
+  returnEnd:!0},{className:"link",relevance:0,begin:"\\]\\(",end:"\\)",
+  excludeBegin:!0,excludeEnd:!0},{className:"symbol",relevance:0,begin:"\\]\\[",
+  end:"\\]",excludeBegin:!0,excludeEnd:!0}]},s={className:"strong",contains:[],
+  variants:[{begin:/_{2}/,end:/_{2}/},{begin:/\*{2}/,end:/\*{2}/}]},c={
+  className:"emphasis",contains:[],variants:[{begin:/\*(?!\*)/,end:/\*/},{
+  begin:/_(?!_)/,end:/_/,relevance:0}]};s.contains.push(c),c.contains.push(s)
+  ;let t=[a,i]
+  ;return s.contains=s.contains.concat(t),c.contains=c.contains.concat(t),
+  t=t.concat(s,c),{name:"Markdown",aliases:["md","mkdown","mkd"],contains:[{
+  className:"section",variants:[{begin:"^#{1,6}",end:"$",contains:t},{
+  begin:"(?=^.+?\\n[=-]{2,}$)",contains:[{begin:"^[=-]*$"},{begin:"^",end:"\\n",
+  contains:t}]}]},a,{className:"bullet",begin:"^[ \t]*([*+-]|(\\d+\\.))(?=\\s+)",
+  end:"\\s+",excludeEnd:!0},s,c,{className:"quote",begin:"^>\\s+",contains:t,
+  end:"$"},{className:"code",variants:[{begin:"(`{3,})[^`](.|\\n)*?\\1`*[ ]*"},{
+  begin:"(~{3,})[^~](.|\\n)*?\\1~*[ ]*"},{begin:"```",end:"```+[ ]*$"},{
+  begin:"~~~",end:"~~~+[ ]*$"},{begin:"`.+?`"},{begin:"(?=^( {4}|\\t))",
+  contains:[{begin:"^( {4}|\\t)",end:"(\\n)$"}],relevance:0}]},{
+  begin:"^[-\\*]{3,}",end:"$"},i,{begin:/^\[[^\n]+\]:/,returnBegin:!0,contains:[{
+  className:"symbol",begin:/\[/,end:/\]/,excludeBegin:!0,excludeEnd:!0},{
+  className:"link",begin:/:\s*/,end:/$/,excludeBegin:!0}]}]}}})());
