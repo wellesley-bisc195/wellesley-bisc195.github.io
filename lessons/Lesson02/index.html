@@ -1,152 +1,214 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Lesson 2 - Data Types and Functions</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=lesson_2_-_data_types_and_functions ><a href="#lesson_2_-_data_types_and_functions" class=header-anchor >Lesson 2 - Data Types and Functions</a></h1> <p><a href="@ref lecture2"><img src="https://img.shields.io/badge/Lecture02-Slides-purple?style&#61;for-the-badge" alt="Lecture 2 - slides" /></a> <img src="https://img.shields.io/badge/Date-6&#37;2F11&#37;2F2020-orange?style&#61;for-the-badge" alt="Lecture 2 - date" /></p> <p><a href="https://classroom.github.com/a/kCXCpki4"><img src="https://img.shields.io/badge/Assignment02-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 02 - Invitation" /></a> <a href="@ref assignment02"><img src="https://img.shields.io/badge/02-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 02 - Description" /></a> <a href="@ref Instructions-for-Assignment02"><img src="https://img.shields.io/badge/02-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 02 - Rendered" /></a> <a href="@ref assignment02"><img src="https://img.shields.io/badge/Due-6&#37;2F14&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 02 - Due" /></a></p> <h2 id=learning_objectives ><a href="#learning_objectives" class=header-anchor >Learning Objectives</a></h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Distinguish between variables and function arguments</p> <li><p>Identify functions that operate on or modify data</p> <li><p>Compare and contrast common scalar and container data types</p> <li><p>Recognize errors resulting from using functions on datatypes that do not have appropriate methods</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Use a plain text editor &#40;VS Code&#41; to modify source code</p> <li><p>Execute functions on different types of arguments in the <code>julia</code> REPL</p> <li><p>Use print statements and type introspection methods to investigate a data type</p> <li><p>Assign, modify, and copy variables</p> <li><p>Use github and github CI to check answers to homework</p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap02">Chapter 2</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03">Chapter 3</a> of Think Julia.</p> <li><p>Cloned the Assignment 2 repository with github classroom.</p> <li><p>Completed assignment 2 with all tests passing.</p> <li><p>Run all code examples from Lesson 2 on their own computers</p> </ul> <h2>Data Types</h2> <p>Programming can be thought of as consiting of 2 things:</p> <ol> <li><p>Data</p> <li><p>Operations on data</p> </ol> <p>Everything else is just sugar. </p> <p>Before continuing, be sure to read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap02">chapter 2</a> of <em>Think Julia</em>, which introduces you to different kinds of values.</p> <p>The next section will expect you do have read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03">chapter 3</a>, which introduces you to the operations part &#40;functions&#41;.</p> <p>These chapters also introduce a number of important concepts like variable assignment, expressions, flow of execution, and arguments. All of these concepts will come up again and again, so if you&#39;re still a bit fuzzy on them, that&#39;s ok.</p> <h3 id=practice ><a href="#practice" class=header-anchor >Practice</a></h3> <p>The following examples are intended to reinforce and extend what you&#39;ve learned. In many cases, they are intended to expose behavior that may be unintuitive, or lead to errors that are worth understanding.</p> <p>@@colbox-orange @@title &quot;Checking Questions&quot; @@</p> <p>1. For each of the following expressions, What is the &#96;type&#96; of the value that gets returned after execution?</p> <pre><code class=language-julia >julia&gt; 1&#43;2
-       3
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Using git for version control</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1><a href="/lessons/Lesson02">Lesson 2 - Using git for version control</a></h1> <p><img src="https://img.shields.io/badge/Date-0001--01--01-orange?style&#61;for-the-badge" alt=lesson2date  /> {{Placeholder for slides}} {{Placeholder for assignment}}</p> <h2>Learning Objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Explain the use of &#39;version control&#39; in the context of a coding project</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Clone, commit to, and push from a git repository</p> <li><p>Use the <code>julia</code> REPL to do basic arithmatic</p> </ul> <p><strong>Tasks</strong> - This lesson is complete when students have:</p> <ul> <li><p>Completed <a href="/assignments/Assignment01">Assignment01</a></p> <li><p>Run all code examples from Lesson 2 on their own computers</p> </ul> <h2></h2> <p>If you&#39;ve ever worked on an assignment and ended up with a list of files like</p> <ul> <li><p><code>assignment1.docx</code></p> <li><p><code>assignment1_v2.docx</code></p> <li><p><code>assignment1_v2_kevins_comments.docx</code></p> <li><p><code>assignment1_v3_fix_final.docx</code></p> <li><p><code>assignment1_v3_fix_final_for_real_this_time.docx</code></p> </ul> <p>... you&#39;ll understand the importance of version control.</p> <p>It goes well beyond naming of course. How can you tell what changed between version 1 and version2? Does version 3 take the comments Kevin made on v2 into account? Is <code>...fix_final_for_real_this_time</code><em>really</em> the last version?</p> <p>It&#39;s even worse if multiple people are working on the same document. If you and your lab partner are editing a document at the same time, How can you gracefully merge the changes? What if the changes you make and the changes she makes are incompatible?</p> <p>Software like Google Docs can address some of these issues, but incompatible changes can still occur. Imagine you&#39;re writing an essay about a dog. At the beginning of the essay, you&#39;ve written</p> <blockquote> <p>The quick brown fox jumped over the lazy dog</p> </blockquote> <p>You and your partner are both refining this epic story at the same time, and further on you write,</p> <blockquote> <p>Because of how lazy the dog was, she didn&#39;t chase the fox.</p> </blockquote> <p>But your partner decided the first line needed some more detail and changes it to</p> <blockquote> <p>The quick brown fox jumped over the lazy male dog.</p> </blockquote> <p>so your pronouns are out of step.</p> <p>In writing, a mistake like this might just look silly, but in programming, it can mean your code doesn&#39;t run or generates the wrong answer. Even more critically, code often involves many files working together, and keeping track of the versions of multiple files at the same time is necessary.</p> <h2 id=git_is_a_program_for_version_control ><a href="#git_is_a_program_for_version_control" class=header-anchor ><code>git</code> is a program for version control</a></h2> <p><code>git</code> is a distributed version control system &#40;DVCS&#41;. That is, it helps one keep track of one&#39;s code, and the information about versions is distributed among many systems.</p> <div class=colbox-blue ><div class=title >Note</div> <p>Early version control systems were centralized - there was a single server that kept track of all of the information about a code repository. Users could &quot;checkout&quot; individual files to edit them, and the central repository would lock that file to prevent conflicting changes. This makes it easy to prevent conflicts, but is also a bit impractical.</p> <p>By contrast, git is distributed - each user&#39;s system contains the entire revision history, and conflicts between versions are explicitly managed when two different edits to the code are brought together. Don&#39;t worry if this isn&#39;t super clear at this stage - we&#39;ll get into some practical examples in a sec.</p></div> <p>You can think of a <code>git</code> &quot;repository&quot; &#40;usually shortened to &quot;repo&quot;&#41; as a directory with super powers. If you&#39;re looking at the directory using Finder or Explorer, it might not look any different, but it&#39;s much more powerful. Before we get into that, though, we need to get <code>git</code> installed.</p> <h2 id=installing_git ><a href="#installing_git" class=header-anchor >Installing git</a></h2> <p>If you are using Windows Subsystem for linux, or a linux operation system, <code>git</code> should already be installed.</p> <p>But lets check - if <code>git</code> is installed, you can execute <code>git --help</code> in the terminal.</p> <pre><code class=language-sh >&#36; git --help
+usage: git &#91;--version&#93; &#91;--help&#93; &#91;-C &lt;path&gt;&#93; &#91;-c &lt;name&gt;&#61;&lt;value&gt;&#93;
+        &#91;--exec-path&#91;&#61;&lt;path&gt;&#93;&#93; &#91;--html-path&#93; &#91;--man-path&#93; &#91;--info-path&#93;
+        &#91;-p | --paginate | -P | --no-pager&#93; &#91;--no-replace-objects&#93; &#91;--bare&#93;
+        &#91;--git-dir&#61;&lt;path&gt;&#93; &#91;--work-tree&#61;&lt;path&gt;&#93; &#91;--namespace&#61;&lt;name&gt;&#93;
+        &lt;command&gt; &#91;&lt;args&gt;&#93;
 
-       julia&gt; 3 / 2
-       1.5
+These are common Git commands used in various situations:
 
-       julia&gt; &quot;42 * 6&quot;
-       &quot;42 * 6&quot;
+start a working area &#40;see also: git help tutorial&#41;
+clone      Clone a repository into a new directory
+init       Create an empty Git repository or reinitialize an existing one
+# ... output truncated</code></pre> <p>If you&#39;re using a Mac, git might not be installed. Executing the command above will probably result in an error message:</p> <pre><code class=language-julia >bash: git: command not found...</code></pre>
+<p>So you need to install it. If the <code>git</code> help message appeared, you can skip <a href="#configuring_git">to here</a>&#41;.</p>
+<p>The easiest way to install git on a mac is using <a href="http://brew.sh"><code>homebrew</code></a>.</p>
+<p>If you&#39;re using a mac and don&#39;t have git installed, enter the following commands into your terminal &#40;excluding the <code>&#36;</code>&#41;, then press <code>enter</code> to execute.</p>
+<pre><code class=language-sh >&#36; xcode-select --install</code></pre>
+<p>This may prompt you to download and install &quot;command line developer tools&quot; from the app store. If it does, click install and follow the prompts. When that&#39;s finished, and you see the command prompt &#40;<code>&#36;</code>&#41; again, run the following command. Note: this is a case when you should probably use copy/paste.</p>
+<pre><code class=language-julia >&#36; /usr/bin/ruby -e &quot;&#36;&#40;curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install&#41;&quot;
+&#61;&#61;&gt; This script will install:
+/usr/local/bin/brew
+/usr/local/share/doc/homebrew
+/usr/local/share/man/man1/brew.1
+/usr/local/share/zsh/site-functions/_brew
+/usr/local/etc/bash_completion.d/brew
+/usr/local/Homebrew
+&#61;&#61;&gt; The following new directories will be created:
+/usr/local/sbin
+# ...</code></pre>
+<p>And follow the prompts. If you are asked for your password, use the one you use to log into your computer. Note that you will not see anything appear as you type, just type the password and hit <code>enter</code>.</p>
+<h2 id=configuring_git ><a href="#configuring_git" class=header-anchor >Configuring git</a></h2>
+<p>The next step is to tell git your name and email address, so that you are credited with the changes you make to repositories. Enter the following commands, changing the name and e-mail address to yours.</p>
+<pre><code class=language-sh >&#36; git config --global user.name &quot;Kevin Bonham, PhD&quot;
+&#36; git config --global user.email kbonham@wellesley.edu</code></pre>
+<h3 id=practice_create_your_first_git_repository ><a href="#practice_create_your_first_git_repository" class=header-anchor >Practice: Create your first git repository</a></h3>
+<p><strong>Step 1:</strong> In your terminal, change your working directory to your <code>Documents</code> folder &#40;<code>~/Documents</code>&#41;</p>
+<div class=colbox-aqua ><div class=title >Windows Users</div>
+<p>You can perform the following steps either in the <code>Documents/</code> folder of your linux filesystem found at <code>~/Documents</code>, or of your Windows filesystem, which is found at <code>/mnt/c/Users/&lt;your_username&gt;  Documents</code></p></div>
+<p><strong>Step 2:</strong> Next, create a new directory called <code>my_repo</code>.</p>
+<div class=colbox-green ><div class=title >Reminders</div>
+<ul>
+<li><p><code>cd</code> is the command for changing working directory</p>
 
-       julia&gt; &quot;42&quot; * &quot;6&quot;
-       &quot;426&quot;</code></pre> <p>2. Assign each of these values to a different variable &#40;eg &#96;my_sum &#61; 1&#43;2&#96;&#41;. And use the <code>typeof&#40;&#41;</code> function to test your answers above. For example</p> <pre><code class=language-julia >julia&gt; x &#61; &quot;42&quot; * &quot;6&quot;
-       &quot;426&quot;   
-       
-       julia&gt; typeof&#40;x&#41;
-       String</code></pre> <p>3. What is the difference between the following expressions? &#96;&#96;&#96;julia julia&gt; &quot;AATTCC&quot;^2 &quot;AATTCCAATTCC&quot; julia&gt; println&#40;&quot;AATTCC&quot;^2&#41; AATTCCAATTCC &#96;&#96;&#96; What happens if you assign each of these expressions to a variable? 4. What is the difference between &#96;Float64&#96; and &#96;Int64&#96;? Are there situations where one is obviously preferred over the other in a math problem? 5. Without evaluating the following expressions, try to guess what the return type will be, &#96;Int64&#96; or &#96;Float64&#96;. &#96;&#96;&#96;julia julia&gt; 1 &#43; 1 julia&gt; 2. - 2. julia&gt; 3 * 3. julia&gt; 4. * 4 julia&gt; 5 / 5 julia&gt; &quot;6&quot; &#43; &quot;6.0&quot; julia&gt; 1e7 &#43; 1 &#96;&#96;&#96; Now evaluate them - did you get them right? use &#96;typeof&#40;&#41;&#96; if you&#39;re not sure.</p> <p>@@</p> <p>@@colbox-green @@title Tip @@</p> <p>When you are working with really big numbers such as <code>1,000,000</code>, do not include the commas if you want <code>julia</code> to recognize it as an integer. For example, if you were to run this code:</p> <p>julia&gt; 1,000,000 &#40;1, 0, 0&#41;</p> <p>you can see that <code>julia</code> thinks that <code>1,000,000</code> is a group of 3 integers &#40;<code>1</code>, <code>0</code>, and <code>0</code>&#41;&#33; Instead, <code>julia</code> allows you to use underscores to break up large integers.</p> <pre><code class=language-julia >julia&gt; 1_000_000
-1000000</code></pre> <p>@@colbox-blue @@title Note @@ But be careful&#33; &#91;&quot;Overflow&quot;&#93;&#40;https://en.wikipedia.org/wiki/Integer_overflow&#41; can occur when you try to use giant numbers. Watch: &#96;&#96;&#96;julia julia&gt; 2^61 2305843009213693952 julia&gt; 2^62 4611686018427387904 julia&gt; 2^63 -9223372036854775808 julia&gt; 2^64 0 &#96;&#96;&#96; What happened? Integers, like all types of data, are stored in memory as bits - sequences of <code>1</code>s and <code>0</code>s. In julia, the primary integer type is <code>Int64</code>, which uses 64 bits, 63 of which are used for the magnitude, and one for the sign &#40;<code>&#43;</code> or <code>-</code>&#41;. The value &#96;2^63&#96; would require 65 bits to hold in memory. @@</p> <p>@@</p> <h2 id=functions ><a href="#functions" class=header-anchor >Functions</a></h2> <p>Before continuing, be sure to read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03">chapter 3</a></p> <p>Functions are the parts of a program that do things. Without functions, all you have is data. Actually, most of the time if you want data, you need functions too, unless you&#39;re writing literally everything by hand.</p> <h3 id=recognizing_functions ><a href="#recognizing_functions" class=header-anchor >Recognizing functions</a></h3> <p>Functions are bits of code that do things. Remember the <a href="@ref first-steps">video from Lesson 1</a>? &#40;seriously, go back and watch it if you didn&#39;t before&#41;. The kids are providing dad a list of functions.</p> <pre><code class=language-julia >get&#40;peanut_butter&#41;
-get&#40;jelly&#41;
-get&#40;toast&#41;
-spread&#40;toast, peanut_butter&#41;
-spread&#40;toast, jelly&#41;</code></pre> <p>In julia, it&#39;s typically easy to recognize functions because they have the structure:</p> <ol> <li><p><code>function_name</code></p> <li><p><code>&#40;</code></p> <li><p><code>arguments, separated, by, commas</code></p> <li><p><code>&#41;</code></p> </ol> <p>So in the expression</p> <pre><code class=language-julia >println&#40;&quot;Hello&quot;, &quot; &quot;, &quot;world&#33;&quot;&#41;</code></pre>
-<p>The <code>function_name</code> is <code>println</code> and there are 3 arguments &#40;in this case, all <code>String</code>s&#41;.</p>
-<p>But functions show up in other ways too.  All of the math you were doing in the previous section was calling functions. In julia, <code>1 &#43; 1</code> is just a convenient syntax<sup id="fnref:1"><a href="#fndef:1" class=fnref >[1]</a></sup> for <code>&#43;&#40;1,1&#41;</code></p>
-<pre><code class=language-julia >&#43;&#40;42,7&#41;
-*&#40;&quot;BISC&quot;, &quot;195&quot;&#41;</code></pre>
-<p>When you do even simple things like type something in the REPL, there are functions being called to evaluate the expression and print the result.</p>
-<h3 id=variables_arguments_and_scopeid_scope ><a href="#variables_arguments_and_scopeid_scope" class=header-anchor >&#91;Variables, arguments, and scope&#93;@id scope</a></h3>
-<p>In chapter 3 of <em>Think Julia</em>, you read that <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_variables_and_parameters_are_local">variables and parameters are local</a> to functions. </p>
-<p>The more technical way to say that is that the inside of functions have their own &quot;scope&quot;<sup id="fnref:2"><a href="#fndef:2" class=fnref >[2]</a></sup>. This will start to become familiar as you write more code, but it can be confusing at first.</p>
-<p>Also potentially confusing is the difference between a <code>variable</code> and an <code>argument</code>. They are similar in various ways, but treating them in the same way, <em>especially naming them the same thing</em>, is an easy way to get yourself confused.</p>
-<p>Let&#39;s see an example:</p>
-<pre><code class=language-julia >args
-function newprint&#40;my_arg&#41;
-    println&#40;my_arg, &quot;, students&#33;&quot;&#41;
-end
+<li><p><code>mkdir</code> is the command for making a directory</p>
 
-newprint&#40;&quot;Hello there&quot;&#41;</code></pre>
-<p>This should seem pretty straightforward. The function <code>newprint&#40;&#41;</code> takes a single argument, and prints that, appending <code>&quot;, students&#33;&quot;</code>. Inside the function, the value passed as an argument - <code>&quot;Hello there&quot;</code> - is passed in everywhere you see <code>my_arg</code>, but <code>my_arg</code> doesn&#39;t exist outside the function.</p>
-<pre><code class=language-julia >args
-my_arg</code></pre>
-<p>We could also have passed a <em>variable</em> as the argument.</p>
-<pre><code class=language-julia >args
-gb &#61; &quot;Goodbye&quot;
+</ul>
+<p>Look back at <a href="../Lesson01">Lesson 1</a> for more information, and don&#39;t worry if you need to keep looking up stuff like this. The stuff you do regularly will become second nature, and the other stuff is always a Google search away.</p></div>
+<p><strong>Step 3:</strong> Now, change your working directory into the newly created <code>my_repo/</code> and initialize a git repository using the command <code>git init</code></p>
+<pre><code class=language-sh >my_repo &#36; git init
+Initialized empty Git repository in /home/kevin/Documents/my_repo/.git/</code></pre>
+<div class=colbox-orange ><div class=title >Checking Questions</div>
+<p>Is the path shown in the output a <em>relative</em> or <em>absolute</em> path?</p>
+<p>If you use the command <code>ls</code> to list the contents of the current directory, can you see the <code>.git/</code> directory that was created? Why or why not?</p></div>
+<p><strong>Step 4:</strong> Open the folder in your operating system&#39;s file system navigator &#40;Finder on a Mac, Explorer in Windows&#41;. This folder appears empty right now, but in fact, there&#39;s a hidden <code>.git</code> folder that will include all of the version information for all of the files that you track.</p>
+<div class=colbox-aqua ><div class=title >&quot;Windows Users&quot;</div>
+<p>If you created the repository in the linux filesystem, the easiest way to do this is to execute <code>explorer.exe ./</code> from the command line. <a href="https://devblogs.microsoft.com/commandline/whats-new-for-wsl-in-windows-10-version-1903/">See here</a> for more information about how the Windows and Linux filesystems interact.</p></div>
+<p>Let&#39;s see how this works.</p>
+<p><strong>Step 5:</strong> Open the <a href="https://code.visualstudio.com/"><code>VS Code</code></a> text editor and create a new file, then save it in your repository directory as <code>fox.txt</code>.</p>
+<p><strong>Step 6:</strong> In your terminal, list the contents of the directory to be sure the file was created.</p>
+<pre><code class=language-sh >my_repo &#36; ls
+fox.txt</code></pre>
+<p>When you create new files, git does not track them automatically. Let&#39;s see what git sees at the moment:</p>
+<pre><code class=language-sh >&#36; git status
+On branch master
 
-newprint&#40;gb&#41;</code></pre>
-<p>Same thing - the <em>variable</em> <code>gb</code> refers to the <em>value</em> <code>&quot;Goodbye&quot;</code>, and will be substituted everywhere that <code>my_arg</code> lives in the function.</p>
-<p>Let&#39;s look at a slightly more confusing example.</p>
-<pre><code class=language-julia >some_arg &#61; &quot;Woah&quot;
-other_arg &#61; &quot;Huzzah&quot;
+No commits yet
 
-function nelly&#40;some_arg&#41;
-    println&#40;some_arg, &quot;, Nelly&#33;&quot;&#41;
-end
+Untracked files:
+&#40;use &quot;git add &lt;file&gt;...&quot; to include in what will be committed&#41;
 
-nelly&#40;other_arg&#41;</code></pre>
-<p>What do you expect? Try it out and see if you&#39;re right.</p>
-<p>When we call <code>nelly&#40;other_arg&#41;</code>, we&#39;re passing the value <code>&quot;Huzzah&quot;</code> as the argument. So inside the scope of the function, <code>some_arg</code> is <code>&quot;Huzzah&quot;</code>.</p>
-<p>What about <code>some_arg</code> outside of the function?</p>
-<pre><code class=language-julia >args2
-some_arg</code></pre>
-<p>Here, we&#39;re outside of the function scope, so <code>some_arg</code> is <code>&quot;Woah&quot;</code>.</p>
-<p>Because of this possibility for confusion, it&#39;s usually a good idea to name your function arguments and your variables different things. </p>
+    fox.txt
+
+nothing added to commit but untracked files present &#40;use &quot;git add&quot; to track&#41;</code></pre>
+<p>So <code>git</code> sees the file exists, but it tells you it&#39;s not being tracked.</p>
+<p><strong>Step 7:</strong> Let&#39;s fix that &#40;the <code>status</code> message helpfully tells you how&#41;:</p>
+<pre><code class=language-sh >my_repo &#36; git add fox.txt
+my_repo &#36; git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+&#40;use &quot;git rm --cached &lt;file&gt;...&quot; to unstage&#41;
+
+    new file:   fox.txt</code></pre>
+<p>The file is now &quot;staged&quot;<sup id="fnref:stage"><a href="#fndef:stage" class=fnref >[1]</a></sup> - that is ready to be &quot;committed.&quot; In git, a &quot;commit&quot;<sup id="fnref:commit"><a href="#fndef:commit" class=fnref >[2]</a></sup> is used to register a specific version of a repository. The current state of all of the tracked files in the repository will be recorded.</p>
+<p>We don&#39;t really need to track an empty file, let&#39;s add some text to it.</p>
+<p><strong>Step 8:</strong> In VS Code, add the following line to <code>fox.txt</code><strong>and save</strong>.</p>
+<pre><code class=language-julia >The quick fox jumped.</code></pre>
+<p>Now, back in the terminal, what&#39;s the status?</p>
+<pre><code class=language-sh >&#36; git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+&#40;use &quot;git rm --cached &lt;file&gt;...&quot; to unstage&#41;
+
+    new file:   fox.txt
+
+Changes not staged for commit:
+&#40;use &quot;git add &lt;file&gt;...&quot; to update what will be committed&#41;
+&#40;use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory&#41;
+
+    modified:   fox.txt</code></pre>
+<p>Notice that <code>fox.txt</code> now appears under both &quot;Changes to be committed&quot; and &quot;Changes not staged for commit&quot;.</p>
+<p>Why? Because you initially staged an empty file, and now there&#39;s a modified version of the file that has not been staged. You can see the difference between the current state of the file and what&#39;s staged using <code>git diff</code></p>
+<pre><code class=language-sh >&#36; git diff fox.txt | cat
+diff --git a/fox.txt b/fox.txt
+index e69de29..395235f 100644
+--- a/fox.txt
+&#43;&#43;&#43; b/fox.txt
+@@ -0,0 &#43;1 @@
+&#43;The quick fox jumped.</code></pre>
+<p>The syntax of this output is perhaps a bit confusing, but it&#39;s saying that a line was added to <code>fox.txt</code>.</p>
+<p><strong>Step 9:</strong> Let&#39;s go ahead and stage this change, and then make our first commit.</p>
+<pre><code class=language-sh >&#36; git add fox.txt
+&#36; git commit -m &quot;my first commit&quot;
+&#91;master &#40;root-commit&#41; b183d56&#93; my first commit
+1 file changed, 1 insertion&#40;&#43;&#41;
+create mode 100644 fox.txt</code></pre>
+<pre><code class=language-sh >&#36; git status
+On branch master
+nothing to commit, working tree clean</code></pre>
+<p>Congratulations&#33; You have a git repository.</p>
+<h3 id=just_keep_committing ><a href="#just_keep_committing" class=header-anchor >Just keep committing</a></h3>
+<div class=colbox-purple ><div class=title >Practice</div>
+<p>Try making some more changes to this file, make some new files, and use <code>git add</code>, <code>git commit</code>, and <code>git status</code> to keep track of those changes.</p></div>
+<div class=colbox-red ><div class=title >Danger&#33;</div>
+<p>If you enter <code>git commit</code> without including a commit message with the <code>-m</code> flag, your terminal may transform into a text editor. If this happens, you may find it difficult to return to the command prompt. Try typing &#40;don&#39;t copy/paste&#41; <code>:q&#33;</code> then <code>enter</code>.</p>
+<p>If this doesn&#39;t work, ask for assistance. If Kevin or the TAs are unavailable, you can always close and re-open your terminal.</p>
+<p>In either case, your commit will be aborted.</p></div>
+<h3 id=using_git_in_this_course ><a href="#using_git_in_this_course" class=header-anchor >Using git in this course</a></h3>
+<p>It might not be clear to you yet why using a version control system is worthwhile. If you don&#39;t trust me, the fact that almost every software company uses git &#40;or something similar&#41; should give you some confidence that it&#39;s important.</p>
+<p>In any case, this entire course will use git and github.com &#40;a website for managing and collaborating on git repositories&#41;. In the <a href="/assignments/Assignment01">first assignment</a>, you&#39;ll learn how to do this.</p>
+<h2 id=running_julia_code ><a href="#running_julia_code" class=header-anchor >Running julia code</a></h2>
+<p>For a lot of this course, we will be using the julia programming language rather than the command line.</p>
+<p>There are a few different ways to run julia code, and this section will get you acquaninted with a couple of them.</p>
+<h3 id=the_julia_repl ><a href="#the_julia_repl" class=header-anchor >The julia REPL</a></h3>
+<p>Open julia, which you <a href="@ref install_julia">should have installed</a> in the <a href="../lessons/Lesson01/#install_julia">first lesson</a>.</p>
+<p>Your terminal application should open, running julia:</p>
+<pre><code class=language-julia >_
+   _       _ _&#40;_&#41;_     |  Documentation: https://docs.julialang.org
+  &#40;_&#41;     | &#40;_&#41; &#40;_&#41;    |
+   _ _   _| |_  __ _   |  Type &quot;?&quot; for help, &quot;&#93;?&quot; for Pkg help.
+  | | | | | | |/ _&#96; |  |
+  | | |_| | | | &#40;_| |  |  Version 1.4.0 &#40;2020-03-21&#41;
+ _/ |\__&#39;_|_|_|\__&#39;_|  |  Official https://julialang.org/ release
+|__/                   |
+
+julia&gt;</code></pre>
+<p>Technically speaking, this is the julia &quot;Read, evaluate, print, loop&quot;, or &quot;REPL&quot;.</p>
+<p>When you enter text at the <code>julia&gt;</code> prompt, the REPL <strong>read</strong>s it, <strong>evaluate</strong>s it as julia code, <strong>print</strong>s the result, and then <strong>loop</strong>s back to the prompt.</p>
+<p>Let&#39;s try it&#33; Type <code>println&#40;&quot;Hello, World&#33;&quot;&#41;</code> at the prompt and hit enter.</p>
+<pre><code class=language-julia >println&#40;&quot;Hello, World&#33;&quot;&#41;</code></pre>
+<p>Don&#39;t worry if you don&#39;t understand all of the components of this command -  we&#39;ll get there.</p>
 <div class=colbox-green ><div class=title >Tip</div>
-<p>Just to reiterate,
-use different names for variables that refer to data
-and function arguments.
+<p>As much as possible, try typing out the commands in these lessons, rather than copy-pasting. It&#39;s important to build the muscle memory, and to see the errors that appear when you have typos&#33;</p>
+<p>For example, what did I miss here:</p>
+<pre><code class=language-julia >println&#40;Hello, World&#33;&#41;</code></pre></div>
+<h3 id=running_julia_from_the_command_line ><a href="#running_julia_from_the_command_line" class=header-anchor >Running julia from the command line</a></h3>
+<p>You can also execute short snippets of code from the command line. But first, you need to tell the terminal where to look for the julia program.</p>
+<p>Mac users, execute the following in your terminal:</p>
+<pre><code class=language-julia >&#36; echo &#39;export PATH&#61;&#36;PATH:/Applications/Julia-1.4.app/Contents/Resources/julia/bin/&#39; &gt;&gt; ~/.bash_profile</code></pre>
+<div class=colbox-aqua ><div class=title >Windows Users</div>
+<p>Your situation is a bit more complicated. You&#39;ll need a separate julia installation for your linux operating system in order to run julia from the command line.</p>
+<p>I will write up complete instructions soon.</p></div>
+<p>Then restart the terminal. Don&#39;t worry if you don&#39;t understand what that command is doing - it&#39;s not worth it to understand it at this moment. </p>
+<div class=colbox-purple ><div class=title >&quot;To Do&quot;</div>
+<p>Open your terminal and enter the following:</p>
+<pre><code class=language-sh >&#36; julia -e &#39;println&#40;&quot;Hello, World&#33;&quot;&#41;&#39;
+Hello, World&#33;</code></pre></div>
+<p>The <code>-e</code> is a command-line flag that tells julia to just execute the next command as julia code. Note the use of single quotes &#40;<code>&#39;</code>&#41; surrounding the command.</p>
+<div class=colbox-orange ><div class=title >Checking Questions</div>
+<ol>
+<li><p>What happens if you just enter <code>julia</code> at the command line without additional arguments?</p>
 
-And typically, it&#39;s also good practice to make your code &quot;self-documenting&quot;,
-which means that the names of functions, variables, and arguments
-tells you something about what they&#39;re used for.</p></div>
-<h3 id=practice__2 ><a href="#practice__2" class=header-anchor >Practice</a></h3>
-<p>The following examples are intended to reinforce and extend what you&#39;ve learned. In many cases, they are intended to expose behavior that may be unintuitive, or lead to errors that are worth understanding.</p>
-<div class=colbox-orange ><div class=title >&quot;Checking Questions&quot;</div>
-<p>1. For each of the expressions ending with <code># ?</code>,
-   try to predict what the output will be.
-   Then, run them in the REPL and see if you were correct.</p>
-<pre><code class=language-julia >julia&gt; x &#61; 4; # putting &#96;;&#96; prevents the &quot;print&quot; part &quot;read-eval-print-loop&quot;
-       
-       julia&gt; x # ?</code></pre>
-<pre><code class=language-julia >julia&gt; y &#61; 2.0;
+<li><p>What happens if you use double quotes instead of single quotes?  Why do you think that is?</p>
 
-       julia&gt; y &#43; x # ?</code></pre>
-<pre><code class=language-julia >julia&gt; z &#61; y * 2;
+</ol></div>
+<h3 id=running_julia_scripts ><a href="#running_julia_scripts" class=header-anchor >Running julia scripts</a></h3>
+<p>Our code is often going to be much more complicated than what we&#39;ve done so far. In those cases, and in order to keep a record of what we&#39;re doing, it&#39;s useful to put our julia code in a file.</p>
+<div class=colbox-purple ><div class=title >To Do</div>
+<ol>
+<li><p>Open up VS Code, and create a new file called <code>hello.jl</code>.</p>
 
-       julia&gt; z # ?</code></pre>
-<p>2. Write a function called <code>multisquare&#40;&#41;</code> that
+<li><p>Type <code>println&#40;&quot;Hello, World&#33;&quot;&#41;</code> into the file and save it. Note the path to the directory where you saved the file&#33;</p>
 
-   - takes **2 arguments**
-   - multiplies them together
-   - returns the product raised to the second power
+<li><p>run:</p>
 
-   Once you&#39;ve defined the function,
-   you should be able to run</p>
-<pre><code class=language-julia >julia&gt; multisquare&#40;2, 5&#41;
-       100
-
-       julia&gt; multisquare&#40;&quot;2&quot;,&quot;5&quot;&#41;
-       &quot;2525&quot;
-
-       julia&gt; multisquare&#40;1,2.0,3.0&#41;
-       ERROR: MethodError: no method matching multisquare&#40;::Int64, ::Float64, ::Float64&#41;
-       # ... stack trace
-
-       julia&gt; multisquare&#40;1,&quot;2&quot;&#41;
-       ERROR: MethodError: no method matching *&#40;::Int64, ::String&#41;
-       # ... stack trace</code></pre>
-<p>   Your output will also contain &quot;stack traces&quot;<sup id="fnref:3"><a href="#fndef:3" class=fnref >[3]</a></sup> for each error.
-   Don&#39;t worry about trying to understand it right now
-   &#40;though it will be very helpful later on&#41;.
-
-3. Both <code>multisquare&#40;1,2.0,3.0&#41;</code> and <code>multisquare&#40;1,&quot;2&quot;&#41;</code> raise <code>MethodError</code>s.
-   Notice that the former says &quot;no method matching <code>multisquare&#40;</code>...&quot;,
-   while the later says &quot;no method matching <code>*&#40;</code>...&quot;
-   What accounts for this difference?
-
-4. Everything we&#39;ve done here so far is using <code>julia</code>,
-   but the same concepts are applicable on the command line too,
-   just with different syntax.
-
-   When you change directories with</p>
-<pre><code class=language-sh >&#36; cd ~/Desktop</code></pre>
-<p> <code>cd</code> is a function and <code>~/Desktop</code> is the argument
-
-   Can you identify the function and the argument&#40;s&#41;
-   in the following shell commands?</p>
-<pre><code class=language-sh >&#36; ls -l ~/Documents</code></pre>
-<pre><code class=language-sh >&#36; mv ace-ventura1.mov /home/kevin/Movies</code></pre></div>
-<h2 id=key_terms ><a href="#key_terms" class=header-anchor >Key Terms</a></h2>
-<p><table class=fndef  id="fndef:1">
+</ol>
+<pre><code class=language-sh >&#36; julia &lt;path_to_directory&gt;/hello.jl</code></pre>
+<pre><code class=language-julia >Hello, World&#33;</code></pre></div>
+<p>When code is saved into a file that can be run from the commandline, it&#39;s called a &quot;script.&quot; All of your assigments will be julia code written into files and commited to code repositories using <code>git</code>.</p>
+<p>But it&#39;s important to realize that all of this code is the same; it&#39;s just text. That text has specific requirements in order to be parsed by the julia interpreter, but whether you run code in the REPL, from the command line, or in a script, it has the same behavior.</p>
+<p><table class=fndef  id="fndef:stage">
     <tr>
-        <td class=fndef-backref ><a href="#fnref:1">[1]</a>
-        <td class=fndef-content ><strong>Syntax</strong> - The rules that govern how characters in your code files
+        <td class=fndef-backref ><a href="#fnref:stage">[1]</a>
+        <td class=fndef-content ><strong>stage</strong> - Files with changes that are ready to be committed.
     
 </table>
-      are translated into instructions that the computer understands.       Julia has one kind of syntax, and the shell has another.       One of my great hopes for this course is that you&#39;ll come to recognize that,       though you will learn some syntax for these specific languages,       most of the skills you&#39;re learning are transferrable       to learning any programming language. <table class=fndef  id="fndef:2">
+ <table class=fndef  id="fndef:commit">
     <tr>
-        <td class=fndef-backref ><a href="#fnref:2">[2]</a>
-        <td class=fndef-content ><strong>Scope</strong> - The region of a program in which assigned variables are available.
+        <td class=fndef-backref ><a href="#fnref:commit">[2]</a>
+        <td class=fndef-content ><strong>commit</strong> - A unique reference to a specific state of a repository.
     
 </table>
-      In julia, scopes tend to be much more restrictive by default than in other languages.       If you ever get an <code>UndefVarError</code> when you think that you&#39;ve actually defined the variable,       it&#39;s probably not in the right scope. <table class=fndef  id="fndef:3">
-    <tr>
-        <td class=fndef-backref ><a href="#fnref:3">[3]</a>
-        <td class=fndef-content ><strong>Stack trace</strong> - This part of error messages can be super daunting at first,
-    
-</table>
-      especially as your programs get more complicated,       but can also be incredibly helpful when debugging.       Essentially, they are displaying the <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#stack_diagrams">stack diagram</a>       for your program where the error occured,       including pointing to the specific line in the code files       &#40;or REPL block number&#41; where the error occurred.</p>
+</p>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: May 15, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>

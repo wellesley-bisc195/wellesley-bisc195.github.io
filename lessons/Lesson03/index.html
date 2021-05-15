@@ -1,128 +1,149 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Lesson 3 - Functions, conditions, recursion, Oh My&#33;</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=lesson_3_-_functions_conditions_recursion_oh_my ><a href="#lesson_3_-_functions_conditions_recursion_oh_my" class=header-anchor >Lesson 3 - Functions, conditions, recursion, Oh My&#33;</a></h1> <p><a href="https://classroom.github.com/a/UbCNPRi2"><img src="https://img.shields.io/badge/Assignment03-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Invitation" /></a> <a href="@ref assignment03"><img src="https://img.shields.io/badge/03-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Description" /></a> <a href="@ref Instructions-for-Assignment03"><img src="https://img.shields.io/badge/03-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Rendered" /></a> <a href="@ref assignment03"><img src="https://img.shields.io/badge/Due-6&#37;2F18&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Due" /></a></p> <h2>Learning objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Distinguish fruitful functions from void functions</p> <li><p>Recognize boolean values and conditional statements</p> <li><p>Recognize errors resulting resulting from functions expecting boolean values</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Write boolean functions to check the properties of numerical values</p> <li><p>Use alternative evaluation execute different funuctions depending on input</p> <li><p>Recognize recursive functions, and identify situations in which they might be useful</p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap05">Chapter 5</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap0">Chapter 6</a> of Think Julia.</p> <li><p>Cloned the Assignment 3 repository with github classroom.</p> <li><p>Completed assignment 3 with all tests passing.</p> <li><p>Run all code examples from Lesson 2 on their own computers</p> </ul> <h2>Conditional &#40;boolean&#41; execution</h2> <p>We can build some useful functions with only the components we&#39;ve discussed so far, but they would be somewhat limited. Let&#39;s work on expanding our repertoire with conditional execution, loops, and recursion.</p> <p>The following sections assume that you have read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap05">chapter 5</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap06">chapter 6</a> in <em>Think Julia</em>. You can do chapter 4 if you like &#40;it lets you play with 🐢&#39;s - it&#39;s fun&#33;&#41;, but that&#39;s not required for now.</p> <h3><a href="@id booleans">Computer logic - Booleans</a></h3> <p>All computers are build on boolean &#40;true/false&#41; logic. At it&#39;s core, the two compoents of computer programs &#40;data and actions&#41; are composed from &quot;bits&quot;, which are physical objects that can have 2 states, <code>0</code> or <code>1</code>, <code>off</code> or <code>on</code>, <code>false</code> or <code>true</code>, and <a href="https://en.wikipedia.org/wiki/Logic_gate#Truth_tables">logical operators</a>.</p> <p>But we don&#39;t need to understand the all the details of how this works at a low-level &#40;I certainly don&#39;t&#41; to effectively use boolean operations in our code. There are a couple of things to keep in mind.</p> <p>As you read in <em>Think Julia</em>, you can use conditional evalutation &#40;<code>if</code> block&#41; to execute different code under different circumstances.</p> <pre><code class=language-julia >compliment
-function compliment&#40;base&#41;
-    if base &#61;&#61; &#39;A&#39;
-        return &#39;T&#39;
-    elseif base &#61;&#61; &#39;T&#39;
-        return &#39;A&#39;
-    else
-        error&#40;&quot;Base &#36;base not supported&quot;&#41;
-    end
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Data types and Functions</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=lesson_3_-_data_types_and_functions ><a href="#lesson_3_-_data_types_and_functions" class=header-anchor >Lesson 3 - Data Types and Functions</a></h1> <p><a href="@ref lecture2"><img src="https://img.shields.io/badge/Lecture02-Slides-purple?style&#61;for-the-badge" alt="Lecture 2 - slides" /></a> <img src="https://img.shields.io/badge/Date-6&#37;2F11&#37;2F2020-orange?style&#61;for-the-badge" alt="Lecture 2 - date" /></p> <p><a href="https://classroom.github.com/a/kCXCpki4"><img src="https://img.shields.io/badge/Assignment02-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 02 - Invitation" /></a> <a href="@ref assignment02"><img src="https://img.shields.io/badge/02-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 02 - Description" /></a> <a href="@ref Instructions-for-Assignment02"><img src="https://img.shields.io/badge/02-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 02 - Rendered" /></a> <a href="@ref assignment02"><img src="https://img.shields.io/badge/Due-6&#37;2F14&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 02 - Due" /></a></p> <h2>Learning Objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Distinguish between variables and function arguments</p> <li><p>Identify functions that operate on or modify data</p> <li><p>Compare and contrast common scalar and container data types</p> <li><p>Recognize errors resulting from using functions on datatypes that do not have appropriate methods</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Use a plain text editor &#40;VS Code&#41; to modify source code</p> <li><p>Execute functions on different types of arguments in the <code>julia</code> REPL</p> <li><p>Use print statements and type introspection methods to investigate a data type</p> <li><p>Assign, modify, and copy variables</p> <li><p>Use github and github CI to check answers to homework</p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap02">Chapter 2</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03">Chapter 3</a> of Think Julia.</p> <li><p>Cloned the Assignment 2 repository with github classroom.</p> <li><p>Completed assignment 2 with all tests passing.</p> <li><p>Run all code examples from Lesson 2 on their own computers</p> </ul> <h2 id=data_types ><a href="#data_types" class=header-anchor >Data Types</a></h2> <p>Programming can be thought of as consiting of 2 things:</p> <ol> <li><p>Data</p> <li><p>Operations on data</p> </ol> <p>Everything else is just sugar. </p> <p>Before continuing, be sure to read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap02">chapter 2</a> of <em>Think Julia</em>, which introduces you to different kinds of values.</p> <p>The next section will expect you do have read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03">chapter 3</a>, which introduces you to the operations part &#40;functions&#41;.</p> <p>These chapters also introduce a number of important concepts like variable assignment, expressions, flow of execution, and arguments. All of these concepts will come up again and again, so if you&#39;re still a bit fuzzy on them, that&#39;s ok.</p> <h3>Practice</h3> <p>The following examples are intended to reinforce and extend what you&#39;ve learned. In many cases, they are intended to expose behavior that may be unintuitive, or lead to errors that are worth understanding.</p> <p>@@colbox-orange @@title &quot;Checking Questions&quot; @@</p> <p>1. For each of the following expressions, What is the &#96;type&#96; of the value that gets returned after execution? &#96;&#96;&#96;julia julia&gt; 1&#43;2 3 julia&gt; 3 / 2 1.5 julia&gt; &quot;42 * 6&quot; &quot;42 * 6&quot; julia&gt; &quot;42&quot; * &quot;6&quot; &quot;426&quot; &#96;&#96;&#96; 2. Assign each of these values to a different variable &#40;eg <code>my_sum &#61; 1&#43;2</code>&#41;. And use the <code>typeof&#40;&#41;</code> function to test your answers above. For example &#96;&#96;&#96;julia julia&gt; x &#61; &quot;42&quot; * &quot;6&quot; &quot;426&quot; julia&gt; typeof&#40;x&#41; String &#96;&#96;&#96; 3. What is the difference between the following expressions? &#96;&#96;&#96;julia julia&gt; &quot;AATTCC&quot;^2 &quot;AATTCCAATTCC&quot; julia&gt; println&#40;&quot;AATTCC&quot;^2&#41; AATTCCAATTCC &#96;&#96;&#96; What happens if you assign each of these expressions to a variable? 4. What is the difference between &#96;Float64&#96; and &#96;Int64&#96;? Are there situations where one is obviously preferred over the other in a math problem? 5. Without evaluating the following expressions, try to guess what the return type will be, &#96;Int64&#96; or &#96;Float64&#96;. &#96;&#96;&#96;julia julia&gt; 1 &#43; 1 julia&gt; 2. - 2. julia&gt; 3 * 3. julia&gt; 4. * 4 julia&gt; 5 / 5 julia&gt; &quot;6&quot; &#43; &quot;6.0&quot; julia&gt; 1e7 &#43; 1 &#96;&#96;&#96; Now evaluate them - did you get them right? use &#96;typeof&#40;&#41;&#96; if you&#39;re not sure.</p> <p>@@</p> <div class=colbox-green ><div class=title >Tip</div> <p>When you are working with really big numbers such as <code>1,000,000</code>, do not include the commas if you want <code>julia</code> to recognize it as an integer. For example, if you were to run this code:</p> <pre><code class=language-julia >julia&gt; 1,000,000
+&#40;1, 0, 0&#41;</code></pre> <p>you can see that <code>julia</code> thinks that <code>1,000,000</code> is a group of 3 integers &#40;<code>1</code>, <code>0</code>, and <code>0</code>&#41;&#33; Instead, <code>julia</code> allows you to use underscores to break up large integers.</p> <pre><code class=language-julia >julia&gt; 1_000_000
+1000000</code></pre> <div class=colbox-blue ><div class=title >Note</div> <p>But be careful&#33; &#91;&quot;Overflow&quot;&#93;&#40;https://en.wikipedia.org/wiki/Integer_overflow&#41; can occur when you try to use giant numbers. Watch:</p> <pre><code class=language-julia >julia&gt; 2^61
+    2305843009213693952
+
+    julia&gt; 2^62
+    4611686018427387904
+
+    julia&gt; 2^63
+    -9223372036854775808
+
+    julia&gt; 2^64
+    0</code></pre> <p>What happened? Integers, like all types of data, are stored in memory as bits - sequences of <code>1</code>s and <code>0</code>s. In julia, the primary integer type is <code>Int64</code>, which uses 64 bits, 63 of which are used for the magnitude, and one for the sign &#40;<code>&#43;</code> or <code>-</code>&#41;. The value <code>2^63</code> would require 65 bits to hold in memory.</p></div></div> <h2 id=functions ><a href="#functions" class=header-anchor >Functions</a></h2> <p>Before continuing, be sure to read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap03">chapter 3</a></p> <p>Functions are the parts of a program that do things. Without functions, all you have is data. Actually, most of the time if you want data, you need functions too, unless you&#39;re writing literally everything by hand.</p> <h3 id=recognizing_functions ><a href="#recognizing_functions" class=header-anchor >Recognizing functions</a></h3> <p>Functions are bits of code that do things. Remember the <a href="@ref first-steps">video from Lesson 1</a>? &#40;seriously, go back and watch it if you didn&#39;t before&#41;. The kids are providing dad a list of functions.</p> <pre><code class=language-julia >get&#40;peanut_butter&#41;
+get&#40;jelly&#41;
+get&#40;toast&#41;
+spread&#40;toast, peanut_butter&#41;
+spread&#40;toast, jelly&#41;</code></pre> <p>In julia, it&#39;s typically easy to recognize functions because they have the structure:</p> <ol> <li><p><code>function_name</code></p> <li><p><code>&#40;</code></p> <li><p><code>arguments, separated, by, commas</code></p> <li><p><code>&#41;</code></p> </ol> <p>So in the expression</p> <pre><code class=language-julia >println&#40;&quot;Hello&quot;, &quot; &quot;, &quot;world&#33;&quot;&#41;</code></pre>
+<p>The <code>function_name</code> is <code>println</code> and there are 3 arguments &#40;in this case, all <code>String</code>s&#41;.</p>
+<p>But functions show up in other ways too.  All of the math you were doing in the previous section was calling functions. In julia, <code>1 &#43; 1</code> is just a convenient syntax<sup id="fnref:1"><a href="#fndef:1" class=fnref >[1]</a></sup> for <code>&#43;&#40;1,1&#41;</code></p>
+<pre><code class=language-julia >&#43;&#40;42,7&#41;
+*&#40;&quot;BISC&quot;, &quot;195&quot;&#41;</code></pre>
+<p>When you do even simple things like type something in the REPL, there are functions being called to evaluate the expression and print the result.</p>
+<h3 id=variables_arguments_and_scopeid_scope ><a href="#variables_arguments_and_scopeid_scope" class=header-anchor >&#91;Variables, arguments, and scope&#93;@id scope</a></h3>
+<p>In chapter 3 of <em>Think Julia</em>, you read that <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_variables_and_parameters_are_local">variables and parameters are local</a> to functions. </p>
+<p>The more technical way to say that is that the inside of functions have their own &quot;scope&quot;<sup id="fnref:2"><a href="#fndef:2" class=fnref >[2]</a></sup>. This will start to become familiar as you write more code, but it can be confusing at first.</p>
+<p>Also potentially confusing is the difference between a <code>variable</code> and an <code>argument</code>. They are similar in various ways, but treating them in the same way, <em>especially naming them the same thing</em>, is an easy way to get yourself confused.</p>
+<p>Let&#39;s see an example:</p>
+<pre><code class=language-julia >args
+function newprint&#40;my_arg&#41;
+    println&#40;my_arg, &quot;, students&#33;&quot;&#41;
 end
 
-compliment&#40;&#39;A&#39;&#41;</code></pre> <pre><code class=language-julia >julia&gt; compliment&#40;&#39;G&#39;&#41;
-ERROR: Base G not supported
-# ...</code></pre> <div class=colbox-green ><div class=title >Tip</div> <p>Notice that we can use variables to insert values in strings using &quot;interpolation&quot; with <code>&#36;</code></p> <pre><code class=language-julia >julia&gt; mystr &#61; &quot;hello&quot;;
+newprint&#40;&quot;Hello there&quot;&#41;</code></pre>
+<p>This should seem pretty straightforward. The function <code>newprint&#40;&#41;</code> takes a single argument, and prints that, appending <code>&quot;, students&#33;&quot;</code>. Inside the function, the value passed as an argument - <code>&quot;Hello there&quot;</code> - is passed in everywhere you see <code>my_arg</code>, but <code>my_arg</code> doesn&#39;t exist outside the function.</p>
+<pre><code class=language-julia >args
+my_arg</code></pre>
+<p>We could also have passed a <em>variable</em> as the argument.</p>
+<pre><code class=language-julia >args
+gb &#61; &quot;Goodbye&quot;
 
-julia&gt; myint &#61; 4;
+newprint&#40;gb&#41;</code></pre>
+<p>Same thing - the <em>variable</em> <code>gb</code> refers to the <em>value</em> <code>&quot;Goodbye&quot;</code>, and will be substituted everywhere that <code>my_arg</code> lives in the function.</p>
+<p>Let&#39;s look at a slightly more confusing example.</p>
+<pre><code class=language-julia >some_arg &#61; &quot;Woah&quot;
+other_arg &#61; &quot;Huzzah&quot;
 
-julia&gt; &quot;Well, &#36;mystr there. 2 &#43; 2 is &#36;myint&quot;
-&quot;Well, hello there. 2 &#43; 2 is 4&quot;</code></pre> <p>Any arbitrary expression can be interpolated, though in many cases you&#39;ll need parentheses:</p> <pre><code class=language-julia >julia&gt; &quot;2&#43;2 is &#36;&#40;2&#43;2&#41;&quot;
-&quot;2&#43;2 is 4&quot;</code></pre> <p>If you want to include an actual <code>&#36;</code> sign in a string, you must &quot;escape&quot; it with <code>\</code>, or use a &quot;raw&quot; string:</p> <pre><code class=language-julia >julia&gt; println&#40;&quot;That will be \&#36;2.50&quot;&#41;
-That will be &#36;2.50
-
-julia&gt; println&#40;raw&quot;But I don&#39;t have &#36;2.50&#33;&#39;&quot;&#41;
-But I don&#39;t have &#36;2.50&#33;&#39;</code></pre></div> <p>Here, we&#39;re trying to make a function that returns the <code>compliment</code> of a DNA base - that is, the base that would be on the opposite strand.</p> <p>I&#39;ve entered the complimentary bases for <code>A</code> and <code>T</code>, but we&#39;re missing <code>C</code> and <code>G</code>.</p> <div class=colbox-purple ><div class=title ></div> <p>Define the <code>compliment&#40;&#41;</code> function so that it gives the compliment of <code>&#39;G&#39;</code> and <code>&#39;C&#39;</code> <em>in addition to</em> <code>&#39;A&#39;</code> and <code>&#39;T&#39;</code>.</p> <p>Be sure to use single quotes - the reason will become clear shortly.</p></div> <h3 id=combinatorial_logic ><a href="#combinatorial_logic" class=header-anchor >Combinatorial logic</a></h3> <p>In many cases, we want to test the truth of multiple statements at once. Combining boolean values has rules and precedence, and it&#39;s possible to string many of them together.</p> <p>If your statements get too long, it can be challenging to reason about them. For example, what&#39;s the truth of the following statement? &#40;remember, <code>||</code> means &quot;or&quot; and <code>&amp;&amp;</code> means &quot;and&quot;&#41;:</p> <pre><code class=language-julia >true &amp;&amp; false || true &amp;&amp; true</code></pre>
-<p>You might figure it out, but personally, my head hurts. In my experience, though, I am typically only comparing two things, so the rules are easy, or I&#39;m using the same logic opperators throughout &#40;all <code>&amp;&amp;</code> or all <code>||</code>&#41;.</p>
-<pre><code class=language-julia >function basetype&#40;base&#41;
-    if base &#61;&#61; &#39;A&#39; || base &#61;&#61; &#39;G&#39;
-        println&#40;&quot;That&#39;s a purine&#33;&quot;&#41;
-    elseif base &#61;&#61; &#39;T&#39; || base &#61;&#61; &#39;C&#39;
-        println&#40;&quot;That&#39;s a pyrimidine&#33;&quot;&#41;
-    else
-        error&#40;&quot;Base &#36;base not supported&quot;&#41;
-    end
+function nelly&#40;some_arg&#41;
+    println&#40;some_arg, &quot;, Nelly&#33;&quot;&#41;
 end
 
-basetype&#40;&#39;C&#39;&#41;</code></pre>
-<p>Another, likely less obvious place where combinatorial logic is at play is in the behavior of <code>elseif</code>. It&#39;s important to remember that the first statement in a conditional block that evaluates to <code>true</code> will be executed, and nothing else will. For example,</p>
-<pre><code class=language-julia >oddhalf
-function oddhalf&#40;num&#41;
-    if iseven&#40;num&#41;
-        println&#40;&quot;That&#39;s an even number, you should get an Int, but you won&#39;t.&quot;&#41;
-    elseif num &#61;&#61; 42
-        println&#40;&quot;Life, the Universe, and Everything&#33;&quot;&#41;
-    else
-        println&#40;&quot;That&#39;s an odd number, expect a Float&#33;&quot;&#41;
-    end
-    return num / 2
-end
+nelly&#40;other_arg&#41;</code></pre>
+<p>What do you expect? Try it out and see if you&#39;re right.</p>
+<p>When we call <code>nelly&#40;other_arg&#41;</code>, we&#39;re passing the value <code>&quot;Huzzah&quot;</code> as the argument. So inside the scope of the function, <code>some_arg</code> is <code>&quot;Huzzah&quot;</code>.</p>
+<p>What about <code>some_arg</code> outside of the function?</p>
+<pre><code class=language-julia >args2
+some_arg</code></pre>
+<p>Here, we&#39;re outside of the function scope, so <code>some_arg</code> is <code>&quot;Woah&quot;</code>.</p>
+<p>Because of this possibility for confusion, it&#39;s usually a good idea to name your function arguments and your variables different things. </p>
+<div class=colbox-green ><div class=title >Tip</div>
+<p>Just to reiterate,
+use different names for variables that refer to data
+and function arguments.
 
-oddhalf&#40;42&#41;</code></pre>
-<p>Here, there&#39;s no way for <code>elseif num &#61;&#61; 42</code> to ever be true, since when <code>num</code> is 42, the <code>iseven&#40;num&#41;</code> gets hit first, and that part of the block is evaluated.</p>
-<div class=colbox-blue ><div class=title >Note</div>
-<p>The julia logic operators <code>&amp;&amp;</code> and <code>||</code>
-are &quot;short circuiting&quot;, which means that
-if the answer can be known before the right-hand side is evaluated,
-then the right-hand side **won&#39;t** be evaluated. 
-This feature can be used to introduce
-a more concise conditional evaluation than an <code>if</code> block.
-
-For example,</p>
-<pre><code class=language-julia >julia&gt; function verbosehalf&#40;x&#41;
-           iseven&#40;x&#41; &amp;&amp; println&#40;&quot;That&#39;s an even number&#33;&quot;&#41;
-           iseven&#40;x&#41; || println&#40;&quot;That&#39;s an odd number&#33;&quot;&#41;
-           x / 2
-       end
-    verbosehalf &#40;generic function with 1 method&#41;
-
-    julia&gt; verbosehalf&#40;42&#41;
-    That&#39;s an even number&#33;
-    21.0
-
-    julia&gt; verbosehalf&#40;43&#41;
-    That&#39;s an odd number&#33;
-    21.5</code></pre>
-<p>When <code>43</code> is passed as an argument, <code>iseven&#40;x&#41;</code> evaluates to <code>false</code>.
-And because <code>false &amp;&amp; &lt;anything&gt;</code> is always false,
-that line just evaluates to false without ever getting to the <code>println&#40;&#41;</code> call.
-But <code>false || &lt;anything&gt;</code> depends on the right hand statement
-&#40;<code>false || true</code> is different than <code>false || false</code>&#41;,
-the right hand statement must be evaluated.
-
-In this case, those lines are equivalent to</p>
-<pre><code class=language-julia >if iseven&#40;x&#41;
-        println&#40;&quot;That&#39;s an even number&#33;&quot;&#41;
-    else
-        println&#40;&quot;That&#39;s an odd number&#33;&quot;&#41;
-    end</code></pre>
-<p>But be aware, chaining these short-circuit expressions is NOT like <code>if/elseif/else</code> since,
-regardless of the outcome of the expression, the following lines _are_ evaluated.
-Eg, if I try to write the <code>oddhalf&#40;&#41;</code> function from above like this:</p>
-<pre><code class=language-julia >function oddhalf&#40;num&#41;
-        iseven&#40;num&#41; &amp;&amp; println&#40;&quot;That&#39;s an even number, you should get an Int, but you won&#39;t.&quot;&#41;
-        num &#61;&#61; 42 &amp;&amp; println&#40;&quot;Life, the Universe, and Everything&#33;&quot;&#41;
-        println&#40;&quot;That&#39;s an odd number, expect a Float&#33;&quot;&#41;
-        return num / 2
-    end
-
-    oddhalf&#40;42&#41;</code></pre>
-<pre><code class=language-julia >That&#39;s an even number, you should get an Int, but you won&#39;t.
-    Life, the Universe, and Everything&#33;
-    That&#39;s an odd number, expect a Float&#33;
-    21.0</code></pre>
-<p>Not exactly what we wanted...</p></div>
+And typically, it&#39;s also good practice to make your code &quot;self-documenting&quot;,
+which means that the names of functions, variables, and arguments
+tells you something about what they&#39;re used for.</p></div>
+<h3 id=practice ><a href="#practice" class=header-anchor >Practice</a></h3>
+<p>The following examples are intended to reinforce and extend what you&#39;ve learned. In many cases, they are intended to expose behavior that may be unintuitive, or lead to errors that are worth understanding.</p>
 <div class=colbox-orange ><div class=title >&quot;Checking Questions&quot;</div>
-<p>1. Referring back to our <code>compliment</code> function,
-   What happens if you try to pass <code>&quot;G&quot;</code> as an argument
-   &#40;note the double quotes&#41;?
-   Can you explain this behavior?
+<p>1. For each of the expressions ending with <code># ?</code>,
+   try to predict what the output will be.
+   Then, run them in the REPL and see if you were correct.</p>
+<pre><code class=language-julia >julia&gt; x &#61; 4; # putting &#96;;&#96; prevents the &quot;print&quot; part &quot;read-eval-print-loop&quot;
+       
+       julia&gt; x # ?</code></pre>
+<pre><code class=language-julia >julia&gt; y &#61; 2.0;
 
-2. Evaluate <code>&#39;G&#39; &#61;&#61; &quot;G&quot;</code> - did you expect it to be <code>true</code> or <code>false</code>?
-3. What are the types of <code>&#39;G&#39;</code> and <code>&quot;G&quot;</code>?
-4. Use the <code>||</code> operator to modify the <code>if</code>/<code>elseif</code> statements
-   in your &#91;<code>compliment&#40;&#41;</code> function&#93;&#40;@ref booleans&#41; from above
-   so that it works with either single-quoted or double-quoted ACGT.
+       julia&gt; y &#43; x # ?</code></pre>
+<pre><code class=language-julia >julia&gt; z &#61; y * 2;
 
-   Note: you should have no more than 3 <code>elseif</code>s in your function,
-   and you should always return a single-quoted version of the compliment.</p></div>
-<h2 id=some_notes_on_recursion ><a href="#some_notes_on_recursion" class=header-anchor >Some notes on recursion</a></h2>
-<p>I find recursion difficult to wrap my head around. To be honest, I almost told you skip those sections of chapters 5 and 6. But I think it is valuable to encounter the concept so that you know it exists, even if we don&#39;t explore the concept in great detail.</p>
-<p>In the years I&#39;ve been programming, I think I&#39;ve only written 2 recursive functions. But there are areas of biology where they can be quite valuable, and actually easier to understand, especially those involving phylogenetic trees or other graph structures, such as those used in genome assembly.</p>
-<p>In these cases, we often want to perform and action on a node, and all the children of that node, which are also nodes, also with children... and so on. In fact, this is similar to how many shell programs interact with your file system &#40;which is also like a tree&#41;.</p>
-<p>But beyond noting that it has its uses, we won&#39;t spend much time on recursive functions in this course.</p>
+       julia&gt; z # ?</code></pre>
+<p>2. Write a function called <code>multisquare&#40;&#41;</code> that
+
+   - takes **2 arguments**
+   - multiplies them together
+   - returns the product raised to the second power
+
+   Once you&#39;ve defined the function,
+   you should be able to run</p>
+<pre><code class=language-julia >julia&gt; multisquare&#40;2, 5&#41;
+       100
+
+       julia&gt; multisquare&#40;&quot;2&quot;,&quot;5&quot;&#41;
+       &quot;2525&quot;
+
+       julia&gt; multisquare&#40;1,2.0,3.0&#41;
+       ERROR: MethodError: no method matching multisquare&#40;::Int64, ::Float64, ::Float64&#41;
+       # ... stack trace
+
+       julia&gt; multisquare&#40;1,&quot;2&quot;&#41;
+       ERROR: MethodError: no method matching *&#40;::Int64, ::String&#41;
+       # ... stack trace</code></pre>
+<p>   Your output will also contain &quot;stack traces&quot;<sup id="fnref:3"><a href="#fndef:3" class=fnref >[3]</a></sup> for each error.
+   Don&#39;t worry about trying to understand it right now
+   &#40;though it will be very helpful later on&#41;.
+
+3. Both <code>multisquare&#40;1,2.0,3.0&#41;</code> and <code>multisquare&#40;1,&quot;2&quot;&#41;</code> raise <code>MethodError</code>s.
+   Notice that the former says &quot;no method matching <code>multisquare&#40;</code>...&quot;,
+   while the later says &quot;no method matching <code>*&#40;</code>...&quot;
+   What accounts for this difference?
+
+4. Everything we&#39;ve done here so far is using <code>julia</code>,
+   but the same concepts are applicable on the command line too,
+   just with different syntax.
+
+   When you change directories with</p>
+<pre><code class=language-sh >&#36; cd ~/Desktop</code></pre>
+<p> <code>cd</code> is a function and <code>~/Desktop</code> is the argument
+
+   Can you identify the function and the argument&#40;s&#41;
+   in the following shell commands?</p>
+<pre><code class=language-sh >&#36; ls -l ~/Documents</code></pre>
+<pre><code class=language-sh >&#36; mv ace-ventura1.mov /home/kevin/Movies</code></pre></div>
+<h2 id=key_terms ><a href="#key_terms" class=header-anchor >Key Terms</a></h2>
+<p><table class=fndef  id="fndef:1">
+    <tr>
+        <td class=fndef-backref ><a href="#fnref:1">[1]</a>
+        <td class=fndef-content ><strong>Syntax</strong> - The rules that govern how characters in your code files
+    
+</table>
+      are translated into instructions that the computer understands.       Julia has one kind of syntax, and the shell has another.       One of my great hopes for this course is that you&#39;ll come to recognize that,       though you will learn some syntax for these specific languages,       most of the skills you&#39;re learning are transferrable       to learning any programming language. <table class=fndef  id="fndef:2">
+    <tr>
+        <td class=fndef-backref ><a href="#fnref:2">[2]</a>
+        <td class=fndef-content ><strong>Scope</strong> - The region of a program in which assigned variables are available.
+    
+</table>
+      In julia, scopes tend to be much more restrictive by default than in other languages.       If you ever get an <code>UndefVarError</code> when you think that you&#39;ve actually defined the variable,       it&#39;s probably not in the right scope. <table class=fndef  id="fndef:3">
+    <tr>
+        <td class=fndef-backref ><a href="#fnref:3">[3]</a>
+        <td class=fndef-content ><strong>Stack trace</strong> - This part of error messages can be super daunting at first,
+    
+</table>
+      especially as your programs get more complicated,       but can also be incredibly helpful when debugging.       Essentially, they are displaying the <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#stack_diagrams">stack diagram</a>       for your program where the error occured,       including pointing to the specific line in the code files       &#40;or REPL block number&#41; where the error occurred.</p>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: May 15, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>

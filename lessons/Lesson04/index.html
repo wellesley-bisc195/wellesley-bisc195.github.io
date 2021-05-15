@@ -1,191 +1,128 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Lesson 4 - Loop-d-loop</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=lesson_4_-_loop-d-loop ><a href="#lesson_4_-_loop-d-loop" class=header-anchor >Lesson 4 - Loop-d-loop</a></h1> <p><a href="https://classroom.github.com/a/1vpkAM2r"><img src="https://img.shields.io/badge/Assignment04-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 04 - Invitation" /></a> <a href="@ref assignment04"><img src="https://img.shields.io/badge/04-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 04 - Description" /></a> <a href="@ref Instructions-for-Assignment04"><img src="https://img.shields.io/badge/04-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 04 - Rendered" /></a> <a href="@ref assignment04"><img src="https://img.shields.io/badge/Due-6&#37;2F18&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 04 - Due" /></a></p> <h2>Learning objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Compare and contrast <code>for</code> loops and <code>while</code> loops</p> <li><p>Recognize the difference between <code>String</code>s and <code>Char</code>s</p> <li><p>Debug errors that occur from writing infinite loops</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Use a <code>for</code> loop to accomplish a task incrementally</p> <li><p>Write a <code>while</code> loop to repeat code until a condition is met</p> <li><p>Stop a loop before it&#39;s complete with <code>break</code></p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04">Chapter 4</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap07">Chapter 7</a> of Think Julia.</p> <li><p>Run all code examples from Lesson 4 on their own computers</p> <li><p>Cloned the Assignment 4 repository with github classroom.</p> <li><p>Completed assignment 4 with all tests passing.</p> </ul> <h2 id=repeating_code_with_loops ><a href="#repeating_code_with_loops" class=header-anchor >Repeating code with loops</a></h2> <p>Writing code is about being lazy - never write more code than you have to&#33; We&#39;ve already seen that we can use functions to wrap up code that can then be used over and over and over and...</p> <p>But there are plenty more opportunities for re-using code, especially &quot;loops.&quot; In the 🐢exercise from <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04">Chapter 4</a> you&#39;ve seen one use of the <code>for</code> loop.</p> <pre><code class=language-julia >for i in 1:5
-    println&#40;i * 3&#41;
-end</code></pre> <p>This loop says, &quot;For each number, 1 to 5, print that number times 3.&quot;</p> <p>The way the computer evaluates this is as a loop -</p> <ol> <li><p><code>i</code> is set to 1, <code>println&#40;i * 3&#41;</code></p> <ol> <li><p>loop back to the top</p> </ol> <li><p><code>i</code> is set to 2, <code>println&#40;i * 3&#41;</code></p> <ol> <li><p>loop back to the top</p> </ol> <li><p>etc...</p> </ol> <h3 id=using_ranges_in_for_loops ><a href="#using_ranges_in_for_loops" class=header-anchor >Using ranges in <code>for</code> loops</a></h3> <p>The <code>1:5</code> is a &quot;range&quot;, it&#39;s all of the integers from 1 to 5. In julia, there are many ways to express ranges - and they don&#39;t always have to increment by 1&#33;</p> <p>The easiest way to use ranges is with the <code>:</code> syntax, <code>&lt;start&gt;:&lt;optional-increment&gt;:&lt;end&gt;</code>.</p> <pre><code class=language-julia >for even_number in 2:2:10
-    println&#40;even_number&#41;
-end
-
-for half in 1:0.5:3
-    println&#40;half&#41;
-end</code></pre> <p>You can even go backwards&#33;</p> <pre><code class=language-julia >function decrement&#40;n&#41;
-    for d in n:-1:0
-        println&#40;d&#41;
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Lesson 3 - Functions, conditions, recursion, Oh My&#33;</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=lesson_3_-_functions_conditions_recursion_oh_my ><a href="#lesson_3_-_functions_conditions_recursion_oh_my" class=header-anchor >Lesson 3 - Functions, conditions, recursion, Oh My&#33;</a></h1> <p><a href="https://classroom.github.com/a/UbCNPRi2"><img src="https://img.shields.io/badge/Assignment03-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Invitation" /></a> <a href="@ref assignment03"><img src="https://img.shields.io/badge/03-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Description" /></a> <a href="@ref Instructions-for-Assignment03"><img src="https://img.shields.io/badge/03-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Rendered" /></a> <a href="@ref assignment03"><img src="https://img.shields.io/badge/Due-6&#37;2F18&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 03 - Due" /></a></p> <h2>Learning objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Distinguish fruitful functions from void functions</p> <li><p>Recognize boolean values and conditional statements</p> <li><p>Recognize errors resulting resulting from functions expecting boolean values</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Write boolean functions to check the properties of numerical values</p> <li><p>Use alternative evaluation execute different funuctions depending on input</p> <li><p>Recognize recursive functions, and identify situations in which they might be useful</p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap05">Chapter 5</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap0">Chapter 6</a> of Think Julia.</p> <li><p>Cloned the Assignment 3 repository with github classroom.</p> <li><p>Completed assignment 3 with all tests passing.</p> <li><p>Run all code examples from Lesson 2 on their own computers</p> </ul> <h2>Conditional &#40;boolean&#41; execution</h2> <p>We can build some useful functions with only the components we&#39;ve discussed so far, but they would be somewhat limited. Let&#39;s work on expanding our repertoire with conditional execution, loops, and recursion.</p> <p>The following sections assume that you have read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap05">chapter 5</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap06">chapter 6</a> in <em>Think Julia</em>. You can do chapter 4 if you like &#40;it lets you play with 🐢&#39;s - it&#39;s fun&#33;&#41;, but that&#39;s not required for now.</p> <h3><a href="@id booleans">Computer logic - Booleans</a></h3> <p>All computers are build on boolean &#40;true/false&#41; logic. At it&#39;s core, the two compoents of computer programs &#40;data and actions&#41; are composed from &quot;bits&quot;, which are physical objects that can have 2 states, <code>0</code> or <code>1</code>, <code>off</code> or <code>on</code>, <code>false</code> or <code>true</code>, and <a href="https://en.wikipedia.org/wiki/Logic_gate#Truth_tables">logical operators</a>.</p> <p>But we don&#39;t need to understand the all the details of how this works at a low-level &#40;I certainly don&#39;t&#41; to effectively use boolean operations in our code. There are a couple of things to keep in mind.</p> <p>As you read in <em>Think Julia</em>, you can use conditional evalutation &#40;<code>if</code> block&#41; to execute different code under different circumstances.</p> <pre><code class=language-julia >compliment
+function compliment&#40;base&#41;
+    if base &#61;&#61; &#39;A&#39;
+        return &#39;T&#39;
+    elseif base &#61;&#61; &#39;T&#39;
+        return &#39;A&#39;
+    else
+        error&#40;&quot;Base &#36;base not supported&quot;&#41;
     end
 end
 
-decrement&#40;5&#41;</code></pre> <p>For more complicated ranges, we can also use the <code>range&#40;&#41;</code> function. Use the REPL <code>help?</code> mode to learn about the <code>range</code> function by typing <code>?</code> &#40;the prompt should change to <code>help?&gt;</code>&#41;, then type <code>range</code> and press <code>enter</code>.</p> <div class=colbox-purple ><div class=title ></div> <p>Use the <code>range&#40;&#41;</code> function to make a range that goes from <code>10</code> to <code>1000</code> with 4 entries. You should be able to run:</p> <pre><code class=language-julia >julia&gt; for i in range&#40;#&#61; your code here &#61;#&#41;
-               println&#40;i&#41;
-           end
-    10.0
-    340.0
-    670.0
-    1000.0</code></pre></div> <h3 id=while_loops ><a href="#while_loops" class=header-anchor >While loops</a></h3> <p>In many cases, the same loop can be written in many different ways. For example,</p> <pre><code class=language-julia >function whiledecrement&#40;n&#41;
-    while n &gt;&#61; 0 # greater than or equal to
-        println&#40;n&#41;
-        n &#61; n - 1
+compliment&#40;&#39;A&#39;&#41;</code></pre> <pre><code class=language-julia >julia&gt; compliment&#40;&#39;G&#39;&#41;
+ERROR: Base G not supported
+# ...</code></pre> <div class=colbox-green ><div class=title >Tip</div> <p>Notice that we can use variables to insert values in strings using &quot;interpolation&quot; with <code>&#36;</code></p> <pre><code class=language-julia >julia&gt; mystr &#61; &quot;hello&quot;;
+
+julia&gt; myint &#61; 4;
+
+julia&gt; &quot;Well, &#36;mystr there. 2 &#43; 2 is &#36;myint&quot;
+&quot;Well, hello there. 2 &#43; 2 is 4&quot;</code></pre> <p>Any arbitrary expression can be interpolated, though in many cases you&#39;ll need parentheses:</p> <pre><code class=language-julia >julia&gt; &quot;2&#43;2 is &#36;&#40;2&#43;2&#41;&quot;
+&quot;2&#43;2 is 4&quot;</code></pre> <p>If you want to include an actual <code>&#36;</code> sign in a string, you must &quot;escape&quot; it with <code>\</code>, or use a &quot;raw&quot; string:</p> <pre><code class=language-julia >julia&gt; println&#40;&quot;That will be \&#36;2.50&quot;&#41;
+That will be &#36;2.50
+
+julia&gt; println&#40;raw&quot;But I don&#39;t have &#36;2.50&#33;&#39;&quot;&#41;
+But I don&#39;t have &#36;2.50&#33;&#39;</code></pre></div> <p>Here, we&#39;re trying to make a function that returns the <code>compliment</code> of a DNA base - that is, the base that would be on the opposite strand.</p> <p>I&#39;ve entered the complimentary bases for <code>A</code> and <code>T</code>, but we&#39;re missing <code>C</code> and <code>G</code>.</p> <div class=colbox-purple ><div class=title ></div> <p>Define the <code>compliment&#40;&#41;</code> function so that it gives the compliment of <code>&#39;G&#39;</code> and <code>&#39;C&#39;</code> <em>in addition to</em> <code>&#39;A&#39;</code> and <code>&#39;T&#39;</code>.</p> <p>Be sure to use single quotes - the reason will become clear shortly.</p></div> <h3 id=combinatorial_logic ><a href="#combinatorial_logic" class=header-anchor >Combinatorial logic</a></h3> <p>In many cases, we want to test the truth of multiple statements at once. Combining boolean values has rules and precedence, and it&#39;s possible to string many of them together.</p> <p>If your statements get too long, it can be challenging to reason about them. For example, what&#39;s the truth of the following statement? &#40;remember, <code>||</code> means &quot;or&quot; and <code>&amp;&amp;</code> means &quot;and&quot;&#41;:</p> <pre><code class=language-julia >true &amp;&amp; false || true &amp;&amp; true</code></pre>
+<p>You might figure it out, but personally, my head hurts. In my experience, though, I am typically only comparing two things, so the rules are easy, or I&#39;m using the same logic opperators throughout &#40;all <code>&amp;&amp;</code> or all <code>||</code>&#41;.</p>
+<pre><code class=language-julia >function basetype&#40;base&#41;
+    if base &#61;&#61; &#39;A&#39; || base &#61;&#61; &#39;G&#39;
+        println&#40;&quot;That&#39;s a purine&#33;&quot;&#41;
+    elseif base &#61;&#61; &#39;T&#39; || base &#61;&#61; &#39;C&#39;
+        println&#40;&quot;That&#39;s a pyrimidine&#33;&quot;&#41;
+    else
+        error&#40;&quot;Base &#36;base not supported&quot;&#41;
     end
 end
 
-whiledecrement&#40;5&#41;</code></pre> <p>Where <code>for</code> loops march through a predetermined sequence, <code>while</code> loops continue until a particular condition is met.</p> <h3 id=loops_and_scope ><a href="#loops_and_scope" class=header-anchor >Loops and scope</a></h3> <p>In julia, loops have their own scope &#40;we talked about <a href="@ref scope">scope back in Lesson 2</a>&#41;. Functions also have their own scope, and the way that the scope of loops and the scope of functions interact can be a bit counter-intuitive.</p> <p>The best way to get a sense of this is to see some examples.</p> <pre><code class=language-julia >i &#61; 5
-
-for i in 1:3
-    println&#40;i&#41;
-end
-
-println&#40;i&#41;</code></pre> <pre><code class=language-julia >function strangeloop&#40;j&#41;
-    k &#61; 1
-    for k in 1:j
-        println&#40;k&#41;
+basetype&#40;&#39;C&#39;&#41;</code></pre>
+<p>Another, likely less obvious place where combinatorial logic is at play is in the behavior of <code>elseif</code>. It&#39;s important to remember that the first statement in a conditional block that evaluates to <code>true</code> will be executed, and nothing else will. For example,</p>
+<pre><code class=language-julia >oddhalf
+function oddhalf&#40;num&#41;
+    if iseven&#40;num&#41;
+        println&#40;&quot;That&#39;s an even number, you should get an Int, but you won&#39;t.&quot;&#41;
+    elseif num &#61;&#61; 42
+        println&#40;&quot;Life, the Universe, and Everything&#33;&quot;&#41;
+    else
+        println&#40;&quot;That&#39;s an odd number, expect a Float&#33;&quot;&#41;
     end
-    println&#40;k&#41;
+    return num / 2
 end
 
-k &#61; 5
-
-strangeloop&#40;k&#41;
-
-println&#40;k&#41;</code></pre> <pre><code class=language-julia >m &#61; 10
-
-while m &gt; 0
-    print&#40;&quot;&#36;m &quot;&#41;
-    m &#61; m - 1
-end</code></pre> <pre><code class=language-julia >ERROR: UndefVarError: m not defined</code></pre>
-<p>Wait, what happened to <code>m</code>?</p>
-<pre><code class=language-julia >while m &gt; 0
-    print&#40;&quot;&#36;m &quot;&#41;
-    break
-end</code></pre>
-<pre><code class=language-julia >10</code></pre>
-<p>This occurs because, though the <code>m</code> in <code>while m &gt; 0</code> refers to the <code>m</code> assigned to <code>10</code>, inside the loop, <code>m</code> hasn&#39;t been defined. So the expression <code>m - 1</code> throws an error.</p>
-<p>In a function, things are a bit different:</p>
-<pre><code class=language-julia >function strangewhile&#40;n&#41;
-    while n &gt; 0
-        print&#40;&quot;&#36;n &quot;&#41;
-        n &#61; n - 1
-    end
-    println&#40;&quot;&quot;&#41; # getting a newline
-    println&#40;n&#41;
-end
-
-strangewhile&#40;10&#41;</code></pre>
-<pre><code class=language-julia >10 9 8 7 6 5 4 3 2 1
-0</code></pre>
-<p>Loops inside the function have access to the function arguments. Re-assigning <code>n</code> inside the function changes what the function-scope <code>n</code> refers to, but doesn&#39;t leak outside the function.</p>
-<pre><code class=language-julia >my_n &#61; 5
-
-strangewhile&#40;my_n&#41;</code></pre>
-<pre><code class=language-julia >5 4 3 2 1
-0</code></pre>
-<pre><code class=language-julia >my_n</code></pre>
-<pre><code class=language-julia >5</code></pre>
-<h2 id=loops_and_strings_-_strings_as_containers ><a href="#loops_and_strings_-_strings_as_containers" class=header-anchor >Loops and Strings - Strings as containers</a></h2>
-<p>Loops can also operate on <code>String</code>s, which are built from <code>Char</code>s.</p>
-<pre><code class=language-julia >sidx
-my_string &#61; &quot;This is a String&quot;;
-
-for c in my_string
-    println&#40;c&#41;
-end</code></pre>
-<p>We can also access individual parts of a <code>String</code> by &quot;indexing&quot; them. The syntax for this in julia is to put the index in <code>&#91;&#93;</code>.</p>
-<p>We can index with individual numbers...</p>
-<pre><code class=language-julia >sidx
-my_string&#91;1&#93;</code></pre>
-<p>or with ranges...</p>
-<pre><code class=language-julia >sidx
-my_string&#91;5:8&#93;</code></pre>
-<p>Or with the special <code>end</code> keyword, which references the last index of a collection.</p>
-<pre><code class=language-julia >sidx
-lastindex&#40;my_string&#41;
-
-my_string&#91;end&#93;
-
-my_string&#91;end-5:end&#93;</code></pre>
+oddhalf&#40;42&#41;</code></pre>
+<p>Here, there&#39;s no way for <code>elseif num &#61;&#61; 42</code> to ever be true, since when <code>num</code> is 42, the <code>iseven&#40;num&#41;</code> gets hit first, and that part of the block is evaluated.</p>
 <div class=colbox-blue ><div class=title >Note</div>
-<p>For those of you that have learned other programming languages like python or java, you might be confused that the first index is <code>1</code> instead of <code>0</code>. That is because julia uses &quot;1-based&quot; indexing.</p>
-<p>For those of you that have used R or matlab, or for those of you that have otherwise never been conditioned to think of <code>0</code> as the first thing, this is probably intuitive.</p></div>
-<div class=colbox-green ><div class=title >Tip</div>
-<p>Notice that the type of a string indexed by a number &#40;or the pieces of a <code>for</code> loop&#41; is <code>Char</code>,  and the type when indexed by a range is a <code>String</code>:</p>
-<pre><code class=language-julia >julia&gt; typeof&#40;my_string&#91;1&#93;&#41;
-Char
+<p>The julia logic operators <code>&amp;&amp;</code> and <code>||</code>
+are &quot;short circuiting&quot;, which means that
+if the answer can be known before the right-hand side is evaluated,
+then the right-hand side **won&#39;t** be evaluated. 
+This feature can be used to introduce
+a more concise conditional evaluation than an <code>if</code> block.
 
-julia&gt; typeof&#40;my_string&#91;1:2&#93;&#41;
-String</code></pre></div>
-<div class=colbox-orange ><div class=title >&quot;Checking Question&quot;</div>
-<p>How can you get a single letter <code>String</code> with indexing?</p></div>
-<h2 id=kmers ><a href="#kmers" class=header-anchor >Kmers</a></h2>
-<p>Over the next couple of lessons, we&#39;re going to build some functions that help us to find and count all of the &quot;kmers&quot; of any length in a sequence, then use them to help us identify DNA sequences from various organisms.</p>
-<p>A &quot;kmer&quot; is a sequence &#40;DNA, RNA, or amino acid&#41; of a given length, <code>k</code>. </p>
-<p>It is often useful to know the kmer composition of a sequence, given different values of <code>k</code>. For example, the 2mer &#40;kmers with length 2&#41; composition of the sequence &quot;ATATATC&quot; is:</p>
-<ul>
-<li><p>&quot;AT&quot; &#61; 3</p>
+For example,</p>
+<pre><code class=language-julia >julia&gt; function verbosehalf&#40;x&#41;
+           iseven&#40;x&#41; &amp;&amp; println&#40;&quot;That&#39;s an even number&#33;&quot;&#41;
+           iseven&#40;x&#41; || println&#40;&quot;That&#39;s an odd number&#33;&quot;&#41;
+           x / 2
+       end
+    verbosehalf &#40;generic function with 1 method&#41;
 
-<li><p>&quot;TA&quot; &#61; 2</p>
+    julia&gt; verbosehalf&#40;42&#41;
+    That&#39;s an even number&#33;
+    21.0
 
-<li><p>&quot;TC&quot; &#61; 1</p>
+    julia&gt; verbosehalf&#40;43&#41;
+    That&#39;s an odd number&#33;
+    21.5</code></pre>
+<p>When <code>43</code> is passed as an argument, <code>iseven&#40;x&#41;</code> evaluates to <code>false</code>.
+And because <code>false &amp;&amp; &lt;anything&gt;</code> is always false,
+that line just evaluates to false without ever getting to the <code>println&#40;&#41;</code> call.
+But <code>false || &lt;anything&gt;</code> depends on the right hand statement
+&#40;<code>false || true</code> is different than <code>false || false</code>&#41;,
+the right hand statement must be evaluated.
 
-</ul>
-<p>Note that all reference frames are valid that is, we don&#39;t just march along by 2s. So the 3mer composition of the same sequence would be</p>
-<ul>
-<li><p>&quot;ATA&quot; &#61; 2</p>
+In this case, those lines are equivalent to</p>
+<pre><code class=language-julia >if iseven&#40;x&#41;
+        println&#40;&quot;That&#39;s an even number&#33;&quot;&#41;
+    else
+        println&#40;&quot;That&#39;s an odd number&#33;&quot;&#41;
+    end</code></pre>
+<p>But be aware, chaining these short-circuit expressions is NOT like <code>if/elseif/else</code> since,
+regardless of the outcome of the expression, the following lines _are_ evaluated.
+Eg, if I try to write the <code>oddhalf&#40;&#41;</code> function from above like this:</p>
+<pre><code class=language-julia >function oddhalf&#40;num&#41;
+        iseven&#40;num&#41; &amp;&amp; println&#40;&quot;That&#39;s an even number, you should get an Int, but you won&#39;t.&quot;&#41;
+        num &#61;&#61; 42 &amp;&amp; println&#40;&quot;Life, the Universe, and Everything&#33;&quot;&#41;
+        println&#40;&quot;That&#39;s an odd number, expect a Float&#33;&quot;&#41;
+        return num / 2
+    end
 
-<li><p>&quot;TAT&quot; &#61; 2</p>
+    oddhalf&#40;42&#41;</code></pre>
+<pre><code class=language-julia >That&#39;s an even number, you should get an Int, but you won&#39;t.
+    Life, the Universe, and Everything&#33;
+    That&#39;s an odd number, expect a Float&#33;
+    21.0</code></pre>
+<p>Not exactly what we wanted...</p></div>
+<div class=colbox-orange ><div class=title >&quot;Checking Questions&quot;</div>
+<p>1. Referring back to our <code>compliment</code> function,
+   What happens if you try to pass <code>&quot;G&quot;</code> as an argument
+   &#40;note the double quotes&#41;?
+   Can you explain this behavior?
 
-<li><p>&quot;ATC&quot; &#61; 1</p>
+2. Evaluate <code>&#39;G&#39; &#61;&#61; &quot;G&quot;</code> - did you expect it to be <code>true</code> or <code>false</code>?
+3. What are the types of <code>&#39;G&#39;</code> and <code>&quot;G&quot;</code>?
+4. Use the <code>||</code> operator to modify the <code>if</code>/<code>elseif</code> statements
+   in your &#91;<code>compliment&#40;&#41;</code> function&#93;&#40;@ref booleans&#41; from above
+   so that it works with either single-quoted or double-quoted ACGT.
 
-</ul>
-<p>Another way to say this is that the sum of the counts of all kmers in a sequence must be equal to the length of the sequence minus <code>k</code> plus 1.</p>
-<div class=colbox-orange ><div class=title >&quot;Checking questions&quot;</div>
-<ol>
-<li><p>How many 4mers are in the sequence &quot;ATTCCGTCA&quot;  &#40;the length of the sequence is 9&#41;</p>
-
-<li><p>All of the 5mers in the above sequence are unique.  What are they?   Answer below<sup id="fnref:1"><a href="#fndef:1" class=fnref >[1]</a></sup>, but don&#39;t peek until you&#39;ve tried it&#33;</p>
-
-</ol></div>
-<h2 id=a_brief_introduction_to_dictionaries ><a href="#a_brief_introduction_to_dictionaries" class=header-anchor >A Brief Introduction to Dictionaries</a></h2>
-<p>Earlier, when we wanted to calculate GC content of a DNA sequence, we looped through a sequence, counted anything that was a <code>G</code> or <code>C</code>, and then divided that number by the length of the sequence.</p>
-<p>If we want to know the composition of all of the bases in DNA that would be easy to write out by hand, because there are only 4 options. You&#39;ll do this for real in Assignment04, but the <a href="https://en.wikipedia.org/wiki/Pseudocode">psedocode</a> might look something like this:</p>
-<pre><code class=language-julia >set variables a,c,g,t to 0
-for each base in the sequence
-    if the base is &#39;A&#39;, add one to &#96;a&#96;
-    or if the base is &#39;C&#39;, add one to &#96;c&#96;
-    or if the base is &#39;G&#39;, add one to &#96;g&#96;
-    or if the base is &#39;T&#39;, add one to &#96;t&#96;
-end
-return a,c,g,t</code></pre>
-<p>But doing something like this for proteins, where each amino acid might be one of 20 options, or for kmers where the number of possibilities increases exponentially with <code>k</code> &#40;there are 16 possible DNA 2mers, 64 possible DNA 3mers, etc&#41; that would be untenable. </p>
-<p>Another option is to use a data structure called a &quot;Dictionary.&quot; What follows is a very brief introduction to dictionaries, we&#39;ll learn more about them next week. </p>
-<p>Dictionaries store data as <code>key &#61;&gt; value</code> pairs, where the <code>key</code> can by &#40;almost&#41; any type and is used to access or alter the <code>value</code>. This is probably confusing, but may be clearer with some examples.</p>
-<pre><code class=language-julia >dicts
-my_dict &#61; Dict&#40;&quot;apples&quot;&#61;&gt; 4, &quot;bananas&quot; &#61;&gt; 1, &quot;strawberries&quot;&#61;&gt;10&#41;</code></pre>
-<p>Here, the fruits are the <code>key</code>s, and the <code>Int64s</code> are the <code>value</code>s. We can access values using the <code>keys</code> as the index:</p>
-<pre><code class=language-julia >dicts
-my_dict&#91;&quot;bananas&quot;&#93;
-my_dict&#91;&quot;strawberries&quot;&#93; * 2</code></pre>
-<p>We can check if a dictionary has a particular key with the boolean function <code>haskey&#40;&#41;</code>. </p>
-<pre><code class=language-julia >dicts
-haskey&#40;my_dict, &quot;apples&quot;&#41;
-haskey&#40;my_dict, &quot;kumquat&quot;&#41;</code></pre>
-<p>If we try to access the dictionary with a key that doesn&#39;t exist, we&#39;ll get an error.</p>
-<pre><code class=language-julia >julia&gt; my_dict&#91;&quot;kumquat&quot;&#93;</code></pre>
-<pre><code class=language-julia >ERROR: KeyError: key &quot;kumquat&quot; not found</code></pre>
-<p>But we can add new entries to the dictionary if we assign them to new values.</p>
-<pre><code class=language-julia >dicts
-my_dict&#91;&quot;kumquat&quot;&#93; &#61; 0
-haskey&#40;my_dict, &quot;kumquat&quot;&#41;</code></pre>
-<p>And we can update entries by reassigning them, as if they are variables.</p>
-<pre><code class=language-julia >dicts
-my_dict&#91;&quot;apples&quot;&#93; &#61; my_dict&#91;&quot;apples&quot;&#93; &#43; 1;
-my_dict&#91;&quot;apples&quot;&#93;</code></pre>
-<p>In the assignment, we&#39;ll use dictionaries where the keys are the kmers, and the values are the counts. Let&#39;s get started&#33;</p>
-<p><table class=fndef  id="fndef:1">
-    <tr>
-        <td class=fndef-backref ><a href="#fnref:1">[1]</a>
-        <td class=fndef-content >There are 6 kmers of length 4 &#40;9 - 4 &#43; 1&#41;,
-    
-</table>
-      &#91;&quot;ATTC&quot;, &quot;TTCC&quot;, &quot;TCCG&quot;, &quot;CCGT&quot;, &quot;CGTC&quot;, &quot;GTCA&quot;&#93;</p>
+   Note: you should have no more than 3 <code>elseif</code>s in your function,
+   and you should always return a single-quoted version of the compliment.</p></div>
+<h2 id=some_notes_on_recursion ><a href="#some_notes_on_recursion" class=header-anchor >Some notes on recursion</a></h2>
+<p>I find recursion difficult to wrap my head around. To be honest, I almost told you skip those sections of chapters 5 and 6. But I think it is valuable to encounter the concept so that you know it exists, even if we don&#39;t explore the concept in great detail.</p>
+<p>In the years I&#39;ve been programming, I think I&#39;ve only written 2 recursive functions. But there are areas of biology where they can be quite valuable, and actually easier to understand, especially those involving phylogenetic trees or other graph structures, such as those used in genome assembly.</p>
+<p>In these cases, we often want to perform and action on a node, and all the children of that node, which are also nodes, also with children... and so on. In fact, this is similar to how many shell programs interact with your file system &#40;which is also like a tree&#41;.</p>
+<p>But beyond noting that it has its uses, we won&#39;t spend much time on recursive functions in this course.</p>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: May 15, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>

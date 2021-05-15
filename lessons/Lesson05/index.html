@@ -1,98 +1,191 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Lesson 5 - Arrays</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=lesson_5_-_arrays ><a href="#lesson_5_-_arrays" class=header-anchor >Lesson 5 - Arrays</a></h1> <p><a href="https://classroom.github.com/a/F3lWDTLh"><img src="https://img.shields.io/badge/Assignment05-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 05 - Invitation" /></a> <a href="@ref assignment05"><img src="https://img.shields.io/badge/05-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 05 - Description" /></a> <a href="@ref Instructions-for-Assignment05"><img src="https://img.shields.io/badge/05-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 05 - Rendered" /></a> <a href="@ref assignment05"><img src="https://img.shields.io/badge/Due-7&#37;2F2&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 05 - Due" /></a></p> <h2>Learning objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Compare and contrast <code>Vector</code>, <code>Matrix</code>, and <code>Tuple</code> types for storing ordered data</p> <li><p>Differentiate between scalar and vector properties of <code>String</code>s</p> <li><p>Explain the uses and limitations of mutable and immutable types</p> <li><p>Recognize when to use copies or references to data</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Solve bugs that occur from attempting to access keys or indexes that don&#39;t exist</p> <li><p>Initialize and grow Vectors of different types</p> <li><p>Use indexes, ranges, and loops to access subsets of data</p> <li><p>Use string joining and interpolation to compose complex strings</p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap08">Chapter 8</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap10">Chapter 10</a> of Think Julia.</p> <li><p>Run all code examples from Lesson 5 on their own computers</p> <li><p>Cloned the Assignment 5 repository with github classroom.</p> <li><p>Completed assignment 5 with all tests passing.</p> </ul> <h2 id=string_as_array ><a href="#string_as_array" class=header-anchor >String as Array</a></h2> <p>After reading chapters 8 and 10, you might have noticed that <code>String</code>s act an awful lot like 1D <code>Array</code>s &#40;<code>Vector</code>s&#41;.</p> <p>Both <code>String</code>s and <code>Vector</code>s:</p> <ol> <li><p>are ordered collections &#40;<code>String</code>s are collections of <code>Char</code>, <code>Vector</code>s can have any type&#41;</p> <li><p>can be indexed and sliced</p> </ol> <p>There are many differences, but chief among them is that <code>Vector</code>s are &quot;mutable&quot;; that is, we can change the vector by changing individual elements, adding things, or removing things. </p> <pre><code class=language-julia >v &#61; collect&#40;2:2:10&#41;
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/gruvbox_code.css"> <link rel=icon  href="/assets/favicon.png"> <title>Lesson 4 - Loop-d-loop</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content ><h1 id=lesson_4_-_loop-d-loop ><a href="#lesson_4_-_loop-d-loop" class=header-anchor >Lesson 4 - Loop-d-loop</a></h1> <p><a href="https://classroom.github.com/a/1vpkAM2r"><img src="https://img.shields.io/badge/Assignment04-Repository-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 04 - Invitation" /></a> <a href="@ref assignment04"><img src="https://img.shields.io/badge/04-Description-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 04 - Description" /></a> <a href="@ref Instructions-for-Assignment04"><img src="https://img.shields.io/badge/04-Script-blue?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 04 - Rendered" /></a> <a href="@ref assignment04"><img src="https://img.shields.io/badge/Due-6&#37;2F18&#37;2F2020-orange?style&#61;for-the-badge&amp;logo&#61;open&#37;20badges" alt="Assignment 04 - Due" /></a></p> <h2>Learning objectives</h2> <p><strong>Concepts</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Compare and contrast <code>for</code> loops and <code>while</code> loops</p> <li><p>Recognize the difference between <code>String</code>s and <code>Char</code>s</p> <li><p>Debug errors that occur from writing infinite loops</p> </ul> <p><strong>Skills</strong> - After completing this lesson, students will be able to:</p> <ul> <li><p>Use a <code>for</code> loop to accomplish a task incrementally</p> <li><p>Write a <code>while</code> loop to repeat code until a condition is met</p> <li><p>Stop a loop before it&#39;s complete with <code>break</code></p> </ul> <p><strong>Assignments</strong> - This lesson is complete when students have:</p> <ul> <li><p>Read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04">Chapter 4</a> and <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap07">Chapter 7</a> of Think Julia.</p> <li><p>Run all code examples from Lesson 4 on their own computers</p> <li><p>Cloned the Assignment 4 repository with github classroom.</p> <li><p>Completed assignment 4 with all tests passing.</p> </ul> <h2 id=repeating_code_with_loops ><a href="#repeating_code_with_loops" class=header-anchor >Repeating code with loops</a></h2> <p>Writing code is about being lazy - never write more code than you have to&#33; We&#39;ve already seen that we can use functions to wrap up code that can then be used over and over and over and...</p> <p>But there are plenty more opportunities for re-using code, especially &quot;loops.&quot; In the 🐢exercise from <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04">Chapter 4</a> you&#39;ve seen one use of the <code>for</code> loop.</p> <pre><code class=language-julia >for i in 1:5
+    println&#40;i * 3&#41;
+end</code></pre> <p>This loop says, &quot;For each number, 1 to 5, print that number times 3.&quot;</p> <p>The way the computer evaluates this is as a loop -</p> <ol> <li><p><code>i</code> is set to 1, <code>println&#40;i * 3&#41;</code></p> <ol> <li><p>loop back to the top</p> </ol> <li><p><code>i</code> is set to 2, <code>println&#40;i * 3&#41;</code></p> <ol> <li><p>loop back to the top</p> </ol> <li><p>etc...</p> </ol> <h3 id=using_ranges_in_for_loops ><a href="#using_ranges_in_for_loops" class=header-anchor >Using ranges in <code>for</code> loops</a></h3> <p>The <code>1:5</code> is a &quot;range&quot;, it&#39;s all of the integers from 1 to 5. In julia, there are many ways to express ranges - and they don&#39;t always have to increment by 1&#33;</p> <p>The easiest way to use ranges is with the <code>:</code> syntax, <code>&lt;start&gt;:&lt;optional-increment&gt;:&lt;end&gt;</code>.</p> <pre><code class=language-julia >for even_number in 2:2:10
+    println&#40;even_number&#41;
+end
 
-push&#33;&#40;v, 42&#41;;
-pushfirst&#33;&#40;v, -1&#41;;
+for half in 1:0.5:3
+    println&#40;half&#41;
+end</code></pre> <p>You can even go backwards&#33;</p> <pre><code class=language-julia >function decrement&#40;n&#41;
+    for d in n:-1:0
+        println&#40;d&#41;
+    end
+end
 
-v
+decrement&#40;5&#41;</code></pre> <p>For more complicated ranges, we can also use the <code>range&#40;&#41;</code> function. Use the REPL <code>help?</code> mode to learn about the <code>range</code> function by typing <code>?</code> &#40;the prompt should change to <code>help?&gt;</code>&#41;, then type <code>range</code> and press <code>enter</code>.</p> <div class=colbox-purple ><div class=title ></div> <p>Use the <code>range&#40;&#41;</code> function to make a range that goes from <code>10</code> to <code>1000</code> with 4 entries. You should be able to run:</p> <pre><code class=language-julia >julia&gt; for i in range&#40;#&#61; your code here &#61;#&#41;
+               println&#40;i&#41;
+           end
+    10.0
+    340.0
+    670.0
+    1000.0</code></pre></div> <h3 id=while_loops ><a href="#while_loops" class=header-anchor >While loops</a></h3> <p>In many cases, the same loop can be written in many different ways. For example,</p> <pre><code class=language-julia >function whiledecrement&#40;n&#41;
+    while n &gt;&#61; 0 # greater than or equal to
+        println&#40;n&#41;
+        n &#61; n - 1
+    end
+end
 
-deleteat&#33;&#40;v, 1:2:7&#41;;
+whiledecrement&#40;5&#41;</code></pre> <p>Where <code>for</code> loops march through a predetermined sequence, <code>while</code> loops continue until a particular condition is met.</p> <h3 id=loops_and_scope ><a href="#loops_and_scope" class=header-anchor >Loops and scope</a></h3> <p>In julia, loops have their own scope &#40;we talked about <a href="@ref scope">scope back in Lesson 2</a>&#41;. Functions also have their own scope, and the way that the scope of loops and the scope of functions interact can be a bit counter-intuitive.</p> <p>The best way to get a sense of this is to see some examples.</p> <pre><code class=language-julia >i &#61; 5
 
-v</code></pre> <p><code>String</code>s, by contrast, are <em>immutable</em>. This might not be obvious, since you can do things like</p> <pre><code class=language-julia >s &#61; &quot;a string&quot;
-s &#61; s * &quot; &quot; * s</code></pre> <p>It seems like <code>s</code> has changed, but it has not changed by altering the actual object - instead, we constructed an <strong>entirely new string</strong> and just reassigned <code>s</code> to the new <code>String</code>.</p> <div class=colbox-orange ><div class=title >Checking Questions</div> <ol> <li><p>Assign an empty vector &#40;<code>&#91;&#93;</code>&#41; to the variable <code>v1</code>, then try to <code>push&#33;</code> an <code>Int64</code>, <code>Float64</code>, and <code>String</code> to it. What is the <code>typeof</code> the <code>Vector</code>?</p> <li><p>Assign <code>&#91;1.2, 3, 4&#93;</code> to the variable <code>v2</code>. What is the type of the second elementt &#40;<code>v2&#91;2&#93;</code>&#41;? Is that what you expected?</p> <li><p>Use <code>push&#33;&#40;&#41;</code> to add the integer <code>5</code> to the vector <code>v2</code>. What is the type of <code>v2&#91;4&#93;</code>?</p> <li><p>Use <code>push&#33;&#40;&#41;</code> to add the <code>String</code> <code>&quot;6&quot;</code> to the vector <code>v2</code>. What happens?</p> </ol></div> <p><code>String</code>s themselves are not <code>Vector</code>s, but we can use <code>Vector</code>s of <code>Char</code>s to act like mutable <code>String</code>s.</p> <pre><code class=language-julia >vc &#61; collect&#40;&quot;Collect makes vector&quot;&#41;
+for i in 1:3
+    println&#40;i&#41;
+end
 
-push&#33;&#40;vc, &#39;s&#39;&#41;;
-join&#40;vc&#41;</code></pre> <p>The <code>join&#40;&#41;</code> function takes a vector of <code>String</code>s or <code>Char</code>s and creates a new string.</p> <div class=colbox-green ><div class=title >Tip</div> <p>Remember that you can use the help REPL &#40;press <code>?</code> at the REPL&#41; to view the docstring of <code>join&#40;&#41;</code>.</p></div> <p>The <code>join&#40;&#41;</code> function can also take <em>optional</em> arguments that can put a <code>String</code> in between each thing that&#39;s <code>join&#40;&#41;</code>ed,</p> <pre><code class=language-julia >join&#40;&#91;&quot;I&quot;, &quot;love&quot;, &quot;the&quot;, &quot;julia&quot;, &quot;language&#33;&quot;&#93;, &quot; 👏 &quot;&#41;</code></pre>
-<p>and something different between the last two values</p>
-<pre><code class=language-julia >join&#40;&#91;&quot;Head&quot;, &quot;shoulders&quot;, &quot;knees&quot;, &quot;toes&quot;&#93;, &quot;, &quot;, &quot;, and &quot;&#41;</code></pre>
-<h2 id=aliasing ><a href="#aliasing" class=header-anchor >Aliasing</a></h2>
-<p>Make sure you&#39;ve read <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_aliasing">the section on &quot;aliasing&quot;</a> in <em>Think Julia</em> prior to answering the following questions. Even if you already read it, it&#39;s worth reading again - this is a constant source of hard-to-find bugs.</p>
-<div class=colbox-orange ><div class=title >&quot;Checking questions&quot;</div>
-<p>For each of the following questions, first try to predict the answer, then check your answer at the REPL. If you were wrong, try to explain the correct answer.</p>
-<ol>
-<li><p>The follwing code assigns 3 variables &#40;<code>a</code>, <code>b</code>, and <code>c</code>&#41; to the float <code>6.02e24</code>,  then reassigns one of them &#40;<code>a</code>&#41; to the float <code>3.14</code>.</p>
+println&#40;i&#41;</code></pre> <pre><code class=language-julia >function strangeloop&#40;j&#41;
+    k &#61; 1
+    for k in 1:j
+        println&#40;k&#41;
+    end
+    println&#40;k&#41;
+end
 
-</ol>
-<pre><code class=language-julia >julia&gt; a &#61; b &#61; c &#61; 6.02e24
-    6.02e24
+k &#61; 5
 
-    julia&gt; a &#61; 3.14
-    3.14</code></pre>
-<p>What is the value of <code>b</code>?</p>
-<ol start=2 >
-<li><p>Can you assign <code>c</code> to an <code>Int64</code>?</p>
+strangeloop&#40;k&#41;
 
-<li><p>The following code assigns 3 variables &#40;<code>u</code>, <code>v</code>, <code>w</code>&#41; to an empty Integer vector,  then <code>push&#33;</code>es the integer <code>12</code> to one of them &#40;<code>u</code>&#41;</p>
+println&#40;k&#41;</code></pre> <pre><code class=language-julia >m &#61; 10
 
-</ol>
-<pre><code class=language-julia >julia&gt; u &#61; v &#61; w &#61; Int64&#91;&#93;
-    0-element Array&#123;Int64,1&#125;
-    
-    julia&gt; push&#33;&#40;u, 12&#41;
-    1-element Array&#123;Int64,1&#125;:
-        12</code></pre>
-<p>What is the value of <code>v</code>?</p>
-<ol start=4 >
-<li><p>Can you <code>push&#33;&#40;&#41;</code> a <code>Float64</code> to <code>w</code>?</p>
+while m &gt; 0
+    print&#40;&quot;&#36;m &quot;&#41;
+    m &#61; m - 1
+end</code></pre> <pre><code class=language-julia >ERROR: UndefVarError: m not defined</code></pre>
+<p>Wait, what happened to <code>m</code>?</p>
+<pre><code class=language-julia >while m &gt; 0
+    print&#40;&quot;&#36;m &quot;&#41;
+    break
+end</code></pre>
+<pre><code class=language-julia >10</code></pre>
+<p>This occurs because, though the <code>m</code> in <code>while m &gt; 0</code> refers to the <code>m</code> assigned to <code>10</code>, inside the loop, <code>m</code> hasn&#39;t been defined. So the expression <code>m - 1</code> throws an error.</p>
+<p>In a function, things are a bit different:</p>
+<pre><code class=language-julia >function strangewhile&#40;n&#41;
+    while n &gt; 0
+        print&#40;&quot;&#36;n &quot;&#41;
+        n &#61; n - 1
+    end
+    println&#40;&quot;&quot;&#41; # getting a newline
+    println&#40;n&#41;
+end
 
-<li><p>Which of the following have the same <em>type</em> as <code>m</code>  if <code>m &#61; &#91;1, 4&#93;</code>?</p>
+strangewhile&#40;10&#41;</code></pre>
+<pre><code class=language-julia >10 9 8 7 6 5 4 3 2 1
+0</code></pre>
+<p>Loops inside the function have access to the function arguments. Re-assigning <code>n</code> inside the function changes what the function-scope <code>n</code> refers to, but doesn&#39;t leak outside the function.</p>
+<pre><code class=language-julia >my_n &#61; 5
+
+strangewhile&#40;my_n&#41;</code></pre>
+<pre><code class=language-julia >5 4 3 2 1
+0</code></pre>
+<pre><code class=language-julia >my_n</code></pre>
+<pre><code class=language-julia >5</code></pre>
+<h2 id=loops_and_strings_-_strings_as_containers ><a href="#loops_and_strings_-_strings_as_containers" class=header-anchor >Loops and Strings - Strings as containers</a></h2>
+<p>Loops can also operate on <code>String</code>s, which are built from <code>Char</code>s.</p>
+<pre><code class=language-julia >sidx
+my_string &#61; &quot;This is a String&quot;;
+
+for c in my_string
+    println&#40;c&#41;
+end</code></pre>
+<p>We can also access individual parts of a <code>String</code> by &quot;indexing&quot; them. The syntax for this in julia is to put the index in <code>&#91;&#93;</code>.</p>
+<p>We can index with individual numbers...</p>
+<pre><code class=language-julia >sidx
+my_string&#91;1&#93;</code></pre>
+<p>or with ranges...</p>
+<pre><code class=language-julia >sidx
+my_string&#91;5:8&#93;</code></pre>
+<p>Or with the special <code>end</code> keyword, which references the last index of a collection.</p>
+<pre><code class=language-julia >sidx
+lastindex&#40;my_string&#41;
+
+my_string&#91;end&#93;
+
+my_string&#91;end-5:end&#93;</code></pre>
+<div class=colbox-blue ><div class=title >Note</div>
+<p>For those of you that have learned other programming languages like python or java, you might be confused that the first index is <code>1</code> instead of <code>0</code>. That is because julia uses &quot;1-based&quot; indexing.</p>
+<p>For those of you that have used R or matlab, or for those of you that have otherwise never been conditioned to think of <code>0</code> as the first thing, this is probably intuitive.</p></div>
+<div class=colbox-green ><div class=title >Tip</div>
+<p>Notice that the type of a string indexed by a number &#40;or the pieces of a <code>for</code> loop&#41; is <code>Char</code>,  and the type when indexed by a range is a <code>String</code>:</p>
+<pre><code class=language-julia >julia&gt; typeof&#40;my_string&#91;1&#93;&#41;
+Char
+
+julia&gt; typeof&#40;my_string&#91;1:2&#93;&#41;
+String</code></pre></div>
+<div class=colbox-orange ><div class=title >&quot;Checking Question&quot;</div>
+<p>How can you get a single letter <code>String</code> with indexing?</p></div>
+<h2 id=kmers ><a href="#kmers" class=header-anchor >Kmers</a></h2>
+<p>Over the next couple of lessons, we&#39;re going to build some functions that help us to find and count all of the &quot;kmers&quot; of any length in a sequence, then use them to help us identify DNA sequences from various organisms.</p>
+<p>A &quot;kmer&quot; is a sequence &#40;DNA, RNA, or amino acid&#41; of a given length, <code>k</code>. </p>
+<p>It is often useful to know the kmer composition of a sequence, given different values of <code>k</code>. For example, the 2mer &#40;kmers with length 2&#41; composition of the sequence &quot;ATATATC&quot; is:</p>
 <ul>
-<li><p><code>n &#61; &#91;5,4,3,2,1&#93;</code></p>
+<li><p>&quot;AT&quot; &#61; 3</p>
 
-<li><p><code>o &#61; Int64&#91;&#93;</code></p>
+<li><p>&quot;TA&quot; &#61; 2</p>
 
-<li><p><code>p &#61; &#91;&quot;2&quot;, &quot;1&quot;&#93;</code></p>
-
-<li><p><code>q &#61; &#91;1.2, 3.4&#93;</code></p>
+<li><p>&quot;TC&quot; &#61; 1</p>
 
 </ul>
-<p>Hint: you can check by doing eg <code>n isa &#40;typeof&#40;m&#41;&#41;</code></p>
+<p>Note that all reference frames are valid that is, we don&#39;t just march along by 2s. So the 3mer composition of the same sequence would be</p>
+<ul>
+<li><p>&quot;ATA&quot; &#61; 2</p>
+
+<li><p>&quot;TAT&quot; &#61; 2</p>
+
+<li><p>&quot;ATC&quot; &#61; 1</p>
+
+</ul>
+<p>Another way to say this is that the sum of the counts of all kmers in a sequence must be equal to the length of the sequence minus <code>k</code> plus 1.</p>
+<div class=colbox-orange ><div class=title >&quot;Checking questions&quot;</div>
+<ol>
+<li><p>How many 4mers are in the sequence &quot;ATTCCGTCA&quot;  &#40;the length of the sequence is 9&#41;</p>
+
+<li><p>All of the 5mers in the above sequence are unique.  What are they?   Answer below<sup id="fnref:1"><a href="#fndef:1" class=fnref >[1]</a></sup>, but don&#39;t peek until you&#39;ve tried it&#33;</p>
 
 </ol></div>
-<h2 id=maps_and_filters_revisited ><a href="#maps_and_filters_revisited" class=header-anchor >Maps and filters revisited</a></h2>
-<p>In <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#_map_filter_and_reduce">chapter 10 of <em>Think Julia</em></a>, you are introduced to the concept of &quot;map&quot; and &quot;filter&quot; functions, which apply a function to each element of a collection, or return only elements that meet a condition respectively.</p>
-<p>In the chapter, the examples shown are of hand-written map and filter functions written with loops, but these pattterns are so useful that there are <code>map&#40;&#41;</code> and <code>filter&#40;&#41;</code> functions, each of which take a function as the first argument, and a collection as the second argument.</p>
-<p>For example,</p>
-<pre><code class=language-julia >function add3&#40;x&#41;
-    return x &#43; 3
+<h2 id=a_brief_introduction_to_dictionaries ><a href="#a_brief_introduction_to_dictionaries" class=header-anchor >A Brief Introduction to Dictionaries</a></h2>
+<p>Earlier, when we wanted to calculate GC content of a DNA sequence, we looped through a sequence, counted anything that was a <code>G</code> or <code>C</code>, and then divided that number by the length of the sequence.</p>
+<p>If we want to know the composition of all of the bases in DNA that would be easy to write out by hand, because there are only 4 options. You&#39;ll do this for real in Assignment04, but the <a href="https://en.wikipedia.org/wiki/Pseudocode">psedocode</a> might look something like this:</p>
+<pre><code class=language-julia >set variables a,c,g,t to 0
+for each base in the sequence
+    if the base is &#39;A&#39;, add one to &#96;a&#96;
+    or if the base is &#39;C&#39;, add one to &#96;c&#96;
+    or if the base is &#39;G&#39;, add one to &#96;g&#96;
+    or if the base is &#39;T&#39;, add one to &#96;t&#96;
 end
-
-v &#61; map&#40;add3, &#91;1,2,3,4&#93;&#41;</code></pre>
-<p>This is the same as</p>
-<pre><code class=language-julia >v &#61; Int64&#91;&#93;
-
-for x in &#91;1,2,3,4&#93;
-    push&#33;&#40;v, add3&#40;x&#41;&#41;
-end</code></pre>
-<p>This type of <code>map&#40;&#41;</code> returns a copy of the vector, so the original data will not be altered, but you can also use <code>map&#33;&#40;&#41;</code> with the same syntax to mutate the underlying vector.</p>
-<p>Similarly, one can use <code>filter&#40;&#41;</code> &#40;or, to mutate, <code>filter&#33;&#40;&#41;</code>&#41; to perform a filtering function. In this case, the function passed as the first argument must be a boolean function &#40;anything that returns <code>true</code> will be kept&#41;.</p>
-<pre><code class=language-julia >original &#61; &#91;3.14, 8.5, 25.3, 1.0&#93;
-
-function lessthan5&#40;x&#41;
-    return x &lt; 5
-end
-
-newv &#61; filter&#40;lessthan5, original&#41;</code></pre>
-<p>is the same as</p>
-<pre><code class=language-julia >newv &#61; Float64&#91;&#93;
-
-for x in original
-    if lessthan5&#40;x&#41;
-        push&#33;&#40;newv, x&#41;
-    end
-end</code></pre>
+return a,c,g,t</code></pre>
+<p>But doing something like this for proteins, where each amino acid might be one of 20 options, or for kmers where the number of possibilities increases exponentially with <code>k</code> &#40;there are 16 possible DNA 2mers, 64 possible DNA 3mers, etc&#41; that would be untenable. </p>
+<p>Another option is to use a data structure called a &quot;Dictionary.&quot; What follows is a very brief introduction to dictionaries, we&#39;ll learn more about them next week. </p>
+<p>Dictionaries store data as <code>key &#61;&gt; value</code> pairs, where the <code>key</code> can by &#40;almost&#41; any type and is used to access or alter the <code>value</code>. This is probably confusing, but may be clearer with some examples.</p>
+<pre><code class=language-julia >dicts
+my_dict &#61; Dict&#40;&quot;apples&quot;&#61;&gt; 4, &quot;bananas&quot; &#61;&gt; 1, &quot;strawberries&quot;&#61;&gt;10&#41;</code></pre>
+<p>Here, the fruits are the <code>key</code>s, and the <code>Int64s</code> are the <code>value</code>s. We can access values using the <code>keys</code> as the index:</p>
+<pre><code class=language-julia >dicts
+my_dict&#91;&quot;bananas&quot;&#93;
+my_dict&#91;&quot;strawberries&quot;&#93; * 2</code></pre>
+<p>We can check if a dictionary has a particular key with the boolean function <code>haskey&#40;&#41;</code>. </p>
+<pre><code class=language-julia >dicts
+haskey&#40;my_dict, &quot;apples&quot;&#41;
+haskey&#40;my_dict, &quot;kumquat&quot;&#41;</code></pre>
+<p>If we try to access the dictionary with a key that doesn&#39;t exist, we&#39;ll get an error.</p>
+<pre><code class=language-julia >julia&gt; my_dict&#91;&quot;kumquat&quot;&#93;</code></pre>
+<pre><code class=language-julia >ERROR: KeyError: key &quot;kumquat&quot; not found</code></pre>
+<p>But we can add new entries to the dictionary if we assign them to new values.</p>
+<pre><code class=language-julia >dicts
+my_dict&#91;&quot;kumquat&quot;&#93; &#61; 0
+haskey&#40;my_dict, &quot;kumquat&quot;&#41;</code></pre>
+<p>And we can update entries by reassigning them, as if they are variables.</p>
+<pre><code class=language-julia >dicts
+my_dict&#91;&quot;apples&quot;&#93; &#61; my_dict&#91;&quot;apples&quot;&#93; &#43; 1;
+my_dict&#91;&quot;apples&quot;&#93;</code></pre>
+<p>In the assignment, we&#39;ll use dictionaries where the keys are the kmers, and the values are the counts. Let&#39;s get started&#33;</p>
+<p><table class=fndef  id="fndef:1">
+    <tr>
+        <td class=fndef-backref ><a href="#fnref:1">[1]</a>
+        <td class=fndef-content >There are 6 kmers of length 4 &#40;9 - 4 &#43; 1&#41;,
+    
+</table>
+      &#91;&quot;ATTC&quot;, &quot;TTCC&quot;, &quot;TCCG&quot;, &quot;CCGT&quot;, &quot;CGTC&quot;, &quot;GTCA&quot;&#93;</p>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: May 14, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: May 15, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>
