@@ -103,7 +103,7 @@ designed for scientific computing.
 1. Go to the [julia downloads page](https://julialang.org/downloads/)
     and select the correct download for your operating system.
 
-    ![julia-download](../assets/img/julia-releases.png)
+    ![julia-download](/assets/img/julia-releases.png)
 
 1. Open the downloaded file and follow the prompts to install it.
     1. Mac users, once the `.dmg` file is opened,
@@ -111,8 +111,6 @@ designed for scientific computing.
     1. Windows users - there will be a `.exe` file - open it to start the installation.
 1. Once the julia application is installed, open it.
    This should cause a text window to open looking something like this:
-
-`test`
 
 ```julia-repl
 .
@@ -139,29 +137,29 @@ julia>
 
 You can close the window in the normal way, or type `exit()` and hit enter.
 
-### [Sign up for github classroom](@id github_signup)
+### Sign up for github
 
 All assignments will be distributed,
-turned in and graded through [github classroom](http://classroom.github.com/).
+turned in and graded through [github](http://github.com/).
 
 To use it, you need to sign up for a github account
 if you don't have one already.
 
 @@colbox-purple
-    @@title
-    To Do
-    @@
-    If you don't have an account already, get one at [https://github.com/join](https://github.com/join).
+@@title
+To Do
+@@
+If you don't have an account already, get one at [https://github.com/join](https://github.com/join).
 @@
 
 @@colbox-orange
-    @@title
-    Privacy Note
-    @@
-    You do not need to use your wellesley.edu email address to create this account, but let Kevin know if you use a different address so that you get credit for your work.
+@@title
+Privacy Note
+@@
+You do not need to use your wellesley.edu email address to create this account, but let Kevin know if you use a different address so that you get credit for your work.
 
-    If you'd like, you may sign up for a [github student discount pack](https://education.github.com/pack)
-    This is not necessary for this course.
+If you'd like, you may sign up for a [github student discount pack](https://education.github.com/pack)
+This is not necessary for this course.
 @@
 
 ## Part 2 - Navigating the filesystem using the terminal

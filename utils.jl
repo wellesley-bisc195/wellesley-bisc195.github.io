@@ -117,7 +117,7 @@ function hfun_include_lessons()
     lessons = [Lesson(joinpath("lessons", p)) for p in filter(f-> startswith(f, "Lesson"), readdir("lessons/"))]
     io = IOBuffer()
     for lesson in lessons
-        lesson.release > today() && continue
+        lesson.release >= today() && continue
 
         write(io, Franklin.md2html("""
             ### [$(lesson.title)]($(getpath(lesson)))
@@ -125,7 +125,7 @@ function hfun_include_lessons()
             $(lesson_badge(lesson))
             $(date_badge(lesson))
             $(join([chapter_badge(c) for c in lesson.chapters], ' '))
-            $(join([assignment_badge(Assignment(a)) for a in lesson.assignments], ' '))
+            $(join([join([assignment_badge(a), due_badge(a)], ' ') for a in Assignment.(lesson.assignments)], ' '))
             """))
     end
     return String(take!(io))

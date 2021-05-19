@@ -1,6 +1,7 @@
 +++
 number = 2
 title = "Using git for version control"
+date = Date(2021,06,08)
 lectures = [2]
 assignments = [1]
 concepts = [

@@ -1,32 +1,22 @@
-# Lesson 4 - Loop-d-loop
++++
+number = 5
+title = "Loop-d-loop"
+date = Date(2021,6,18)
+assignments = [4]
+chapters = [4,7]
+concepts = [
+    "Compare and contrast `for` loops and `while` loops",
+    "Recognize the difference between `String`s and `Char`s",
+    "Debug errors that occur from writing infinite loops   "
+]
+skills = [
+    "Use a `for` loop to accomplish a task incrementally",
+    "Write a `while` loop to repeat code until a condition is met",
+    "Stop a loop before it's complete with `break`"
+]
++++
 
-[![Assignment 04 - Invitation](https://img.shields.io/badge/Assignment04-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/1vpkAM2r)
-[![Assignment 04 - Description](https://img.shields.io/badge/04-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment04)
-[![Assignment 04 - Rendered](https://img.shields.io/badge/04-Script-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment04)
-[![Assignment 04 - Due](https://img.shields.io/badge/Due-6%2F18%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment04)
-
-## Learning objectives
-
-**Concepts** - After completing this lesson, students will be able to:
-
-- Compare and contrast `for` loops and `while` loops
-- Recognize the difference between `String`s and `Char`s
-- Debug errors that occur from writing infinite loops
-
-**Skills** - After completing this lesson, students will be able to:
-
-- Use a `for` loop to accomplish a task incrementally
-- Write a `while` loop to repeat code until a condition is met
-- Stop a loop before it's complete with `break`
-
-**Assignments** - This lesson is complete when students have:
-
-- Read [Chapter 4](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04)
-  and [Chapter 7](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap07)
-  of Think Julia.
-- Run all code examples from Lesson 4 on their own computers
-- Cloned the Assignment 4 repository with github classroom.
-- Completed assignment 4 with all tests passing.
+{{lesson_preamble}}
 
 ## Repeating code with loops
 
@@ -87,30 +77,48 @@ end
 decrement(5)
 ```
 
+@@colbox-green
+@@title
+Tip
+@@
+In the examples above, I'm writing these in "script notation"
+rather than "REPL" notation (note the absence of the `julia> ` prompt).
+
+But you can (and should!) copy the code into a REPL
+or evaluate it in VS-code to see the results.
+Try to predict what the outcome will be *before* you run it,
+and if the results aren't what you expect, look into why.
+@@
+
 For more complicated ranges, we can also use the `range()` function.
 Use the REPL `help?` mode to learn about the `range` function
 by typing `?` (the prompt should change to `help?>`),
 then type `range` and press `enter`.
 
+```julia-repl
+help?> range
+# ...
+```
+
 @@colbox-purple
 @@title
-
+Practice
 @@
 
-    Use the `range()` function to make a range
-    that goes from `10` to `1000` with 4 entries.
+Use the `range()` function to make a range
+that goes from `10` to `1000` with 4 entries.
 
-    You should be able to run:
+You should be able to run:
 
-    ```julia
-    julia> for i in range(#= your code here =#)
-               println(i)
-           end
-    10.0
-    340.0
-    670.0
-    1000.0
-    ```
+```julia-repl
+julia> for i in range(#= your code here =#)
+            println(i)
+       end
+10.0
+340.0
+670.0
+1000.0
+```
 @@
 
 ### While loops
@@ -136,52 +144,83 @@ Where `for` loops march through a predetermined sequence,
 ### Loops and scope
 
 In julia, loops have their own scope
-(we talked about [scope back in Lesson 2](@ref scope)).
+(we talked about [scope back in Lesson 3](/lessons/Lesson03/#variables_arguments_and_scope)).
 Functions also have their own scope,
 and the way that the scope of loops and the scope of functions interact
 can be a bit counter-intuitive.
 
 The best way to get a sense of this is to see some examples.
 
-```julia
-i = 5
+```julia-repl
+julia> i = 5
+5
 
-for i in 1:3
-    println(i)
-end
+julia> for i in 1:3
+           println(i)
+       end
+1
+2
+3
 
-println(i)
+julia> println(i)
+5
 ```
 
-```julia
-function strangeloop(j)
-    k = 1
-    for k in 1:j
-        println(k)
-    end
-    println(k)
-end
+```julia-repl
+julia> function strangeloop(j)
+           k = 1
+           for k in 1:j
+               println(k)
+           end
+           println(k)
+       end
+strangeloop (generic function with 1 method)
 
-k = 5
+julia> k = 5
+5
 
-strangeloop(k)
+julia> strangeloop(k)
+1
+2
+3
+4
+5
+1
 
-println(k)
+julia> println(k)
+5
 ```
 
-```julia
-m = 10
+```julia-repl
+julia> m = 3
+3
 
-while m > 0
-    print("$m ")
-    m = m - 1
-end
+julia> while m > 0
+           print("$m ")
+           m = m - 1
+       end
+3 2 1
+
+julia> m
+0
 ```
-```
-ERROR: UndefVarError: m not defined
+
+Note that here, the REPL behaves differently
+than the same code in a julia file.
+
+Put the code above (without the `julia>` prompts)
+into a file called "scope.jl" and execute it.
+
+```julia-repl
+julia> include("scope.jl")
+┌ Warning: Assignment to `m` in soft scope is ambiguous because a global variable by the same name exists: `m` will be treated as a new local. Disambiguate by using `local m` to suppress this warning or `global m` to assign to the existing global variable.
+└ @ scope.jl:4
+ERROR: LoadError: UndefVarError: m not defined
 ```
 
 Wait, what happened to `m`?
+The warning message tells you.
+Change `scope.jl` to the following
 
 ```julia
 while m > 0
@@ -189,34 +228,43 @@ while m > 0
     break
 end
 ```
-```
-10
+
+and run it again:
+
+```julia-repl
+julia> include("scope.jl")
+3
 ```
 
 This occurs because,
 though the `m` in `while m > 0` refers to the `m`
-assigned to `10`,
+outside the loop that's assigned to `3`,
 inside the loop,
 `m` hasn't been defined.
 So the expression `m - 1` throws an error.
+This is different in the REPL,
+because a lot of people complained about the scoping rules in the REPL,
+and the developers of julia decided
+that the convenience was worth the inconsistancy.
 
-In a function, things are a bit different:
+Mostly, this doesn't come up in real life,
+since in a function, things are a bit different.
+The following works in the REPL or in a script.
 
-```julia
-function strangewhile(n)
-    while n > 0
-        print("$n ")
-        n = n - 1
-    end
-    println("") # getting a newline
-    println(n)
-end
+```julia-repl
+julia> function strangewhile(n)
+           while n > 0
+               print("$n ")
+               n = n - 1
+           end
+           println("") # getting a newline
+           println(n)
+       end
+strangewhile (generic function with 2 methods)
 
-strangewhile(10)
-```
-```
+julia> strangewhile(10)
 10 9 8 7 6 5 4 3 2 1
-0
+0   
 ```
 
 Loops inside the function have access to the function arguments.
@@ -224,19 +272,19 @@ Re-assigning `n` inside the function
 changes what the function-scope `n` refers to,
 but doesn't leak outside the function.
 
-```julia
-my_n = 5
+```julia-repl
+julia> strangewhile(10)
+10 9 8 7 6 5 4 3 2 1
+0
 
-strangewhile(my_n)
-```
-```
+julia> my_n = 5
+5
+
+julia> strangewhile(my_n)
 5 4 3 2 1
 0
-```
-```julia
-my_n
-```
-```
+
+julia> my_n
 5
 ```
 
@@ -245,12 +293,28 @@ my_n
 Loops can also operate on `String`s,
 which are built from `Char`s.
 
-```julia sidx
-my_string = "This is a String";
+```julia-repl
+julia> my_string = "This is a String";
 
-for c in my_string
-    println(c)
-end
+julia> for c in my_string
+           println(c)
+       end
+T
+h
+i
+s
+
+i
+s
+
+a
+
+S
+t
+r
+i
+n
+g
 ```
 
 We can also access individual parts of a `String`
@@ -259,25 +323,30 @@ The syntax for this in julia is to put the index in `[]`.
 
 We can index with individual numbers...
 
-```julia sidx
-my_string[1]
+```julia-repl
+julia> my_string[1]
+'T': ASCII/Unicode U+0054 (category Lu: Letter, uppercase)
 ```
 
 or with ranges...
 
-```julia sidx
-my_string[5:8]
+```julia-repl
+julia> my_string[5:8]
+" is "
 ```
 
 Or with the special `end` keyword,
 which references the last index of a collection.
 
-```julia sidx
-lastindex(my_string)
+```julia-repl
+julia> lastindex(my_string)
+16
 
-my_string[end]
+julia> my_string[end]
+'g': ASCII/Unicode U+0067 (category Ll: Letter, lowercase)
 
-my_string[end-5:end]
+julia> my_string[end-7:end]
+"a String"
 ```
 
 @@colbox-blue
@@ -304,7 +373,7 @@ Notice that the type of a string indexed by a number
 (or the pieces of a `for` loop) is `Char`, 
 and the type when indexed by a range is a `String`:
 
-```julia
+```julia-repl
 julia> typeof(my_string[1])
 Char
 
@@ -327,8 +396,8 @@ we're going to build some functions that help us to find
 and count all of the "kmers" of any length in a sequence,
 then use them to help us identify DNA sequences from various organisms.
 
-A "kmer" is a sequence (DNA, RNA, or amino acid)
-of a given length, `k`. 
+A "kmer" is a biological sequence (DNA, RNA, or amino acid)
+of a given length, $k$.
 
 It is often useful to know the kmer composition
 of a sequence, given different values of `k`.
@@ -347,7 +416,9 @@ So the 3mer composition of the same sequence would be
 
 Another way to say this is that the sum of the counts
 of all kmers in a sequence must be equal to
-the length of the sequence minus `k` plus 1.
+the length of the sequence minus $k$ plus 1, or
+
+$\sum{counts_{seq}} = |seq| - k + 1$
 
 @@colbox-orange
 @@title
@@ -357,7 +428,7 @@ the length of the sequence minus `k` plus 1.
     (the length of the sequence is 9)
 2. All of the 5mers in the above sequence are unique.
     What are they? 
-    Answer below[^1], but don't peek until you've tried it!
+    Answer below[^ans], but don't peek until you've tried it!
 @@
 
 ## A Brief Introduction to Dictionaries
@@ -372,7 +443,7 @@ because there are only 4 options.
 You'll do this for real in Assignment04,
 but the [psedocode](https://en.wikipedia.org/wiki/Pseudocode) might look something like this:
 
-```
+```plaintext
 set variables a,c,g,t to 0
 for each base in the sequence
     if the base is 'A', add one to `a`
@@ -399,51 +470,75 @@ where the `key` can by (almost) any type and is used to access
 or alter the `value`.
 This is probably confusing, but may be clearer with some examples.
 
-```julia dicts
-my_dict = Dict("apples"=> 4, "bananas" => 1, "strawberries"=>10)
+```julia-repl
+julia> my_dict = Dict("apples"=> 4, "bananas" => 1, "strawberries"=>10)
+Dict{String, Int64} with 3 entries:
+  "bananas"      => 1
+  "apples"       => 4
+  "strawberries" => 10
 ```
 
 Here, the fruits are the `key`s,
 and the `Int64s` are the `value`s.
 We can access values using the `keys` as the index:
 
-```julia dicts
-my_dict["bananas"]
-my_dict["strawberries"] * 2
+```julia-repl
+julia> my_dict["bananas"]
+1
+
+julia> my_dict["strawberries"] * 2
+20
 ```
 
 We can check if a dictionary has a particular key
 with the boolean function `haskey()`. 
 
-```julia dicts
-haskey(my_dict, "apples")
-haskey(my_dict, "kumquat")
+```julia-repl
+julia> haskey(my_dict, "apples")
+true
+
+julia> haskey(my_dict, "kumquat")
+false
 ```
 
 If we try to access the dictionary with a key that doesn't exist,
 we'll get an error.
 
-```julia
+```julia-repl
 julia> my_dict["kumquat"]
-```
-```
 ERROR: KeyError: key "kumquat" not found
 ```
 
-But we can add new entries to the dictionary if we
+You can use the `get()` function to try to use a key,
+and return a default if the key doesn't exist:
+
+```julia-repl
+julia> get(my_dict, "bananas", 0)
+1
+
+julia> get(my_dict, "kumquat", 0)
+0
+```
+
+And we can add new entries to the dictionary if we
 assign them to new values.
 
-```julia dicts
-my_dict["kumquat"] = 0
-haskey(my_dict, "kumquat")
+```julia-repl
+julia> my_dict["kumquat"] = 0
+0
+
+julia> haskey(my_dict, "kumquat")
+true
 ```
 
 And we can update entries by reassigning them,
 as if they are variables.
 
-```julia dicts
-my_dict["apples"] = my_dict["apples"] + 1;
-my_dict["apples"]
+```julia-repl
+julia> my_dict["apples"] = my_dict["apples"] + 1;
+
+julia> my_dict["apples"]
+5
 ```
 
 In the assignment,
@@ -451,5 +546,6 @@ we'll use dictionaries where the keys are the kmers,
 and the values are the counts.
 Let's get started!
 
-[^1]: There are 6 kmers of length 4 (9 - 4 + 1),
-      ["ATTC", "TTCC", "TCCG", "CCGT", "CGTC", "GTCA"]
+## Answers
+
+[^ans]: There are 6 kmers of length 4 ($9 - 4 + 1$), `["ATTC", "TTCC", "TCCG", "CCGT", "CGTC", "GTCA"]`

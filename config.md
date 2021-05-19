@@ -8,6 +8,7 @@ The website_* must be defined for the RSS to work
 @def website_url   = "https://wellesley-bisc195.github.io/"
 
 @def author = "Kevin Bonham, PhD"
+@def course_calendar = "https://calendar.google.com/calendar/u/0?cid=Y192ZHJxM243cTh0czluOGZ1aGpzZnVmMHFzMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t"
 
 @def mintoclevel = 2
 

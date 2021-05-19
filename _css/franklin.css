@@ -240,9 +240,9 @@ td {
 ================================================================== */
 
 .franklin-content img {
-  /* width: 70%; */
-  /* text-align: center; */
-  /* padding-left: 10%; */
+  width: 90%;
+  text-align: center;
+  padding-left: 10%;
   display: inline-block;
 }
 

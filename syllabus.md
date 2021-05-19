@@ -62,6 +62,14 @@ Recommended: Molecular and/or Cell Biology.
 **Online textbook (free):**
 [Think Julia: How to think like a computer scientist](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
 
+## Calendar
+
+[Direct link](https://calendar.google.com/calendar/u/0?cid=Y192ZHJxM243cTh0czluOGZ1aGpzZnVmMHFzMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t)
+
+~~~
+<iframe src="https://calendar.google.com/calendar/embed?src=c_vdrq3n7q8ts9n8fuhjsfuf0qs0%40group.calendar.google.com&ctz=America%2FNew_York" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+~~~
+
 ### Lessons
 
 {{include_lessons}}

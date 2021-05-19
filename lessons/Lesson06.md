@@ -1,35 +1,24 @@
-# Lesson 5 - Arrays
++++
+number = 6
+title = "Arrays"
+date = Date(2021,06,22)
+assignments = [5]
+chapters = [8, 10]
+concepts = [
+    "Compare and contrast `Vector`, `Matrix`, and `Tuple` types for storing ordered data",
+    "Differentiate between scalar and vector properties of `String`s",
+    "Explain the uses and limitations of mutable and immutable types",
+    "Recognize when to use copies or references to data"
+]
+skills = [
+    "Solve bugs that occur from attempting to access keys or indexes that don't exist",
+    "Initialize and grow Vectors of different types",
+    "Use indexes, ranges, and loops to access subsets of data",
+    "Use string joining and interpolation to compose complex strings"
+]
++++
 
-[![Assignment 05 - Invitation](https://img.shields.io/badge/Assignment05-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/F3lWDTLh)
-[![Assignment 05 - Description](https://img.shields.io/badge/05-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment05)
-[![Assignment 05 - Rendered](https://img.shields.io/badge/05-Script-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment05)
-[![Assignment 05 - Due](https://img.shields.io/badge/Due-7%2F2%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment05)
-
-## Learning objectives
-
-**Concepts** - After completing this lesson, students will be able to:
-
-- Compare and contrast `Vector`, `Matrix`, and `Tuple` types for storing ordered data
-- Differentiate between scalar and vector properties of `String`s
-- Explain the uses and limitations of mutable and immutable types
-- Recognize when to use copies or references to data
-
-**Skills** - After completing this lesson, students will be able to:
-
-- Solve bugs that occur from attempting to access keys or indexes that don't exist
-- Initialize and grow Vectors of different types
-- Use indexes, ranges, and loops to access subsets of data
-- Use string joining and interpolation to compose complex strings
-
-**Assignments** - This lesson is complete when students have:
-
-- Read [Chapter 8](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap08)
-  and [Chapter 10](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap10)
-  of Think Julia.
-- Run all code examples from Lesson 5 on their own computers
-- Cloned the Assignment 5 repository with github classroom.
-- Completed assignment 5 with all tests passing.
-
+{{lesson_preamble}}
 ## String as Array
 
 After reading chapters 8 and 10,
@@ -44,17 +33,36 @@ There are many differences, but chief among them is that `Vector`s are "mutable"
 that is, we can change the vector by changing individual elements,
 adding things, or removing things. 
 
-```julia
-v = collect(2:2:10)
+```julia-repl
+julia> v = collect(2:2:10)
+5-element Vector{Int64}:
+  2
+  4
+  6
+  8
+ 10
 
-push!(v, 42);
-pushfirst!(v, -1);
+julia> push!(v, 42);
 
-v
+julia> pushfirst!(v, -1);
 
-deleteat!(v, 1:2:7);
+julia> v
+7-element Vector{Int64}:
+ -1
+  2
+  4
+  6
+  8
+ 10
+ 42
 
-v
+julia> deleteat!(v, 1:2:7);
+
+julia> v
+3-element Vector{Int64}:
+  2
+  6
+ 10
 ```
 
 `String`s, by contrast, are *immutable*.
@@ -94,10 +102,33 @@ but we can use `Vector`s of `Char`s
 to act like mutable `String`s.
 
 ```julia
-vc = collect("Collect makes vector")
+julia> vc = collect("Collect makes vector")
+20-element Vector{Char}:
+ 'C': ASCII/Unicode U+0043 (category Lu: Letter, uppercase)
+ 'o': ASCII/Unicode U+006F (category Ll: Letter, lowercase)
+ 'l': ASCII/Unicode U+006C (category Ll: Letter, lowercase)
+ 'l': ASCII/Unicode U+006C (category Ll: Letter, lowercase)
+ 'e': ASCII/Unicode U+0065 (category Ll: Letter, lowercase)
+ 'c': ASCII/Unicode U+0063 (category Ll: Letter, lowercase)
+ 't': ASCII/Unicode U+0074 (category Ll: Letter, lowercase)
+ ' ': ASCII/Unicode U+0020 (category Zs: Separator, space)
+ 'm': ASCII/Unicode U+006D (category Ll: Letter, lowercase)
+ 'a': ASCII/Unicode U+0061 (category Ll: Letter, lowercase)
+ 'k': ASCII/Unicode U+006B (category Ll: Letter, lowercase)
+ 'e': ASCII/Unicode U+0065 (category Ll: Letter, lowercase)
+ 's': ASCII/Unicode U+0073 (category Ll: Letter, lowercase)
+ ' ': ASCII/Unicode U+0020 (category Zs: Separator, space)
+ 'v': ASCII/Unicode U+0076 (category Ll: Letter, lowercase)
+ 'e': ASCII/Unicode U+0065 (category Ll: Letter, lowercase)
+ 'c': ASCII/Unicode U+0063 (category Ll: Letter, lowercase)
+ 't': ASCII/Unicode U+0074 (category Ll: Letter, lowercase)
+ 'o': ASCII/Unicode U+006F (category Ll: Letter, lowercase)
+ 'r': ASCII/Unicode U+0072 (category Ll: Letter, lowercase)
 
-push!(vc, 's');
-join(vc)
+julia> push!(vc, 's');
+
+julia> join(vc)
+"Collect makes vectors"
 ```
 
 The `join()` function takes a vector of `String`s or `Char`s
@@ -115,14 +146,16 @@ to view the docstring of `join()`.
 The `join()` function can also take *optional* arguments
 that can put a `String` in between each thing that's `join()`ed,
 
-```julia
-join(["I", "love", "the", "julia", "language!"], " 👏 ")
+```julia-repl
+julia> join(["I", "love", "the", "julia", "language!"], " 👏 ")
+"I 👏 love 👏 the 👏 julia 👏 language!"
 ```
 
 and something different between the last two values
 
 ```julia
-join(["Head", "shoulders", "knees", "toes"], ", ", ", and ")
+julia> join(["Head", "shoulders", "knees", "toes"], ", ", ", and ")
+"Head, shoulders, knees, and toes"
 ```
 
 ## Aliasing
@@ -146,13 +179,13 @@ If you were wrong, try to explain the correct answer.
 1. The follwing code assigns 3 variables (`a`, `b`, and `c`) to the float `6.02e24`,
     then reassigns one of them (`a`) to the float `3.14`.
 
-    ```julia
-    julia> a = b = c = 6.02e24
-    6.02e24
+```julia-repl
+julia> a = b = c = 6.02e24
+6.02e24
 
-    julia> a = 3.14
-    3.14
-    ```
+julia> a = 3.14
+3.14
+```
 
     What is the value of `b`?
 
@@ -160,25 +193,25 @@ If you were wrong, try to explain the correct answer.
 3. The following code assigns 3 variables (`u`, `v`, `w`) to an empty Integer vector,
     then `push!`es the integer `12` to one of them (`u`)
 
-    ```julia
-    julia> u = v = w = Int64[]
-    0-element Array{Int64,1}
-    
-    julia> push!(u, 12)
-    1-element Array{Int64,1}:
-        12
-    ```
+```julia-repl
+julia> u = v = w = Int64[]
+0-element Array{Int64,1}
+
+julia> push!(u, 12)
+1-element Array{Int64,1}:
+    12
+```
 
     What is the value of `v`?
 
 4. Can you `push!()` a `Float64` to `w`?
 5. Which of the following have the same *type* as `m`
-    if `m = [1, 4]`?
+   if `m = [1, 4]`?
 
-    - `n = [5,4,3,2,1]`
-    - `o = Int64[]`
-    - `p = ["2", "1"]`
-    - `q = [1.2, 3.4]`
+   - `n = [5,4,3,2,1]`
+   - `o = Int64[]`
+   - `p = ["2", "1"]`
+   - `q = [1.2, 3.4]`
 
     Hint: you can check by doing eg `n isa (typeof(m))`
 @@
@@ -199,12 +232,18 @@ and a collection as the second argument.
 
 For example,
 
-```julia
-function add3(x)
-    return x + 3
-end
+```julia-repl
+julia> function add3(x)
+           return x + 3
+       end
+add3 (generic function with 1 method)
 
-v = map(add3, [1,2,3,4])
+julia> v = map(add3, [1,2,3,4])
+4-element Vector{Int64}:
+ 4
+ 5
+ 6
+ 7
 ```
 
 This is the same as
@@ -228,14 +267,20 @@ In this case, the function passed as the first argument
 must be a boolean function
 (anything that returns `true` will be kept).
 
-```julia
-original = [3.14, 8.5, 25.3, 1.0]
+```julia-repl
+julia> original = [3.14, 8.5, 25.3, 1.0]
+4-element Vector{Float64}:
+  3.14
+  8.5
+ 25.3
+  1.0
 
-function lessthan5(x)
-    return x < 5
-end
+julia> function lessthan5(x)
+           return x < 5
+       end
+lessthan5 (generic function with 1 method)
 
-newv = filter(lessthan5, original)
+julia> newv = filter(lessthan5, original)
 ```
 
 is the same as
@@ -249,3 +294,4 @@ for x in original
     end
 end
 ```
+

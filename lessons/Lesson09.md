@@ -1,23 +1,12 @@
 +++
+number = 9
 title = "Types and methods"
-date = Date("2021-07-04")
-release = Date("2021-06-12")
+date = Date(2021,7,2)
+release = Date(2021,6,12)   
+chapters = [17,18]
 +++
 
-
-# Lesson 9 - Types and methods
-
-[![Assignment 09 - Description](https://img.shields.io/badge/09-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment09)
-[![Assignment 09 - Due](https://img.shields.io/badge/Due-7%2F20%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment09)
-
-**Assignments** - This lesson is complete when students have:
-
-- Read [Chapter 17](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap17)
-  and [Chapter 18](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap18)
-  of Think Julia.
-- Run all code examples from Lesson 9 on their own computers
-- Cloned the Assignment 9 repository with github classroom.
-- Completed assignment 9 with all tests passing.
+{{lesson_preamble}}
 
 ## Types can be scary (but don't have to be)
 
@@ -30,7 +19,7 @@ One bit of good news is that, most of the time,
 you don't need to worry _too_ much about types to write julia code.
 As you've seen, beyond knowing that things like `split()`
 only work on strings,
-or seeing a `MethodError` and needing to know whalht that means,
+or seeing a `MethodError` and needing to know what that means,
 mostly you can write functions without specifying argument types
 and you can get a lot done with built-in types.
 
@@ -56,7 +45,7 @@ that depends on the types of its arguments.
 When you first define a function,
 it only has one method (the one you just defined).
 
-```julia
+```julia-repl
 julia> function somefunc(x)
            println("Fallback method!")
        end
@@ -68,7 +57,7 @@ can refer to many methods,
 with different argument types,
 and even different numbers of arguments.
 
-```julia
+```julia-repl
 julia> function somefunc(x::Number)
            println("Number method!!")
        end
@@ -102,7 +91,7 @@ of the same function!
 For example,
 we can write a `complement()` function that works on `Char`:
 
-```julia
+```julia-repl
 julia> function complement(base::Char)
            base = uppercase(base)
            comps = Dict('A' => 'T',
@@ -118,7 +107,7 @@ complement (generic function with 1 method)
 And then another function that works on `String`s,
 that maps the `complement(::Char)` method onto the `String`.
 
-```julia
+```julia-repl
 julia> function complement(seq::AbstractString)
            map(complement, seq)
        end
@@ -134,7 +123,7 @@ to each element of the `String`, which are `Char`s.
 Some functions have _a ton_ of methods -
 you can see them using the `methods()` function:
 
-```julia
+```julia-repl
 julia> methods(complement)
 # 2 methods for generic function "complement":
 [1] complement(base::Char) in Main at REPL[5]:2
@@ -209,7 +198,7 @@ function parse_fasta(path)
 end
 ```
 
-```julia
+```julia-repl
 julia> ex1 = parse_fasta("/Users/ksb/repos/courses/assignment07/data/ex1.fasta")
 2-element Array{FastaRecord,1}:
  FastaRecord("ex1.1 | easy", "AATTATAGC")
@@ -231,30 +220,30 @@ gc_content(fr::FastaRecord) = gc_content(sequence(fr))
  "Checking Question"
 @@
 
-    If multiple methods work for a particular function call,
-    how does julia decide which one to use?
+If multiple methods work for a particular function call,
+how does julia decide which one to use?
 
-    Eg, if I write
+Eg, if I write
 
-    ```julia
-    julia> function foo(x::Number, y::Number)
-        println("first method")
-    end
-    foo (generic function with 1 method)
+```julia-repl
+julia> function foo(x::Number, y::Number)
+           println("first method")
+       end
+foo (generic function with 1 method)
 
-    julia> function foo(x::Float64, y::Number)
-                println("second method")
-            end
-    foo (generic function with 2 methods)
+julia> function foo(x::Float64, y::Number)
+           println("second method")
+       end
+foo (generic function with 2 methods)
 
-    julia> function foo(x::Float64, y::Float64)
-                println("third method")
-            end
-    foo (generic function with 3 methods)
-    ```
+julia> function foo(x::Float64, y::Float64)
+           println("third method")
+       end
+foo (generic function with 3 methods)
+```
 
-    Which method is called when I run `foo(1.0, 1)`?
-    What about `foo(42, 1.0)`?
-    Try to answer the question before running the code,
-    then check to see if you're right.
+Which method is called when I run `foo(1.0, 1)`?
+What about `foo(42, 1.0)`?
+Try to answer the question before running the code,
+then check to see if you're right.
 @@

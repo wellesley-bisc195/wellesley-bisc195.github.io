@@ -1,39 +1,28 @@
-# Lesson 6 - Miscellany
++++
+number = 7
+title = "Miscellany"
+date = Date(2021,06,25)
+chapters = [9,14]
+assignments = [7]
+concepts = [
+   "Compare and contrast plain text and binary file formats",
+   "Select the best data structure for different types of data"
+]
+skills = [
+   "Download files from a url from the command line",
+   "Read files line-by-line and perform actions on each line"
+]
++++
 
-[![Assignment 06 - Invitation](https://img.shields.io/badge/Assignment06-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/reOfVyUk)
-[![Assignment 06 - Description](https://img.shields.io/badge/06-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment06)
-[![Assignment 06 - Rendered](https://img.shields.io/badge/06-Script-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment06)
-[![Assignment 06 - Due](https://img.shields.io/badge/Due-7%2F6%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment06)
-
-## Learning objectives
-
-**Concepts** - After completing this lesson, students will be able to:
-
-- Compare and contrast plain text and binary file formats
-- Select the best data structure for different types of data
-
-**Skills** - After completing this lesson, students will be able to:
-
-- Download files from a url from the command line
-- Read files line-by-line and perform actions on each line.
-
-**Assignments** - This lesson is complete when students have:
-
-- Read [Chapter 9](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap09)
-  and [Chapter 14](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap14)
-  of Think Julia.
-- Run all code examples from Lesson 6 on their own computers
-- Cloned the Assignment 6 repository with github classroom.
-- Completed assignment 6 with all tests passing.
-
+{{lesson_preamble}}
 ## Beyond `Base` - Statistics
 
 All of the functionality we've used thus far
-has been found in the main `julia` library, called `Base`. 
-But one of the great things about programming languages, 
+has been found in the main `julia` library, called `Base`.
+But one of the great things about programming languages,
 especially open-source ones like `julia`,
 is that many people have written a lot of other functionality
-and shared it with the world in "packages."
+and shared it with the world in "packages."[^package]
 
 This functionality is not available out-of-the-box,
 but you can easily bring this world of additional functions and types
@@ -53,7 +42,7 @@ For example, it is often useful to calculate
 the mean, median, and standard deviation
 of numbers in a vector.
 
-```julia
+```julia-repl
 julia> v = rand(100); # create vector of random numbers
 
 julia> mean(v)
@@ -88,28 +77,27 @@ given what you've learned so far,
 but lots of other people have probably needed this functionality before,
 and the code is already written and tested.
 
-In this case, the functionality is part of the stdlib
+In this case, the functionality is part of the `stdlib`
 in the `Statistics` package.
 To load the functionality into your own code,
 we use the keyword `using`:
 
-```julia stats
-v = rand(100)
-```
+```julia-repl
+julia> using Statistics
 
-```julia stats
-using Statistics
+julia> mean(v)
+0.48948120851162236
 
-mean(v)
+julia> median(v)
+0.47657406120014545
 
-median(v)
-
-std(v)
+julia> std(v)
+0.2725349745172383
 ```
 
 @@colbox-orange
 @@title
- "Checking Questions"
+Checking Questions
 @@
 
  1. How does the result form `mean()`? from `Statistics` compare
@@ -152,3 +140,7 @@ as struggling through these practice problems will help
 when it comes time to do the assignment.
 
 Good luck!
+
+## Key Terms
+
+[^package]: A set of related types and / or functions that someone has written that can be loaded into a coding project. Different programming languages have different philosophies around packages, but julia package authors tend to do their best to allow code from different packages to work together.

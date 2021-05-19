@@ -1,18 +1,18 @@
-# Lesson 8 - Putting it all together
++++
+number = 8
+title = "Putting it all together"
+date = Date(2021,6,29)
+chapters = [15,16]
+assignments = [8]
+skills = []
+concepts = []
++++
 
-[![Assignment 08 - Description](https://img.shields.io/badge/08-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment08)
-[![Assignment 08 - Due](https://img.shields.io/badge/Due-7%2F17%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment08)
+{{lesson_preamble}}
 
-**Assignments** - This lesson is complete when students have:
+## Book correction
 
-- Read [Chapter 15](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap15)
-  and [Chapter 16](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap16)
-  of Think Julia.
-- Run all code examples from Lesson 8 on their own computers
-- Cloned the Assignment 8 repository with github classroom.
-- Completed assignment 8 with all tests passing.
-
-_Book correction_: in the section of chapter 16
+In the section of chapter 16
 [on modifiers](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#modifiers),
 the book write a function that is supposed to update a field
 of an immutable struct,
@@ -58,19 +58,19 @@ like **bold** and _italics_,
 but also some that you might be less familiar with
 like `inline code`.
 
-[Take a look at the source code](https://raw.githubusercontent.com/wellesley-bisc195/BISC195.jl/trunk/docs/src/Lessons/Lesson8.md)
+[Take a look at the source code](https://github.com/wellesley-bisc195/wellesley-bisc195.github.io/blob/main/lessons/Lesson08.md)
 for this webpage - it's written in markdown
 (as are all of the pages for this website),
 and can be easily edited in VS Code just like your julia files.
 
-![Markdown](../assets/markdown.png)
+![Markdown](/assets/img/markdown.png)
 
 One can also write blocks of code that have syntax highlighting,
 the colors that you see in eg. VS Code
 that help you see the structure of your code.
 Eg. compare the following block without syntax highlighting
 
-```
+```plaintext
 function a_function(str)
     str = replace(str, " "=>"_")
     println("hi! I'm a String! $str")
@@ -127,7 +127,7 @@ and gives VS code (and other software) hints about how to handle it
 but the extension doesn't have any special powers.
 You can tell VS code to treat any file as markdown by changing the language mode.
 
-![language-mode](../assets/language-mode.png)
+![language-mode](/assets/img/language-mode.png)
 @@
 
 Now write some markdown - eg

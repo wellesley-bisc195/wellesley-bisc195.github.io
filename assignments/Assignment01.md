@@ -1,20 +1,19 @@
 +++
 number = 1
 title = "Getting set up"
-due_date = Date("2021-06-11")
+due_date = Date(2021,06,11)
 
 +++
 
 {{assignment_preamble}}
 
 In this course,
-assignments are provided through github classroom.
+assignments are git repositories provided through github.
 This assigment is mostly designed to familiarize you with the process
 of downloading and completing assignments.
 
-You should have already signed up for a github account,
-and joined the classroom.
-If not, go back and follow the [instructions here](@ref github_signup).
+You should have already signed up for a github account.
+If not, go back and follow the [instructions here](/lessons/Lesson01/#sign_up_for_github).
 
 @@colbox-purple
 @@title
@@ -52,8 +51,6 @@ To Do: Clone the repo
 
 ```sh
 $ git clone <url>
-```
-```
 remote: Enumerating objects: 18, done.
 remote: Counting objects: 100% (18/18), done.
 remote: Compressing objects: 100% (14/14), done.
