@@ -1,13 +1,14 @@
-# [Assignment02](@id assignment02)
++++
+number = 2
+title = "Getting set up"
+due_date = Date(2021,06,11)
++++
 
-[![Assignment 02 - Invitation](https://img.shields.io/badge/Assignment02-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/kCXCpki4)
-[![Assignment 02 - Description](https://img.shields.io/badge/02-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment02)
-[![Assignment 02 - Rendered](https://img.shields.io/badge/02-Script-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment02)
-[![Assignment 02 - Due](https://img.shields.io/badge/Due-6%2F14%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment02)
+{{assignment_preamble}}
 
 ## Instructions
 
-As you did with [Assignment01](@ref assignment01),
+As you did with [Assignment01](/assignments/Assignment01),
 click the [invite link](https://classroom.github.com/a/kCXCpki4)
 to make a new copy of the assignment repository.
 

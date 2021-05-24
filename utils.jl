@@ -1,5 +1,6 @@
 using Parameters
 using Dates
+using Downloads
 
 @with_kw struct Lesson
     number::Int = 99
@@ -190,4 +191,9 @@ function hfun_assignment_preamble()
     return String(take!(io))
 end
 
-# same for hfun_include_assignments
+function hfun_literate_assignment(n)
+    ln = parse(Int, first(n))
+    isdir("_literate/") || mkdir("_literate/")
+    Downloads.download("https://raw.githubusercontent.com/wellesley-bisc195/Assignment$(lpad(ln, 2, '0'))/master/src/assignment.jl", "_literate/assignment$(lpad(ln, 2, '0')).jl")
+    return Franklin.fd2html("\\literate{/_literate/assignment$(lpad(ln, 2, '0')).jl}", internal=true)
+end

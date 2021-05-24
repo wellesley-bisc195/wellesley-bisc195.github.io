@@ -1,10 +1,10 @@
-# [Assignment06](@id assignment06)
++++
+number = 6
+title = "Getting set up"
+due_date = Date(2021,06,11)
++++
 
-[![Assignment 06 - Invitation](https://img.shields.io/badge/Assignment06-Repository-blue?style=for-the-badge&logo=open%20badges)](https://classroom.github.com/a/reOfVyUk)
-[![Assignment 06 - Description](https://img.shields.io/badge/06-Description-blue?style=for-the-badge&logo=open%20badges)](@ref assignment06)
-[![Assignment 06 - Rendered](https://img.shields.io/badge/06-Script-blue?style=for-the-badge&logo=open%20badges)](@ref Instructions-for-Assignment06)
-[![Assignment 06 - Due](https://img.shields.io/badge/Due-7%2F2%6F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment06)
-
+{{assignment_preamble}}
 
 ## Instructions
 

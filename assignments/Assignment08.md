@@ -1,7 +1,10 @@
-# [Assignment 08](@id assignment08)
++++
+number = 8
+title = "Getting set up"
+due_date = Date(2021,06,11)
++++
 
-[![Assignment 08 - Due](https://img.shields.io/badge/Due-7%2F17%2F2020-orange?style=for-the-badge&logo=open%20badges)](@ref assignment08)
-
+{{assignment_preamble}}
 ## Check list
 
 There are a lot of different tasks introduced in this assignment,

@@ -2,7 +2,6 @@
 number = 1
 title = "Getting set up"
 due_date = Date(2021,06,11)
-
 +++
 
 {{assignment_preamble}}
@@ -68,14 +67,14 @@ To Do
 
 **Step 4:** 
 First, change your working directory to `Assignment01-<your_username>/`, 
-(you remember how to [do this right](@ref cd)?).
+(you remember how to [do this right](/lessons/Lesson01/#change_directory)?).
 
 Then do `git status`
 
 ```sh
 Assignment01 $ git status
 ```
-```
+```plaintext
 On branch master
 Your branch is up to date with 'origin/master'.
 
@@ -99,7 +98,7 @@ See the url of `origin`:
 ```sh
 Assignment01 $ git remote get-url origin
 ```
-```
+```plaintext
 https://github.com/wellesley-bisc195/Assignment01-<your_username>
 ```
 
@@ -119,7 +118,7 @@ Let's take a look at these files using the terminal:
 ```sh
 Assignment01 $ ls src
 ```
-```
+```plaintext
 Assignment01.jl		run.jl			some_variables.jl
 assignment.jl		some_functions.jl
 ```
@@ -129,7 +128,7 @@ The `cat` command prints the contents of a file or files to the screen:
 ```sh
 Assignment01 $ cat src/some_functions.jl
 ```
-```
+```plaintext
 function say_name(name)
     println("Hi there, $(name)!")
 end
@@ -158,7 +157,7 @@ This assignment is just a directory with text files,
 some of which contain code.
 
 VS Code, which you should already have installed
-(if you don't, [click here](@ref install-ide)),
+(if you don't, [click here](/lessons/Lesson01/#installing_your_ide)),
 is designed to explore exactly this kind of project.
 
 @@colbox-purple
@@ -202,7 +201,7 @@ To Do
 **Step 5**: Edit the files.
 
 Open up `src/some_variables.jl` in VS code
-and change the values "Kevin" and 36
+and change the values `"Kevin"` and `36`
 to be more appropriate.
 Be sure to save the file,
 then execute `julia src/run.jl` again.
@@ -364,8 +363,8 @@ These lines are skipped by the julia parser entirely,
 even if they contain valid code.
 
 The formatting of the comments might look a little weird,
-it allows me to generate [a website](@ref Instructions-for-Assignment01) from the code that's
-a bit easier too look at
+it allows me to generate [a rendered version](#assignment01_code)
+from the code that's a bit easier too look at
 @@
 
 Then use `git add` and `git commit`
@@ -413,3 +412,11 @@ Good work!
 [^1]: `clone` - A copy of a repository in a different location. Clones can be linked to enable easy syncing of commits.
 [^2]: `remote` - A clone of a repository that exists on a server, rather than your local machine. You can see what remotes are linked to your local repo with `git remote`.
 [^3]: `push` - Move commits from a local repo to the remote.
+
+## Assignment01 code
+
+For each assignment, the contents of the assignment code script
+will be rendered as html at the bottom of the assignment description page.
+If you're interested in how that works, check out [Literate.jl](https://fredrikekre.github.io/Literate.jl/v2/)
+
+{{literate_assignment 1}}
