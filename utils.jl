@@ -20,6 +20,7 @@ end
     title::String = ""
     due_date::Date = Date(0)
     link::String = ""
+    classroom::String = ""
 end
 
 @with_kw struct Lecture
@@ -71,11 +72,15 @@ function Assignment(path)
     title = default_pagevar(path, :title, "")
     due_date = default_pagevar(path, :due_date, Date(0))
     link = default_pagevar(path, :link, "")
-    return Assignment(number, release, title, due_date, link)
+    classroom = default_pagevar(path, :classroom, "")
+    return Assignment(number, release, title, due_date, link, classroom)
 end
 
+const classroom_link = "https://classroom.github.com/a/"
+
 Assignment(n::Int) = Assignment("assignments/Assignment$(lpad(n, 2, '0')).md")
-getpath(l::Assignment) = joinpath("/assignments", "Assignment$(lpad(l.number, 2, '0'))")
+getpath(a::Assignment) = joinpath("/assignments", "Assignment$(lpad(a.number, 2, '0'))")
+getclassroom(a::Assignment) = string(classroom_link, a.classroom)
 
 const book_link = "https://benlauwens.github.io/ThinkJulia.jl/latest/book.html"
 chapter_link(n::Int) = string(book_link, "#chap", lpad(n, 2, '0'))
@@ -107,6 +112,12 @@ due_badge(a::Assignment) = string(
     "-red?style=for-the-badge)"
 )
 
+classroom_badge(a::Assignment) = string(
+    "[!", "[assignment", a.number, "link]",
+    "(https://img.shields.io/badge/Assignment-", a.number,
+    "-darkblue?style=for-the-badge)](", getclassroom(a), ")"
+)
+
 chapter_badge(chap::Union{Int,String}) = string(
     "[!", "[book chapter $chap]",
     "(https://img.shields.io/badge/Book-", 
@@ -125,7 +136,9 @@ function hfun_include_lessons()
             
             $(lesson_badge(lesson))
             $(date_badge(lesson))
+
             $(join([chapter_badge(c) for c in lesson.chapters], ' '))
+            
             $(join([join([assignment_badge(a), due_badge(a)], ' ') for a in Assignment.(lesson.assignments)], ' '))
             """))
     end
@@ -154,7 +167,7 @@ function hfun_lesson_preamble()
     write(io, Franklin.md2html("""
         # [Lesson $(lesson.number) - $(lesson.title)]($(getpath(lesson)))
         
-        $(date_badge(lesson)) {{Placeholder for slides}} {{Placeholder for assignment}}
+        $(date_badge(lesson)) {{Placeholder for slides}} $(join([join([assignment_badge(a), due_badge(a)], ' ') for a in Assignment.(lesson.assignments)], ' '))
         """))
     
     write(io, Franklin.md2html("""
@@ -185,7 +198,7 @@ function hfun_assignment_preamble()
     write(io, Franklin.md2html("""
         # [Assignment $(assignment.number) - $(assignment.title)]($(getpath(assignment)))
         
-        {{Placeholder for repo link}}
+        $(classroom_badge(assignment))
         $(due_badge(assignment))
         """))
     return String(take!(io))

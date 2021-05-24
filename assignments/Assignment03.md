@@ -2,10 +2,12 @@
 number = 3
 title = "Getting set up"
 due_date = Date(2021,06,11)
+classroom = "6BGGjSBx"
 +++
 
+@@badges
 {{assignment_preamble}}
-
+@@
 ## Instructions
 
 Hopefully, this process is familiar by now.
@@ -39,35 +41,33 @@ the `Julia` and `Markdown Julia` extensions.
 
 Once this is finished, your julia files
 should have syntax highlighting
-(making it easier to see different parts of you program),
+(making it easier to see different parts of your program),
 and allowing you to send bits of julia code to an integrated julia REPL.
 
 @@colbox-blue
 @@title
 Note
 @@
-
-    Just after you install the plugin,
-    it may take a bit of time for the "language" server to get going.
-    If the stuff below doesn't work at first, just wait a couple of minutes.
+Just after you install the plugin,
+it may take a bit of time for the "language" server to get going.
+If the stuff below doesn't work at first, just wait a couple of minutes.
 @@
 
 @@colbox-aqua
 @@title
  "Windows Users"
 @@
-
-    You should also install the "WSL remote" extension.
-    This allows you to access your Ubuntu installation
-    as if it were a remote computer.
-    Once it's installed,
-    press the "Remote Explorer" button on the left toolbar,
-    and you should see your Ubuntu installation.
-    Click the `+` icon next Ubuntu,
-    and then you can browse and open folders inside linux.
+You should also install the "WSL remote" extension.
+This allows you to access your Ubuntu installation
+as if it were a remote computer.
+Once it's installed,
+press the "Remote Explorer" button on the left toolbar,
+and you should see your Ubuntu installation.
+Click the `+` icon next Ubuntu,
+and then you can browse and open folders inside linux.
 @@
 
-One the plugin is installed, open `src/assignment.jl`
+Once the plugin is installed, open `src/assignment.jl`
 in your Assignment03 directory from within VS Code.
 Then, put the cursor on the line with `function compliment(base)`,
 press and hold the `alt` key, then press `return`.
@@ -86,29 +86,30 @@ Tip
     Sometimes, you can confuse yourself by running things out of order.
     For example, let's say I write,
 
-    ```julia
-    function hello(x)
-        println("Hello, $(x)!")
-    end
-    
-    s = "Students"
-    t = "TAs"
+```julia
+function hello(x)
+    println("Hello, $(x)!")
+end
 
-    hello(s)
-    hello(t)
-    ```
+s = "Students"
+a = "Auditors"
+
+hello(s)
+hello(a)
+```
 
     And then execute the whole thing in VS code.
-    Later on, I decide I don't need to say hello to the TAs
-    so I delete the line `t = "TAs"`,
-    but forget to delete `hello(t)`. 
+    Later on, I decide I don't need to say hello to the Auditors
+    so I delete the line `a = "Auditors"`,
+    but forget to delete `hello(a)`. 
 
     As I continue to run the code in the same julia session,
     there are no problems because,
-    even though I deleted `t = "TAs"`,
-    there's no way to unassign `t` - it's still defined.
+    even though I deleted `a = "Auditors"`,
+    there's no way to unassign `a` - it's still defined.
     But, if I come back later and try to run the file in a new julia session,
     I will get an `UndefinedVariableError`
-    when the program tries to execute `hello(t)`.
-    
+    when the program tries to execute `hello(a)`.
 @@
+
+{{literate_assignment 3}}

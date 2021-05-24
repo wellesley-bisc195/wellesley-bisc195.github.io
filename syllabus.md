@@ -64,16 +64,19 @@ Recommended: Molecular and/or Cell Biology.
 
 ## Calendar
 
-[Direct link](https://calendar.google.com/calendar/u/0?cid=Y192ZHJxM243cTh0czluOGZ1aGpzZnVmMHFzMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t)
+[Direct link](https://calendar.google.com/calendar/embed?src=c_classroom11a73fd3%40group.calendar.google.com&ctz=America%2FNew_York)
 
 ~~~
 <iframe src="https://calendar.google.com/calendar/embed?src=c_classroom11a73fd3%40group.calendar.google.com&ctz=America%2FNew_York" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-ju~~~
+~~~
 
 ### Lessons
 
+@@badges
 {{include_lessons}}
-
+@@
 ### Assignments
 
+@@badges
 {{include_assignments}}
+@@

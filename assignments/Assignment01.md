@@ -2,9 +2,12 @@
 number = 1
 title = "Getting set up"
 due_date = Date(2021,06,11)
+classroom = "Vvy9ZWKL"
 +++
 
+@@badges
 {{assignment_preamble}}
+@@
 
 In this course,
 assignments are git repositories provided through github.
@@ -18,7 +21,7 @@ If not, go back and follow the [instructions here](/lessons/Lesson01/#sign_up_fo
 @@title
 To Do: Accept the assignment
 @@
-**Step 1:** Accept `Assignment01` at [this link](https://classroom.github.com/a/jOe6EhXJ)
+**Step 1:** Accept `Assignment01` at [this link](https://classroom.github.com/a/Vvy9ZWKL)
 
 When you accept the assignment,
 a git repository is created in your github account.

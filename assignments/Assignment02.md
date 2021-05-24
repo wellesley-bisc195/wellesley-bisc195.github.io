@@ -1,7 +1,8 @@
 +++
 number = 2
 title = "Getting set up"
-due_date = Date(2021,06,11)
+due_date = Date(2021,06,14)
+classroom = "4FgCLmLn"
 +++
 
 {{assignment_preamble}}
@@ -9,16 +10,16 @@ due_date = Date(2021,06,11)
 ## Instructions
 
 As you did with [Assignment01](/assignments/Assignment01),
-click the [invite link](https://classroom.github.com/a/kCXCpki4)
+click the [invite link](https://classroom.github.com/a/4FgCLmLn)
 to make a new copy of the assignment repository.
 
 Then, clone the repository, and look at the `src/assignment.jl` file,
-which contains information for what needs to be done. 
+which contains information for what needs to be done.
 
 ## Unit Tests
 
 You may or may not have noticed that each of your assignments
-has automated "unit testing" set up to check that your code works as expected. 
+has automated "unit testing" set up to check that your code works as expected.
 
 Once you've completed the assignment,
 you will see a green checkmark next to the commit in github
@@ -130,10 +131,10 @@ Example tests |    1     1      1      3
  "Checking Question"
 @@
 
-    Which test failed, and which test was an error?
-    
-    Run the example in the REPL;
-    can you find any relevant information in the stacktrace?
+Which test failed, and which test was an error?
+
+Run the example in the REPL;
+can you find any relevant information in the stacktrace?
 @@
 
 If you'd like to examine the tests for this assignment,
