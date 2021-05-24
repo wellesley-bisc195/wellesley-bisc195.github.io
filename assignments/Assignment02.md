@@ -1,6 +1,6 @@
 +++
 number = 2
-title = "Getting set up"
+title = "Data types and Functions"
 due_date = Date(2021,06,14)
 classroom = "4FgCLmLn"
 +++

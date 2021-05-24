@@ -1,7 +1,7 @@
 +++
 number = 3
-title = "Getting set up"
-due_date = Date(2021,06,11)
+title = "Functions, conditions, recursion, Oh My!"
+due_date = Date(2021,06,15)
 classroom = "6BGGjSBx"
 +++
 
