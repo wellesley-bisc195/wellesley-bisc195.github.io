@@ -1,4 +1,4 @@
-Sitemap: https://wellesley-bisc195.github.io/sitemap.xml
+Sitemap: http://bisc195.wellesley.edu/sitemap.xml
 
 User-agent: *
 Disallow:
