@@ -4,6 +4,7 @@ title = "Using git for version control"
 date = Date(2021,06,08)
 lectures = [2]
 assignments = [1]
+chapters = [1]
 concepts = [
     "Explain the use of 'version control' in the context of a coding project"
 ]

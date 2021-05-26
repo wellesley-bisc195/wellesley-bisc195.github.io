@@ -254,9 +254,9 @@ td {
 
 .badges img {
   width: auto;
-  text-align: auto;
-  padding-left: auto;
-  display: auto;
+  height: 23px;
+  padding-left: 0;
+  border-radius: 0px;
 }
 
 /* ==================================================================

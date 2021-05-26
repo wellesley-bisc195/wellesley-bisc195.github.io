@@ -5,7 +5,7 @@ The website_* must be defined for the RSS to work
 -->
 @def website_title = "BISC195"
 @def website_descr = "Essential Skills for Computational Biology"
-@def website_url   = "https://wellesley-bisc195.github.io/"
+@def website_url   = "http://bisc195.wellesley.edu/"
 
 @def author = "Kevin Bonham, PhD"
 @def course_calendar = "https://calendar.google.com/calendar/u/0?cid=Y192ZHJxM243cTh0czluOGZ1aGpzZnVmMHFzMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t"

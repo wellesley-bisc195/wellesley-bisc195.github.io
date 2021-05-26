@@ -131,16 +131,16 @@ function hfun_include_lessons()
     for lesson in lessons
         lesson.release >= today() && continue
 
-        write(io, Franklin.md2html("""
-            ### [$(lesson.title)]($(getpath(lesson)))
+        write(io, Franklin.fd2html("""
+            ### Lesson $(lesson.number) - [$(lesson.title)]($(getpath(lesson)))
             
+            @@badges
             $(lesson_badge(lesson))
             $(date_badge(lesson))
-
             $(join([chapter_badge(c) for c in lesson.chapters], ' '))
-            
             $(join([join([assignment_badge(a), due_badge(a)], ' ') for a in Assignment.(lesson.assignments)], ' '))
-            """))
+            @@
+            """, internal=true))
     end
     return String(take!(io))
 end
@@ -151,12 +151,14 @@ function hfun_include_assignments()
     for assignment in assignments
         assignment.release > today() && continue
 
-        write(io, Franklin.md2html("""
-            ### [$(assignment.title)]($(getpath(assignment)))
+        write(io, Franklin.fd2html("""
+            ### Assignment $(assignment.number) - [$(assignment.title)]($(getpath(assignment)))
             
+            @@badges
             $(assignment_badge(assignment))
             $(due_badge(assignment))
-            """))
+            @@
+            """, internal=true))
     end
     return String(take!(io))
 end
@@ -164,11 +166,13 @@ end
 function hfun_lesson_preamble()
     lesson = Lesson(locvar(:number))
     io = IOBuffer()
-    write(io, Franklin.md2html("""
+    write(io, Franklin.fd2html("""
         # [Lesson $(lesson.number) - $(lesson.title)]($(getpath(lesson)))
         
+        @@badges
         $(date_badge(lesson)) {{Placeholder for slides}} $(join([join([assignment_badge(a), due_badge(a)], ' ') for a in Assignment.(lesson.assignments)], ' '))
-        """))
+        @@
+        """, internal=true))
     
     write(io, Franklin.md2html("""
         ## Learning Objectives
@@ -195,12 +199,14 @@ end
 function hfun_assignment_preamble()
     assignment = Assignment(locvar(:number))
     io = IOBuffer()
-    write(io, Franklin.md2html("""
+    write(io, Franklin.fd2html("""
         # [Assignment $(assignment.number) - $(assignment.title)]($(getpath(assignment)))
         
+        @@badges
         $(classroom_badge(assignment))
         $(due_badge(assignment))
-        """))
+        @@
+        """, internal=true))
     return String(take!(io))
 end
 

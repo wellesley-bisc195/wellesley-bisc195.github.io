@@ -2,7 +2,7 @@
 number = 1
 title = "Getting Started"
 date = Date("2021-06-08")
-chapters = ["preface", 1]
+chapters = ["preface"]
 lectures = [1]
 
 concepts = [
