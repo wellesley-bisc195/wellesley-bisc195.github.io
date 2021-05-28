@@ -62,6 +62,20 @@ Recommended: Molecular and/or Cell Biology.
 **Online textbook (free):**
 [Think Julia: How to think like a computer scientist](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
 
+## Grading
+
+- [Assignments](/assignments/): 70%
+  - 10 assignments each worth 7 points
+  - Assignments are complete when automated tests all pass
+- Final Project: 30%
+  - You will design and build a julia package building on the work
+    you do in the later assignments
+  - 30 points; a rubric will be provided, but points will be based on:
+    - correct use of concepts from class (eg types, functions)
+    - sensible and well-implemented application programming interface (API)
+    - Documentation
+    - test coverage
+
 ## Calendar
 
 [Direct link](https://calendar.google.com/calendar/embed?src=c_classroom11a73fd3%40group.calendar.google.com&ctz=America%2FNew_York)

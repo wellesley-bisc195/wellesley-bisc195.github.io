@@ -51,18 +51,19 @@ ERROR: LoadError: Some tests did not pass: 6 passed, 3 failed, 5 errored, 0 brok
 Unit tests are widely used in computer programing
 so that developers can be certain that their code is working the way they intend.
 I'm using them here so you can tell how close you are to completing your assignment.
+
+In later assignments, and in your final project,
+you will write your own unit tests for the code that you write.
 For now, you can just be assured that if all tests pass,
 you're done, and if they don't,
 you still have some work to do
 
-If you'd like to know more, keep reading.
-The information below is not necessary to complete the assignment this week
-(though some of the information may be helpful 😉).
-
 ### How tests work
 
-Tests take the form of conditional expressions -
+Tests take the form of "Boolean" expressions -
 that is, things that return `true` or `false`.
+Boolean expressions are also also used in conditional execution,
+which you'll learn about in [Lesson 4](/lessons/Lesson04).
 
 ```julia
 julia> using Test
@@ -82,27 +83,31 @@ Errors are reported when the expression throws an error
 before returning a value,
 or when the expression doesn't return either `true` or `false`  .
 
-There are lots of different types of "boolean" expressions,
-those that return `true` or `false`.
+There are lots of different types of boolean expressions.
 For example, `==` is used to ask if two values are equal.
 
 ```julia
-1 + 1 == 2
+julia> 1 + 1 == 2
+true
 
-x = 3
+julia> x = 3; # remember, one `=` is for assigning variables
 
-x == 6 / 2
+julia> x == 6 / 2
+true
 
-"3" == x
+julia> "3" == x
+false
 ```
 
 There are also many built-in functions whose role is to check something,
 returning a boolean value.
 
 ```julia
-isodd(42)
+julia> isodd(42)
+false
 
-iseven(12)
+julia> iseven(12)
+true
 ```
 
 We can define "testsets" that check a bunch of expressions

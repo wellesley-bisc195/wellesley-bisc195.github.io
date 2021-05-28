@@ -416,10 +416,4 @@ Good work!
 [^2]: `remote` - A clone of a repository that exists on a server, rather than your local machine. You can see what remotes are linked to your local repo with `git remote`.
 [^3]: `push` - Move commits from a local repo to the remote.
 
-## Assignment01 code
-
-For each assignment, the contents of the assignment code script
-will be rendered as html at the bottom of the assignment description page.
-If you're interested in how that works, check out [Literate.jl](https://fredrikekre.github.io/Literate.jl/v2/)
-
 {{literate_assignment 1}}

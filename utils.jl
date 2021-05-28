@@ -114,7 +114,7 @@ due_badge(a::Assignment) = string(
 
 classroom_badge(a::Assignment) = string(
     "[!", "[assignment", a.number, "link]",
-    "(https://img.shields.io/badge/Assignment-", a.number,
+    "(https://img.shields.io/badge/Github%20-", a.number,
     "-darkblue?style=for-the-badge)](", getclassroom(a), ")"
 )
 
@@ -156,6 +156,7 @@ function hfun_include_assignments()
             
             @@badges
             $(assignment_badge(assignment))
+            $(classroom_badge(assignment))
             $(due_badge(assignment))
             @@
             """, internal=true))
@@ -214,5 +215,13 @@ function hfun_literate_assignment(n)
     ln = parse(Int, first(n))
     isdir("_literate/") || mkdir("_literate/")
     Downloads.download("https://raw.githubusercontent.com/wellesley-bisc195/Assignment$(lpad(ln, 2, '0'))/master/src/assignment.jl", "_literate/assignment$(lpad(ln, 2, '0')).jl")
-    return Franklin.fd2html("\\literate{/_literate/assignment$(lpad(ln, 2, '0')).jl}", internal=true)
+    return Franklin.fd2html("""
+    ## Assignment$(lpad(ln, 2, '0')) code
+
+    For each assignment, the contents of the assignment code script
+    will be rendered as html at the bottom of the assignment description page.
+    If you're interested in how that works, check out [Literate.jl](https://fredrikekre.github.io/Literate.jl/v2/)
+
+
+    \\literate{/_literate/assignment$(lpad(ln, 2, '0')).jl}""", internal=true)
 end
