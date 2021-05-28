@@ -6,7 +6,7 @@
 In this assignment,
 you will learn how to use github classroom
 to download, complete, and test your assignments.
-Make sure you have followed [the instructions](https://wellesley-bisc195.github.io/Assignments/assignment01.html)
+Make sure you have followed [the instructions](https://wellesley-bisc195.github.io/assignments/Assignment01)
 to set up your account and join the classroom.
 
 ## Question 1
