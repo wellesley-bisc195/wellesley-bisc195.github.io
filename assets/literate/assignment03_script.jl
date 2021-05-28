@@ -1,10 +1,10 @@
 # This file was generated, do not modify it.
 
 # To view additional instructions for this assignment,
-# see https://wellesley-bisc195.github.io/BISC195.jl/stable/Assignments/assignment03.html
+# see https://wellesley-bisc195.github.io/assignments/Assignment03/
 
 # To view a rendered version of this document,
-# see https://wellesley-bisc195.github.io/BISC195.jl/stable/Assignments/assignment03_code.html
+# see https://wellesley-bisc195.github.io/assignments/Assignment03/#assignment03_code
 
 """
     compliment(base)
@@ -53,6 +53,13 @@ Examples
     julia> ispurine("C")
     false
 
+    julia> if ispurine("G")
+               println("It's a purine!")
+           else
+               println("It's a pyrimidine!")
+           end
+    It's a purine!
+
     julia> ispurine('B')
     Error: "Base B not supported")
 """
@@ -76,6 +83,13 @@ Examples
 
     julia> ispyrimidine("T")
     true
+
+    julia> if ispyrimidine("G")
+               println("It's a pyrimidine!")
+           else
+               println("It's a purine!")
+           end
+    It's a purine!
 
     julia> ispyrimidine('X')
     Error: "Base X not supported"

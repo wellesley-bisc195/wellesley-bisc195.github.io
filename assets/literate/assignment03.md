@@ -26,10 +26,14 @@ Below, I've put a couple of function signatures with docstrings,
 but you can (and should!) copy the necessary functionality
 out of the functions you've already defined, if applicable.
 
-!!! tip
-    If you defined those functions in the julia REPL,
-    you can go find them from the command line or the julia REPL!
-    In VS Code, open ~/.julia/logs/repl_history.jl.
+@@colbox-blue
+@@title
+Tip
+@@
+If you defined those functions in the julia REPL,
+you can go find them from the command line or the julia REPL!
+In VS Code, open ~/.julia/logs/repl_history.jl.
+@@
 
 ## Question 1 - a `compliment` function
 
@@ -85,6 +89,13 @@ Examples
     julia> ispurine("C")
     false
 
+    julia> if ispurine("G")
+               println("It's a purine!")
+           else
+               println("It's a pyrimidine!")
+           end
+    It's a purine!
+
     julia> ispurine('B')
     Error: "Base B not supported")
 """
@@ -108,6 +119,13 @@ Examples
 
     julia> ispyrimidine("T")
     true
+
+    julia> if ispyrimidine("G")
+               println("It's a pyrimidine!")
+           else
+               println("It's a purine!")
+           end
+    It's a purine!
 
     julia> ispyrimidine('X')
     Error: "Base X not supported"

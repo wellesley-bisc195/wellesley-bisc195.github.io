@@ -1,4 +1,4 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Data types and Functions</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hrefassignmentsassignment02assignment_2_-_data_types_and_functions ><a href="#a_hrefassignmentsassignment02assignment_2_-_data_types_and_functions" class=header-anchor ><a href="/assignments/Assignment02">Assignment 2 - Data types and Functions</a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/4FgCLmLn"><img src="https://img.shields.io/badge/Assignment-2-darkblue?style&#61;for-the-badge" alt=assignment2link  /></a> <img src="https://img.shields.io/badge/Due-2021--06--14-red?style&#61;for-the-badge" alt=assignment2due  /></div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>As you did with <a href="/assignments/Assignment01">Assignment01</a>, click the <a href="https://classroom.github.com/a/4FgCLmLn">invite link</a> to make a new copy of the assignment repository.</p> <p>Then, clone the repository, and look at the <code>src/assignment.jl</code> file, which contains information for what needs to be done.</p> <h2 id=unit_tests ><a href="#unit_tests" class=header-anchor >Unit Tests</a></h2> <p>You may or may not have noticed that each of your assignments has automated &quot;unit testing&quot; set up to check that your code works as expected.</p> <p>Once you&#39;ve completed the assignment, you will see a green checkmark next to the commit in github</p> <p><img src="https://imgur.com/kb5YuDL.png" alt="Github CI passing" /></p> <p>You can also check this on your own computer - with your assignment repository as the working directory, run:</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Data types and Functions</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hrefassignmentsassignment02assignment_2_-_data_types_and_functions ><a href="#a_hrefassignmentsassignment02assignment_2_-_data_types_and_functions" class=header-anchor ><a href="/assignments/Assignment02">Assignment 2 - Data types and Functions</a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/4FgCLmLn"><img src="https://img.shields.io/badge/Github&#37;20-2-darkblue?style&#61;for-the-badge" alt=assignment2link  /></a> <img src="https://img.shields.io/badge/Due-2021--06--14-red?style&#61;for-the-badge" alt=assignment2due  /></div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>As you did with <a href="/assignments/Assignment01">Assignment01</a>, click the <a href="https://classroom.github.com/a/4FgCLmLn">invite link</a> to make a new copy of the assignment repository.</p> <p>Then, clone the repository, and look at the <code>src/assignment.jl</code> file, which contains information for what needs to be done.</p> <h2 id=unit_tests ><a href="#unit_tests" class=header-anchor >Unit Tests</a></h2> <p>You may or may not have noticed that each of your assignments has automated &quot;unit testing&quot; set up to check that your code works as expected.</p> <p>Once you&#39;ve completed the assignment, you will see a green checkmark next to the commit in github</p> <p><img src="https://imgur.com/kb5YuDL.png" alt="Github CI passing" /></p> <p>You can also check this on your own computer - with your assignment repository as the working directory, run:</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
 <p>If you do this before you&#39;ve completed the assignment, you&#39;ll probably see a bunch of error messages, along with the test results:</p>
 <pre><code class=language-julia >Test Summary: | Pass  Fail  Error  Total
 Assignment02  |    6     3      5     14
@@ -8,10 +8,10 @@ Assignment02  |    6     3      5     14
   Question 3  |    1     1             2
   Question 4  |    1            1      2
 ERROR: LoadError: Some tests did not pass: 6 passed, 3 failed, 5 errored, 0 broken.</code></pre>
-<p>Unit tests are widely used in computer programing so that developers can be certain that their code is working the way they intend. I&#39;m using them here so you can tell how close you are to completing your assignment. For now, you can just be assured that if all tests pass, you&#39;re done, and if they don&#39;t, you still have some work to do</p>
-<p>If you&#39;d like to know more, keep reading. The information below is not necessary to complete the assignment this week &#40;though some of the information may be helpful 😉&#41;.</p>
+<p>Unit tests are widely used in computer programing so that developers can be certain that their code is working the way they intend. I&#39;m using them here so you can tell how close you are to completing your assignment.</p>
+<p>In later assignments, and in your final project, you will write your own unit tests for the code that you write. For now, you can just be assured that if all tests pass, you&#39;re done, and if they don&#39;t, you still have some work to do</p>
 <h3 id=how_tests_work ><a href="#how_tests_work" class=header-anchor >How tests work</a></h3>
-<p>Tests take the form of conditional expressions - that is, things that return <code>true</code> or <code>false</code>.</p>
+<p>Tests take the form of &quot;Boolean&quot; expressions - that is, things that return <code>true</code> or <code>false</code>. Boolean expressions are also also used in conditional execution, which you&#39;ll learn about in <a href="/lessons/Lesson04">Lesson 4</a>.</p>
 <pre><code class=language-julia >julia&gt; using Test
 
 julia&gt; @test true
@@ -22,18 +22,23 @@ Test Failed at REPL&#91;3&#93;:1
   Expression: false
 ERROR: There was an error during testing</code></pre>
 <p>&quot;Passing&quot; tests are those that evaluate <code>true</code>. &quot;Failing&quot; tests are those that evaluate <code>false</code>. Errors are reported when the expression throws an error before returning a value, or when the expression doesn&#39;t return either <code>true</code> or <code>false</code>  .</p>
-<p>There are lots of different types of &quot;boolean&quot; expressions, those that return <code>true</code> or <code>false</code>. For example, <code>&#61;&#61;</code> is used to ask if two values are equal.</p>
-<pre><code class=language-julia >1 &#43; 1 &#61;&#61; 2
+<p>There are lots of different types of boolean expressions. For example, <code>&#61;&#61;</code> is used to ask if two values are equal.</p>
+<pre><code class=language-julia >julia&gt; 1 &#43; 1 &#61;&#61; 2
+true
 
-x &#61; 3
+julia&gt; x &#61; 3; # remember, one &#96;&#61;&#96; is for assigning variables
 
-x &#61;&#61; 6 / 2
+julia&gt; x &#61;&#61; 6 / 2
+true
 
-&quot;3&quot; &#61;&#61; x</code></pre>
+julia&gt; &quot;3&quot; &#61;&#61; x
+false</code></pre>
 <p>There are also many built-in functions whose role is to check something, returning a boolean value.</p>
-<pre><code class=language-julia >isodd&#40;42&#41;
+<pre><code class=language-julia >julia&gt; isodd&#40;42&#41;
+false
 
-iseven&#40;12&#41;</code></pre>
+julia&gt; iseven&#40;12&#41;
+true</code></pre>
 <p>We can define &quot;testsets&quot; that check a bunch of expressions and report the information</p>
 <pre><code class=language-julia >julia&gt; using Test
 
@@ -54,7 +59,7 @@ Example tests |    1     1      1      3</code></pre>
 <p>If you&#39;d like to examine the tests for this assignment, take a look inside <code>test/runtests.jl</code> in your assignment repository. A lot of things will likely be unfamiliar, but you might find some hints for how to finish the assignment...</p>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: May 26, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: May 28, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>
