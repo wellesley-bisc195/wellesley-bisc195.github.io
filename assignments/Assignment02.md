@@ -56,7 +56,7 @@ In later assignments, and in your final project,
 you will write your own unit tests for the code that you write.
 For now, you can just be assured that if all tests pass,
 you're done, and if they don't,
-you still have some work to do
+you still have some work to do.
 
 ### How tests work
 
@@ -133,7 +133,7 @@ Example tests |    1     1      1      3
 
 @@colbox-orange
 @@title
- "Checking Question"
+Checking Question
 @@
 
 Which test failed, and which test was an error?
@@ -146,5 +146,254 @@ If you'd like to examine the tests for this assignment,
 take a look inside `test/runtests.jl` in your assignment repository.
 A lot of things will likely be unfamiliar,
 but you might find some hints for how to finish the assignment...
+
+## Running your code during development
+
+In this assignment, you will start to write functions
+that accomplish some task.
+Almost inevitably, you will need to try many different things
+before your function(s) do what you want them to.
+How can you build your code incrementally, while testing what it does?
+
+You'll learn several different ways to do this in this course -
+no one way is obviously better than another,
+each has advanatages and disadvantages.
+
+### REPL-based development
+
+The most straightforward development strategy is to use the REPL
+as your primary playground.
+You can try different function definitions
+with different inputs, and then once you get something that works,
+copy the code from the REPL into your code files.
+
+For example, let's say you're trying to solve [question 3](#question_3)
+of this assignment.
+You're given some starter code,
+and a description of what you're trying to do:
+
+```
+"""
+    question3(sequence)
+
+Calculates the GC ratio of a DNA sequence.
+The GC ratio is the total number of G and C bases divided by the total length of the sequence.
+For more info about GC content, see here: https://en.wikipedia.org/wiki/GC-content
+
+Example
+≡≡≡≡≡≡≡≡≡≡
+
+    julia> question3("AATG")
+    0.25
+
+    julia> question3("CCCGG")
+    1.0
+
+    julia> question3("ATTA")
+    0.0
+"""
+function question3(sequence)
+    # throw an error if the string contains anything other than ACGT
+    if any(c-> !in(c, ['A','C','G','T']), sequence)
+        throw(ArgumentError("Sequence must only contain ACGT"))
+    end
+
+    # change line to assign `seqlength` to the length of `sequence` instead of `1`
+    # If you're stuck, search for "length of string julia"
+    seqlength = 1
+
+    # count the number of G's
+    gs = count(==('G'), sequence)
+    # count the number of C's
+    cs = count(==('C'), sequence)
+
+    return gs + cs / seqlength # something is wrong with this line...
+end
+```
+
+The first thing to do is copy the code into the REPL and execute it.
+
+```julia-repl
+   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+  (_)     | (_) (_)    |
+   _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
+  | | | | | | |/ _` |  |
+  | | |_| | | | (_| |  |  Version 1.6.0 (2021-03-24)
+ _/ |\__'_|_|_|\__'_|  |
+|__/                   |
+
+julia> function question3(sequence)
+           # throw an error if the string contains anything other than ACGT
+           if any(c-> !in(c, ['A','C','G','T']), sequence)
+               throw(ArgumentError("Sequence must only contain ACGT"))
+           end
+
+           # change line to assign `seqlength` to the length of `sequence` instead of `1`
+           # If you're stuck, search for "length of string julia"
+           seqlength = 1
+
+           # count the number of G's
+           gs = count(==('G'), sequence)
+           # count the number of C's
+           cs = count(==('C'), sequence)
+
+           return gs + cs / seqlength # something is wrong with this line...
+       end
+question3 (generic function with 1 method)
+
+julia>
+```
+
+Now let's try the examples and see what happens:
+
+```julia-repl
+julia> question3("AATG")
+1.0
+
+julia> question3("CCCGG")
+5.0
+
+julia> question3("ATTA")
+0.0
+```
+
+Hmm - instead of giving me the *ratio* of GCs,
+it seems to be giving me a *count* of GCs.
+The first hint tells me I need to replace `seqlength = 1`
+to assign the length of the sequence instead of `1`.
+I'm not sure how to do that, let's see what happens
+if I enter the length by hand.
+
+First, I'll change the code in the assignment file to set `seqlength = 4`,
+then copy and paste the whole block into the REPL,
+then run the first example again.
+
+```julia-repl
+julia> function question3(sequence)
+           # throw an error if the string contains anything other than ACGT
+           if any(c-> !in(c, ['A','C','G','T']), sequence)
+               throw(ArgumentError("Sequence must only contain ACGT"))
+           end
+
+           # change line to assign `seqlength` to the length of `sequence` instead of `1`
+           # If you're stuck, search for "length of string julia"
+           seqlength = 4
+
+           # count the number of G's
+           gs = count(==('G'), sequence)
+           # count the number of C's
+           cs = count(==('C'), sequence)
+
+           return gs + cs / seqlength # something is wrong with this line...
+       end
+question3 (generic function with 1 method)
+
+julia> question3("AATG")
+1.0
+```
+
+Rats! That didn't seem to change anything.
+What about if I change it to 5, and do the second example?
+
+```julia-repl
+julia> function question3(sequence)
+           # throw an error if the string contains anything other than ACGT
+           if any(c-> !in(c, ['A','C','G','T']), sequence)
+               throw(ArgumentError("Sequence must only contain ACGT"))
+           end
+
+           # change line to assign `seqlength` to the length of `sequence` instead of `1`
+           # If you're stuck, search for "length of string julia"
+           seqlength = 5
+
+           # count the number of G's
+           gs = count(==('G'), sequence)
+           # count the number of C's
+           cs = count(==('C'), sequyouence)
+
+           return gs + cs / seqlength # something is wrong with this line...
+       end
+question3 (generic function with 1 method)
+
+julia> question3("CCCGG")
+2.6
+```
+
+Well, it's not right, but at least that changed the answer.
+But I'm not sure where to go next.
+
+Let's try the function line-by line, to see what's happening.
+First, I'll assign `sequence = "AATG"`,
+to mimic passing that as an argument to the function
+(we'll learn more about functions and arguments in the next lesson).
+Then, I'll copy and paste each line of the function into the REPL
+to see if it's doing what I expect.
+
+```julia-repl
+julia> if any(c-> !in(c, ['A','C','G','T']), sequence)
+          throw(ArgumentError("Sequence must only contain ACGT"))
+       end
+
+julia> seqlength = 4 # will figure this out later
+4
+
+julia> # count the number of G's
+       gs = count(==('G'), sequence)
+1
+
+julia> # count the number of C's
+       cs = count(==('C'), sequence)
+0
+```
+
+So far so good - so it must be the last line)
+
+```julia-repl
+julia> gs + cs / seqlength
+1.0
+```
+
+OK, so that's what we got the first time.
+What we want is the sum of gs and cs, divided by the length.
+So let's try each piece
+
+```julia-repl
+julia> cs + gs
+1
+
+julia> cs / seqlength
+0.0
+```
+
+See the problem? If not, try the same thing, but set `sequence = "CCCGG"`
+and `seqlength = 5`, then go through each line again.
+
+@@colbox-green
+@@title
+Tip
+@@
+You can always make your changes directly in the REPL,
+rather than copy-pasting them from your assignment file.
+Just remember to update your assignment file once you get some working code.
+
+If you press the up arrow, you can cycle through previous commands.
+Just remember that you can't use your mouse to move the cursor.
+@@
+@@colbox-blue
+@@title
+Note
+@@
+Copying back and forth between the REPL and a file
+may introduce some weird spacing. Eg.
+
+Mostly, julia doesn't care about whitespace like spaces and newlines,
+and in the REPL, it doesn't matter much.
+But try to keep your assignment code nicely aligned,
+with blocks indented, and `end` keywords aligned
+with the statement that they terminate.
+
+It makes it easier to read (for you _and_ for me)
+and easier to spot problems.
+@@
 
 {{literate_assignment 2}}
