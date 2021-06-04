@@ -1,0 +1,10 @@
+name = "Assignment02"
+uuid = "60754d59-2b2a-495c-956e-7072f165c304"
+authors = ["Kevin Bonham", "PhD <kbonham@wellesley.edu>"]
+version = "0.1.0"
+
+[deps]
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[compat]
+julia = "1.4"

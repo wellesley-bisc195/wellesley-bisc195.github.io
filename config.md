@@ -11,6 +11,7 @@ The website_* must be defined for the RSS to work
 @def course_calendar = "https://calendar.google.com/calendar/u/0?cid=Y192ZHJxM243cTh0czluOGZ1aGpzZnVmMHFzMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t"
 
 @def mintoclevel = 2
+@def ignore = ["assignment_repos/"]
 
 <!--
 Add here files or directories that should be ignored by Franklin, otherwise

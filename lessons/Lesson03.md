@@ -70,9 +70,9 @@ julia> "42" * "6"
 "426"
 ```
     
-   2. Assign each of these values to a different variable (eg `my_sum = 1+2`).
+   2. Assign each of the values from (1) above to a different variable (eg `my_sum = 1+2`).
        And use the `typeof()` function to test your answers above.
-       For example   
+       For example:
        
 ```julia-repl
 julia> x = "42" * "6"
@@ -325,7 +325,7 @@ Try it out and see if you're right.
 
 When we call `nelly(other_arg)`,
 we're passing the value `"Huzzah"` as the argument.
-So inside the scope of the function,
+So _inside_ the scope of the function,
 `some_arg` is `"Huzzah"`.
 
 What about `some_arg` outside of the function?
@@ -335,7 +335,7 @@ julia> some_arg
 "Woah"
 ```
 
-Here, we're outside of the function scope,
+Here, we're _outside_ of the function scope,
 so `some_arg` is `"Woah"`.
 
 Because of this possibility for confusion,

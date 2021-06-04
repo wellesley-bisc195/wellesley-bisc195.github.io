@@ -1,0 +1,7 @@
+name = "Assignment07"
+uuid = "67893044-1481-44cf-8ab6-de350e09ee4e"
+authors = ["Kevin Bonham, PhD <kbonham@wellesley.edu>"]
+version = "0.1.0"
+
+[compat]
+julia = "1.4"

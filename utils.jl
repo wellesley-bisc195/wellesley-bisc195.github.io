@@ -214,7 +214,7 @@ end
 function hfun_literate_assignment(n)
     ln = parse(Int, first(n))
     isdir("_literate/") || mkdir("_literate/")
-    Downloads.download("https://raw.githubusercontent.com/wellesley-bisc195/Assignment$(lpad(ln, 2, '0'))/master/src/assignment.jl", "_literate/assignment$(lpad(ln, 2, '0')).jl")
+    Downloads.download("https://raw.githubusercontent.com/wellesley-bisc195/Assignment$(lpad(ln, 2, '0'))/main/src/assignment.jl", "_literate/assignment$(lpad(ln, 2, '0')).jl")
     return Franklin.fd2html("""
     ## Assignment$(lpad(ln, 2, '0')) code
 
