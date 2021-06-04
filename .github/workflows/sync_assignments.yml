@@ -68,7 +68,7 @@ jobs:
 
       - name: Copy synced files to assignment repo
         env:
-          ASSIGNMENT: basename ${{ matrix.assignment }}
+          ASSIGNMENT: $(basename ${{ matrix.assignment }})
         run: |
           cp -a main/assignment_repos/$ASSIGNMENT assignment-repo/
 
