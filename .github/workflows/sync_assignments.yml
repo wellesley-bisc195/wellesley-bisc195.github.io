@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
           repository: ${{ matrix.assignment }}
-          token: ${{ secrets.ASSIGNMENT_DEPLOY_KEY }}
+          token: ${{ secrets.BISC195_BOT_KEY }}
           path: assignment-repo
           fetch-depth: 0
 
@@ -100,7 +100,7 @@ jobs:
         if: steps.changes.outputs.changes == 'true'
         env:
           ASSIGNMENT_REPO_FULLNAME: ${{ matrix.assignment }}
-          ASSIGNMENT_DEPLOY_KEY: ${{ secrets.ASSIGNMENT_DEPLOY_KEY }}
+          BISC195_BOT_KEY: ${{ secrets.BISC195_BOT_KEY }}
         run: |
           cd assignment-repo
 
@@ -123,7 +123,7 @@ jobs:
           ASSIGNMENT_REPO_FULLNAME: ${{ matrix.assignment }}
           BRANCH_NAME: ${{ steps.branch.outputs.name }}
         with:
-          github-token: ${{ secrets.ASSIGNMENT_DEPLOY_KEY }}
+          github-token: ${{ secrets.BISC195_BOT_KEY }}
           script: |
             const repo = process.env.ASSIGNMENT_REPO_FULLNAME.split('/')[1]
 
