@@ -67,8 +67,10 @@ jobs:
           echo "::set-output name=name::$branch"
 
       - name: Copy synced files to assignment repo
+        env:
+          ASSIGNMENT: basename ${{ matrix.assignment }}
         run: |
-          cp -a main/synced-files/. assignment-repo/
+          cp -a main/assignment_repos/$ASSIGNMENT assignment-repo/
 
       - name: Check for changes
         id: changes
@@ -111,7 +113,7 @@ jobs:
           # If a push contains several commits, the commit message will only link to the last one
           git commit -m "🤖 Sync org-wide files to upstream repo" -m "More info: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
 
-          # Push commit
+          # Push commitq
           git push "$GITHUB_SERVER_URL/$ASSIGNMENT_REPO_FULLNAME.git"
 
       - name: Open pull request on assignment repo
