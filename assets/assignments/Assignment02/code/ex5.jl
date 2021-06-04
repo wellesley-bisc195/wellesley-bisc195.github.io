@@ -23,3 +23,5 @@ Example
 function question4(sequence)
     # Your code here
 end
+
+# Question 5

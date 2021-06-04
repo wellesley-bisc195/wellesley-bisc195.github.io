@@ -9,7 +9,7 @@ Assignment02  |    6     3      5     14
   Question 4  |    1            1      2
 ERROR: LoadError: Some tests did not pass: 6 passed, 3 failed, 5 errored, 0 broken.</code></pre>
 <p>Unit tests are widely used in computer programing so that developers can be certain that their code is working the way they intend. I&#39;m using them here so you can tell how close you are to completing your assignment.</p>
-<p>In later assignments, and in your final project, you will write your own unit tests for the code that you write. For now, you can just be assured that if all tests pass, you&#39;re done, and if they don&#39;t, you still have some work to do</p>
+<p>In later assignments, and in your final project, you will write your own unit tests for the code that you write. For now, you can just be assured that if all tests pass, you&#39;re done, and if they don&#39;t, you still have some work to do.</p>
 <h3 id=how_tests_work ><a href="#how_tests_work" class=header-anchor >How tests work</a></h3>
 <p>Tests take the form of &quot;Boolean&quot; expressions - that is, things that return <code>true</code> or <code>false</code>. Boolean expressions are also also used in conditional execution, which you&#39;ll learn about in <a href="/lessons/Lesson04">Lesson 4</a>.</p>
 <pre><code class=language-julia >julia&gt; using Test
@@ -53,15 +53,173 @@ julia&gt; @testset &quot;Example tests&quot; begin
        end</code></pre>
 <pre><code class=language-julia >Test Summary: | Pass  Fail  Error  Total
 Example tests |    1     1      1      3</code></pre>
-<div class=colbox-orange ><div class=title >&quot;Checking Question&quot;</div>
+<div class=colbox-orange ><div class=title >Checking Question</div>
 <p>Which test failed, and which test was an error?</p>
 <p>Run the example in the REPL; can you find any relevant information in the stacktrace?</p></div>
 <p>If you&#39;d like to examine the tests for this assignment, take a look inside <code>test/runtests.jl</code> in your assignment repository. A lot of things will likely be unfamiliar, but you might find some hints for how to finish the assignment...</p>
+<h2 id=running_your_code_during_development ><a href="#running_your_code_during_development" class=header-anchor >Running your code during development</a></h2>
+<p>In this assignment, you will start to write functions that accomplish some task. Almost inevitably, you will need to try many different things before your function&#40;s&#41; do what you want them to. How can you build your code incrementally, while testing what it does?</p>
+<p>You&#39;ll learn several different ways to do this in this course - no one way is obviously better than another, each has advanatages and disadvantages.</p>
+<h3 id=repl-based_development ><a href="#repl-based_development" class=header-anchor >REPL-based development</a></h3>
+<p>The most straightforward development strategy is to use the REPL as your primary playground. You can try different function definitions with different inputs, and then once you get something that works, copy the code from the REPL into your code files.</p>
+<p>For example, let&#39;s say you&#39;re trying to solve <a href="#question_3">question 3</a> of this assignment. You&#39;re given some starter code, and a description of what you&#39;re trying to do:</p>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    question3&#40;sequence&#41;
+
+Calculates the GC ratio of a DNA sequence.
+The GC ratio is the total number of G and C bases divided by the total length of the sequence.
+For more info about GC content, see here: https://en.wikipedia.org/wiki/GC-content
+
+Example
+≡≡≡≡≡≡≡≡≡≡
+
+    julia&gt; question3&#40;&quot;AATG&quot;&#41;
+    0.25
+
+    julia&gt; question3&#40;&quot;CCCGG&quot;&#41;
+    1.0
+
+    julia&gt; question3&#40;&quot;ATTA&quot;&#41;
+    0.0
+&quot;&quot;&quot;
+function question3&#40;sequence&#41;
+    # throw an error if the string contains anything other than ACGT
+    if any&#40;c-&gt; &#33;in&#40;c, &#91;&#39;A&#39;,&#39;C&#39;,&#39;G&#39;,&#39;T&#39;&#93;&#41;, sequence&#41;
+        throw&#40;ArgumentError&#40;&quot;Sequence must only contain ACGT&quot;&#41;&#41;
+    end
+
+    # change line to assign &#96;seqlength&#96; to the length of &#96;sequence&#96; instead of &#96;1&#96;
+    # If you&#39;re stuck, search for &quot;length of string julia&quot;
+    seqlength &#61; 1
+
+    # count the number of G&#39;s
+    gs &#61; count&#40;&#61;&#61;&#40;&#39;G&#39;&#41;, sequence&#41;
+    # count the number of C&#39;s
+    cs &#61; count&#40;&#61;&#61;&#40;&#39;C&#39;&#41;, sequence&#41;
+
+    return gs &#43; cs / seqlength # something is wrong with this line...
+end</code></pre>
+<p>The first thing to do is copy the code into the REPL and execute it.</p>
+<pre><code class=language-julia-repl >_       _ _&#40;_&#41;_     |  Documentation: https://docs.julialang.org
+  &#40;_&#41;     | &#40;_&#41; &#40;_&#41;    |
+   _ _   _| |_  __ _   |  Type &quot;?&quot; for help, &quot;&#93;?&quot; for Pkg help.
+  | | | | | | |/ _&#96; |  |
+  | | |_| | | | &#40;_| |  |  Version 1.6.0 &#40;2021-03-24&#41;
+ _/ |\__&#39;_|_|_|\__&#39;_|  |
+|__/                   |
+
+julia&gt; function question3&#40;sequence&#41;
+           # throw an error if the string contains anything other than ACGT
+           if any&#40;c-&gt; &#33;in&#40;c, &#91;&#39;A&#39;,&#39;C&#39;,&#39;G&#39;,&#39;T&#39;&#93;&#41;, sequence&#41;
+               throw&#40;ArgumentError&#40;&quot;Sequence must only contain ACGT&quot;&#41;&#41;
+           end
+
+           # change line to assign &#96;seqlength&#96; to the length of &#96;sequence&#96; instead of &#96;1&#96;
+           # If you&#39;re stuck, search for &quot;length of string julia&quot;
+           seqlength &#61; 1
+
+           # count the number of G&#39;s
+           gs &#61; count&#40;&#61;&#61;&#40;&#39;G&#39;&#41;, sequence&#41;
+           # count the number of C&#39;s
+           cs &#61; count&#40;&#61;&#61;&#40;&#39;C&#39;&#41;, sequence&#41;
+
+           return gs &#43; cs / seqlength # something is wrong with this line...
+       end
+question3 &#40;generic function with 1 method&#41;
+
+julia&gt;</code></pre>
+<p>Now let&#39;s try the examples and see what happens:</p>
+<pre><code class=language-julia-repl >julia&gt; question3&#40;&quot;AATG&quot;&#41;
+1.0
+
+julia&gt; question3&#40;&quot;CCCGG&quot;&#41;
+5.0
+
+julia&gt; question3&#40;&quot;ATTA&quot;&#41;
+0.0</code></pre>
+<p>Hmm - instead of giving me the <em>ratio</em> of GCs, it seems to be giving me a <em>count</em> of GCs. The first hint tells me I need to replace <code>seqlength &#61; 1</code> to assign the length of the sequence instead of <code>1</code>. I&#39;m not sure how to do that, let&#39;s see what happens if I enter the length by hand.</p>
+<p>First, I&#39;ll change the code in the assignment file to set <code>seqlength &#61; 4</code>, then copy and paste the whole block into the REPL, then run the first example again.</p>
+<pre><code class=language-julia-repl >julia&gt; function question3&#40;sequence&#41;
+           # throw an error if the string contains anything other than ACGT
+           if any&#40;c-&gt; &#33;in&#40;c, &#91;&#39;A&#39;,&#39;C&#39;,&#39;G&#39;,&#39;T&#39;&#93;&#41;, sequence&#41;
+               throw&#40;ArgumentError&#40;&quot;Sequence must only contain ACGT&quot;&#41;&#41;
+           end
+
+           # change line to assign &#96;seqlength&#96; to the length of &#96;sequence&#96; instead of &#96;1&#96;
+           # If you&#39;re stuck, search for &quot;length of string julia&quot;
+           seqlength &#61; 4
+
+           # count the number of G&#39;s
+           gs &#61; count&#40;&#61;&#61;&#40;&#39;G&#39;&#41;, sequence&#41;
+           # count the number of C&#39;s
+           cs &#61; count&#40;&#61;&#61;&#40;&#39;C&#39;&#41;, sequence&#41;
+
+           return gs &#43; cs / seqlength # something is wrong with this line...
+       end
+question3 &#40;generic function with 1 method&#41;
+
+julia&gt; question3&#40;&quot;AATG&quot;&#41;
+1.0</code></pre>
+<p>Rats&#33; That didn&#39;t seem to change anything. What about if I change it to 5, and do the second example?</p>
+<pre><code class=language-julia-repl >julia&gt; function question3&#40;sequence&#41;
+           # throw an error if the string contains anything other than ACGT
+           if any&#40;c-&gt; &#33;in&#40;c, &#91;&#39;A&#39;,&#39;C&#39;,&#39;G&#39;,&#39;T&#39;&#93;&#41;, sequence&#41;
+               throw&#40;ArgumentError&#40;&quot;Sequence must only contain ACGT&quot;&#41;&#41;
+           end
+
+           # change line to assign &#96;seqlength&#96; to the length of &#96;sequence&#96; instead of &#96;1&#96;
+           # If you&#39;re stuck, search for &quot;length of string julia&quot;
+           seqlength &#61; 5
+
+           # count the number of G&#39;s
+           gs &#61; count&#40;&#61;&#61;&#40;&#39;G&#39;&#41;, sequence&#41;
+           # count the number of C&#39;s
+           cs &#61; count&#40;&#61;&#61;&#40;&#39;C&#39;&#41;, sequyouence&#41;
+
+           return gs &#43; cs / seqlength # something is wrong with this line...
+       end
+question3 &#40;generic function with 1 method&#41;
+
+julia&gt; question3&#40;&quot;CCCGG&quot;&#41;
+2.6</code></pre>
+<p>Well, it&#39;s not right, but at least that changed the answer. But I&#39;m not sure where to go next.</p>
+<p>Let&#39;s try the function line-by line, to see what&#39;s happening. First, I&#39;ll assign <code>sequence &#61; &quot;AATG&quot;</code>, to mimic passing that as an argument to the function &#40;we&#39;ll learn more about functions and arguments in the next lesson&#41;. Then, I&#39;ll copy and paste each line of the function into the REPL to see if it&#39;s doing what I expect.</p>
+<pre><code class=language-julia-repl >julia&gt; if any&#40;c-&gt; &#33;in&#40;c, &#91;&#39;A&#39;,&#39;C&#39;,&#39;G&#39;,&#39;T&#39;&#93;&#41;, sequence&#41;
+          throw&#40;ArgumentError&#40;&quot;Sequence must only contain ACGT&quot;&#41;&#41;
+       end
+
+julia&gt; seqlength &#61; 4 # will figure this out later
+4
+
+julia&gt; # count the number of G&#39;s
+       gs &#61; count&#40;&#61;&#61;&#40;&#39;G&#39;&#41;, sequence&#41;
+1
+
+julia&gt; # count the number of C&#39;s
+       cs &#61; count&#40;&#61;&#61;&#40;&#39;C&#39;&#41;, sequence&#41;
+0</code></pre>
+<p>So far so good - so it must be the last line&#41;</p>
+<pre><code class=language-julia-repl >julia&gt; gs &#43; cs / seqlength
+1.0</code></pre>
+<p>OK, so that&#39;s what we got the first time. What we want is the sum of gs and cs, divided by the length. So let&#39;s try each piece</p>
+<pre><code class=language-julia-repl >julia&gt; cs &#43; gs
+1
+
+julia&gt; cs / seqlength
+0.0</code></pre>
+<p>See the problem? If not, try the same thing, but set <code>sequence &#61; &quot;CCCGG&quot;</code> and <code>seqlength &#61; 5</code>, then go through each line again.</p>
+<div class=colbox-green ><div class=title >Tip</div>
+<p>You can always make your changes directly in the REPL, rather than copy-pasting them from your assignment file. Just remember to update your assignment file once you get some working code.</p>
+<p>If you press the up arrow, you can cycle through previous commands. Just remember that you can&#39;t use your mouse to move the cursor.</p></div>
+<div class=colbox-blue ><div class=title >Note</div>
+<p>Copying back and forth between the REPL and a file may introduce some weird spacing. Eg.</p>
+<p>Mostly, julia doesn&#39;t care about whitespace like spaces and newlines, and in the REPL, it doesn&#39;t matter much. But try to keep your assignment code nicely aligned, with blocks indented, and <code>end</code> keywords aligned with the statement that they terminate.</p>
+<p>It makes it easier to read &#40;for you <em>and</em> for me&#41; and easier to spot problems.</p></div>
 <h2 id=assignment02_code ><a href="#assignment02_code" class=header-anchor >Assignment02 code</a></h2>
 <p>For each assignment, the contents of the assignment code script will be rendered as html at the bottom of the assignment description page. If you&#39;re interested in how that works, check out <a href="https://fredrikekre.github.io/Literate.jl/v2/">Literate.jl</a></p>
 <h1 id=instructions_for_assignment02 ><a href="#instructions_for_assignment02" class=header-anchor >Instructions for Assignment02</a></h1>
 <h2 id=introduction ><a href="#introduction" class=header-anchor >Introduction</a></h2>
-<p>In this assignment, you will start to put the pieces together. Note: this file is runnable in its current state, but is incomplete. You can run the file from the command line, or use the VS Code julia extension to run individual lines.</p>
+<p>In this assignment, you will start to put the pieces together. Note: this file is runnable in its current state, but is incomplete. You can run the file from the command line in script mode, copy code into the REPL in interactive mode, or use the VS Code julia extension to run individual lines.</p>
 <p>The following code is used for set up; there is no need to change it. If you <em>do</em> change it to figure out what it&#39;s doing, make sure you change it back or your assignment may not work correctly</p>
 <pre><code class=language-julia >using Random
 Random.seed&#33;&#40;42&#41;
@@ -74,12 +232,12 @@ end
 
 my_seq &#61; generate_sequence&#40;20&#41;</code></pre>
 <h2 id=question_1 ><a href="#question_1" class=header-anchor >Question 1</a></h2>
-<p>The code above generates a random 20nt DNA sequence, and assigns it to the variable <code>my_seq</code>. What kind of data type is <code>my_seq</code> &#40;eg Float64, Int64, String, or something else&#41;? Assign the variable <code>question1</code> to the correct type.</p>
+<p>The code above generates a random 20nt DNA sequence, and assigns it to the variable <code>my_seq</code>. What kind of data type is <code>my_seq</code> &#40;eg <code>Float64</code>, <code>Int64</code>, <code>String</code>, or something else&#41;? Assign the variable <code>question1</code> to the correct type.</p>
 <p>Hint1: rather than guess, you can just use the <code>typeof&#40;&#41;</code> function.</p>
 <pre><code class=language-julia >question1 &#61; &quot;&quot;</code></pre>
 <p>Hint2: If you&#39;re having trouble, note that your answer should not contain quotes. Eg. if you think that <code>seq</code> has the type <code>MyType</code>, your code should read <code>question1 &#61; MyType</code> and not <code>question1 &#61; &quot;MyType&quot;</code></p>
 <h2 id=question_2 ><a href="#question_2" class=header-anchor >Question 2</a></h2>
-<p>The function bellow has a &quot;doc string&quot;, which explains what the function should do. Many julia functions have doc strings, which makes it easy to get help right from the REPL</p>
+<p>The function bellow has a documentation string or &quot;doc string&quot;, which explains what the function should do. Many julia functions have doc strings, which makes it easy to get help right from the REPL</p>
 <p>Open a julia REPL and type <code>?</code>. You will see the <code>julia&gt;</code> prompt change to <code>help?&gt;</code>. Now type <code>println</code> and hit enter. The docstring of <code>println</code> is printed and you&#39;re returned to a julia prompt</p>
 <p>Evaluate the following function, including the docstring, in the REPL &#40;that is, copy from the tripple quotes down to the &quot;end&quot; and paste it into the REPL, then hit enter&#41;</p>
 <pre><code class=language-julia >&quot;&quot;&quot;
@@ -180,12 +338,63 @@ Example
 &quot;&quot;&quot;
 function question4&#40;sequence&#41;
     # Your code here
+end
+
+# Question 5</code></pre>
+<p>The following are related to questions in the exercises from chapter 2 of <em>Think Julia</em>. The format of the varables below refer to specific exercise questions. For example, <code>ce_2_1_1</code> would refer to chapter excercise 2-2, question 1.</p>
+<blockquote>
+<p>We’ve seen that <code>n &#61; 42</code> is legal. What about <code>42 &#61; n</code>?</p>
+</blockquote>
+<p>Assign the variable to <code>true</code> if legal, <code>false</code> if illegal</p>
+<pre><code class=language-julia >ce_2_2_1 &#61; Bool</code></pre>
+<blockquote>
+<p>How about <code>x &#61; y &#61; 1</code>?</p>
+</blockquote>
+<p>Assign the variable to <code>true</code> if legal, <code>false</code> if illegal</p>
+<pre><code class=language-julia >ce_2_2_2 &#61; Bool</code></pre>
+<blockquote>
+<p>The volume of a sphere with radius <code>r</code> is <code>4/3πr^3</code>.</p>
+</blockquote>
+<p>What is the volume of a sphere with radius <code>5</code>?</p>
+<p>Assign the variable to the correct answer</p>
+<pre><code class=language-julia >ce_2_3_1 &#61; Float64</code></pre>
+<blockquote>
+<p>Suppose the cover price of a book is &#36;24.95,</p>
+</blockquote>
+<p>but bookstores get a 40 &#37; discount. Shipping costs &#36;3 for the first copy and 75 cents for each additional copy. What is the total wholesale cost for 60 copies?</p>
+<p>Assign the variable to the correct answer.</p>
+<pre><code class=language-julia >ce_2_3_2 &#61; Float64
+
+# Question 6</code></pre>
+<p>Write a function that calculates the cost of books, given some list price, discount rate, and number.</p>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    bookprice&#40;list, discount, count&#41;
+
+Calculates the price of books, given some list price, discount rate,
+and number of books ordered.
+
+Example
+≡≡≡≡≡≡≡≡≡≡
+
+    julia&gt; bookprice&#40;24.95, 0.4, 60&#41;</code></pre>
+<p>this should be the same answer you got for <code>c_2_3_2</code></p>
+<pre><code class=language-julia >julia&gt; bookprice&#40;24.95, 0.4, 1&#41;
+    17.97
+
+    julia&gt; bookprice&#40;24.95, 0.4, 2&#41;
+    33.69
+
+    julia&gt; bookprice&#40;1, 0, 1&#41;
+    4.0
+&quot;&quot;&quot;
+function bookprice&#40;list, discount, count&#41;
+    # your code here
 end</code></pre>
 
 
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: May 28, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: June 04, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>

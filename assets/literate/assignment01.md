@@ -50,3 +50,33 @@ Enter the command between the quotes below.
 question3 = ""
 ```
 
+## Question 4
+
+If you haven't already, take a look at the syllabus.
+Which of the following is closest to the course policy
+on collaborating / sharing code?
+
+1. I shouldn't discuss anything about the course with other students
+2. I can freely discuss the non-assignment parts of the course,
+   but shouldn't talk about assignments with other students.
+3. I can freely discuss all aspects of the course,
+   but shouldn't share my assignment code or look at someone else's assignment code.
+4. I can freely discuss all aspects of the course,
+   and freely share all of my code - open source!
+
+Replace the `0` below with the correct number
+
+```julia:ex4
+question4 = 0
+```
+
+## Question 5
+
+What fraction of the course grade
+is based on completing assignments like this one?
+Express the answer as a number between 0 and 1
+
+```julia:ex5
+question5 = 0.0
+```
+

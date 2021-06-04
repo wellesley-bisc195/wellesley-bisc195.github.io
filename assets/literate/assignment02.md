@@ -7,7 +7,8 @@ In this assignment,
 you will start to put the pieces together.
 Note: this file is runnable in its current state,
 but is incomplete.
-You can run the file from the command line,
+You can run the file from the command line in script mode,
+copy code into the REPL in interactive mode,
 or use the VS Code julia extension to run individual lines.
 
 The following code is used for set up;
@@ -32,7 +33,7 @@ my_seq = generate_sequence(20)
 
 The code above generates a random 20nt DNA sequence,
 and assigns it to the variable `my_seq`.
-What kind of data type is `my_seq` (eg Float64, Int64, String, or something else)?
+What kind of data type is `my_seq` (eg `Float64`, `Int64`, `String`, or something else)?
 Assign the variable `question1` to the correct type.
 
 Hint1: rather than guess, you can just use the `typeof()` function.
@@ -48,7 +49,7 @@ your code should read `question1 = MyType` and not `question1 = "MyType"`
 
 ## Question 2
 
-The function bellow has a "doc string",
+The function bellow has a documentation string or "doc string",
 which explains what the function should do.
 Many julia functions have doc strings,
 which makes it easy to get help right from the REPL
@@ -188,6 +189,84 @@ Example
 """
 function question4(sequence)
     # Your code here
+end
+
+# Question 5
+```
+
+The following are related to questions in the exercises
+from chapter 2 of _Think Julia_.
+The format of the varables below refer to specific exercise questions.
+For example, `ce_2_1_1` would refer to chapter excercise 2-2, question 1.
+
+> We’ve seen that `n = 42` is legal. What about `42 = n`?
+
+Assign the variable to `true` if legal, `false` if illegal
+
+```julia:ex6
+ce_2_2_1 = Bool
+```
+
+> How about `x = y = 1`?
+
+Assign the variable to `true` if legal, `false` if illegal
+
+```julia:ex7
+ce_2_2_2 = Bool
+```
+
+> The volume of a sphere with radius `r` is `4/3πr^3`.
+What is the volume of a sphere with radius `5`?
+
+Assign the variable to the correct answer
+
+```julia:ex8
+ce_2_3_1 = Float64
+```
+
+> Suppose the cover price of a book is \$24.95,
+but bookstores get a 40 % discount.
+Shipping costs \$3 for the first copy and 75 cents for each additional copy.
+What is the total wholesale cost for 60 copies?
+
+Assign the variable to the correct answer.
+
+```julia:ex9
+ce_2_3_2 = Float64
+
+# Question 6
+```
+
+Write a function that calculates the cost of books,
+given some list price, discount rate, and number.
+
+```julia:ex10
+"""
+    bookprice(list, discount, count)
+
+Calculates the price of books, given some list price, discount rate,
+and number of books ordered.
+
+Example
+≡≡≡≡≡≡≡≡≡≡
+
+    julia> bookprice(24.95, 0.4, 60)
+```
+
+this should be the same answer you got for `c_2_3_2`
+
+```julia:ex11
+    julia> bookprice(24.95, 0.4, 1)
+    17.97
+
+    julia> bookprice(24.95, 0.4, 2)
+    33.69
+
+    julia> bookprice(1, 0, 1)
+    4.0
+"""
+function bookprice(list, discount, count)
+    # your code here
 end
 ```
 

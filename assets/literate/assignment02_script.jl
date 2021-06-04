@@ -104,3 +104,39 @@ function question4(sequence)
     # Your code here
 end
 
+# Question 5
+
+ce_2_2_1 = Bool
+
+ce_2_2_2 = Bool
+
+ce_2_3_1 = Float64
+
+ce_2_3_2 = Float64
+
+# Question 6
+
+"""
+    bookprice(list, discount, count)
+
+Calculates the price of books, given some list price, discount rate,
+and number of books ordered.
+
+Example
+≡≡≡≡≡≡≡≡≡≡
+
+    julia> bookprice(24.95, 0.4, 60)
+
+    julia> bookprice(24.95, 0.4, 1)
+    17.97
+
+    julia> bookprice(24.95, 0.4, 2)
+    33.69
+
+    julia> bookprice(1, 0, 1)
+    4.0
+"""
+function bookprice(list, discount, count)
+    # your code here
+end
+

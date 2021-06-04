@@ -1,0 +1,22 @@
+>ex2.1 | oneper
+A
+T
+C
+C
+G
+T
+
+>ex2.2 | wrong
+ATC
+GTGG
+aact
+
+>ex2.3 | wronger
+ATC
+GTGG
+
+aact
+
+>ex2.4 | wrongest
+this isn't a dna string,
+but parse it anyway
