@@ -101,8 +101,6 @@ jobs:
         env:
           ASSIGNMENT_REPO_FULLNAME: ${{ matrix.assignment }}
           BISC195_BOT_KEY: ${{ secrets.BISC195_BOT_KEY }}
-        with:
-          github-token: ${{ secrets.BISC195_BOT_KEY }}
         run: |
           cd assignment-repo
 
