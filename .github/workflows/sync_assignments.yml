@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
           repository: ${{ matrix.assignment }}
-          token: ${{ secrets.BISC195_BOT_KEY }}
+          github-token: ${{ secrets.BISC195_BOT_KEY }}
           path: assignment-repo
           fetch-depth: 0
 
@@ -101,6 +101,8 @@ jobs:
         env:
           ASSIGNMENT_REPO_FULLNAME: ${{ matrix.assignment }}
           BISC195_BOT_KEY: ${{ secrets.BISC195_BOT_KEY }}
+        with:
+          github-token: ${{ secrets.BISC195_BOT_KEY }}
         run: |
           cd assignment-repo
 
