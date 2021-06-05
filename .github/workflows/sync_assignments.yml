@@ -35,6 +35,13 @@ jobs:
       max-parallel: 1
       matrix:
         assignment:
+          - 'wellesley-bisc195/Assignment01'
+          - 'wellesley-bisc195/Assignment02'
+          - 'wellesley-bisc195/Assignment03'
+          - 'wellesley-bisc195/Assignment04'
+          - 'wellesley-bisc195/Assignment05'
+          - 'wellesley-bisc195/Assignment06'
+          - 'wellesley-bisc195/Assignment07'
           - 'wellesley-bisc195/Assignment08'
           - 'wellesley-bisc195/Assignment09'
 
