@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
           repository: ${{ matrix.assignment }}
-          github-token: ${{ secrets.BISC195_BOT_KEY }}
+          token: ${{ secrets.BISC195_BOT_KEY }}
           path: assignment-repo
           fetch-depth: 0
 
@@ -71,7 +71,7 @@ jobs:
           ASSIGNMENT_PATH: ${{ matrix.assignment }}
         run: |
           ASSIGNMENT=$(basename $ASSIGNMENT_PATH)
-          cp -a main/assignment_repos/$ASSIGNMENT assignment-repo/
+          cp -a main/assignment_repos/$ASSIGNMENT/. assignment-repo/
 
       - name: Check for changes
         id: changes
