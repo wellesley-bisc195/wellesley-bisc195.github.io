@@ -1,7 +1,0 @@
-name = "Assignment09"
-uuid = "367a7308-a03f-4eb8-b21c-021c32a8a804"
-authors = ["Kevin Bonham", "PhD <kbonham@wellesley.edu>"]
-version = "0.1.0"
-
-[compat]
-julia = "1.4"
