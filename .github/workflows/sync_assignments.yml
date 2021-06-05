@@ -52,6 +52,20 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.BISC195_BOT_KEY }}
 
+      # - name: Checkout new branch on assignment repo
+      #   id: branch
+      #   env:
+      #     ASSIGNMENT: ${{ matrix.assignment }}
+      #   run: |
+      #     cd assignment-repo
+
+      #     # github.run_number is a unique ID for each workflow run in a repo
+      #     # WARNING: the run_number will NOT be updated if a workflow is re-run
+      #     branch="🤖/wellesley-bisc195/${{ github.run_number }}"
+      #     git checkout -b "$branch"
+
+      #     echo "::set-output name=name::$branch"
+
       - name: Copy synced files to assignment repo
         env:
           ASSIGNMENT_PATH: ${{ matrix.assignment }}
@@ -103,24 +117,24 @@ jobs:
           # Push commitq
           git push "$GITHUB_SERVER_URL/$ASSIGNMENT_REPO_FULLNAME.git"
 
-      - name: Open pull request on assignment repo
-        if: steps.changes.outputs.changes == 'true'
-        uses: actions/github-script@a3e7071a34d7e1f219a8a4de9a5e0a34d1ee1293
-        env:
-          ASSIGNMENT_REPO_FULLNAME: ${{ matrix.assignment }}
-          BRANCH_NAME: ${{ steps.branch.outputs.name }}
-        with:
-          github-token: ${{ secrets.BISC195_BOT_KEY }}
+      # - name: Open pull request on assignment repo
+      #   if: steps.changes.outputs.changes == 'true'
+      #   uses: actions/github-script@a3e7071a34d7e1f219a8a4de9a5e0a34d1ee1293
+      #   env:
+      #     ASSIGNMENT_REPO_FULLNAME: ${{ matrix.assignment }}
+      #     BRANCH_NAME: ${{ steps.branch.outputs.name }}
+      #   with:
+      #     github-token: ${{ secrets.BISC195_BOT_KEY }}
           
-          script: |
-            const repo = process.env.ASSIGNMENT_REPO_FULLNAME.split('/')[1]
+      #     script: |
+      #       const repo = process.env.ASSIGNMENT_REPO_FULLNAME.split('/')[1]
 
-            github.pulls.create({
-              owner: 'wellesley-bisc195',
-              repo,
-              title: '🤖 Sync assignments files to upstream repo',
-              head: `bisc195-bot:${process.env.BRANCH_NAME}`,
-              base: 'main',
-              body: `More info: ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/commit/${process.env.GITHUB_SHA}`,
-              maintainer_can_modify: false
-            })
+      #       github.pulls.create({
+      #         owner: 'wellesley-bisc195',
+      #         repo,
+      #         title: '🤖 Sync assignments files to upstream repo',
+      #         head: `bisc195-bot:${process.env.BRANCH_NAME}`,
+      #         base: 'main',
+      #         body: `More info: ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/commit/${process.env.GITHUB_SHA}`,
+      #         maintainer_can_modify: false
+      #       })
