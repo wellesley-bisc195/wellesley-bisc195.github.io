@@ -124,6 +124,7 @@ jobs:
           BRANCH_NAME: ${{ steps.branch.outputs.name }}
         with:
           github-token: ${{ secrets.BISC195_BOT_KEY }}
+          
           script: |
             const repo = process.env.ASSIGNMENT_REPO_FULLNAME.split('/')[1]
 
