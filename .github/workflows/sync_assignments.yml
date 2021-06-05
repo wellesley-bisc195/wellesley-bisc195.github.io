@@ -101,6 +101,8 @@ jobs:
         env:
           ASSIGNMENT_REPO_FULLNAME: ${{ matrix.assignment }}
           BISC195_BOT_KEY: ${{ secrets.BISC195_BOT_KEY }}
+        with:
+          token: ${{ secrets.BISC195_BOT_KEY }}
         run: |
           cd assignment-repo
 
@@ -129,10 +131,10 @@ jobs:
             const repo = process.env.ASSIGNMENT_REPO_FULLNAME.split('/')[1]
 
             github.pulls.create({
-              owner: 'exercism',
+              owner: 'wellesley-bisc195',
               repo,
-              title: '🤖 Sync org-wide files to upstream repo',
-              head: `exercism-bot:${process.env.BRANCH_NAME}`,
+              title: '🤖 Sync assignments files to upstream repo',
+              head: `bisc195-bot:${process.env.BRANCH_NAME}`,
               base: 'main',
               body: `More info: ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/commit/${process.env.GITHUB_SHA}`,
               maintainer_can_modify: false
