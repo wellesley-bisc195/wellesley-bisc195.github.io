@@ -127,7 +127,7 @@ end
 # First, it's probably helpful to know that julia has a built in `reverse()` function
 # that can take a `String` or `Vector` and return it with the indecies reversed.
 # 
-# ```julia`
+# ```julia
 # julia> reverse([4,3,2,1])
 # 4-element Array{Int64,1}:
 #  1
