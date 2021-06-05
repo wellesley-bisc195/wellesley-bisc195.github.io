@@ -43,6 +43,7 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
           path: main
+          token: ${{ secrets.BISC195_BOT_KEY }}
 
       - name: Checkout assignment repo
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
@@ -50,6 +51,7 @@ jobs:
           repository: ${{ matrix.assignment }}
           path: assignment-repo
           fetch-depth: 0
+          token: ${{ secrets.BISC195_BOT_KEY }}
 
       - name: Checkout new branch on assignment repo
         id: branch
@@ -101,8 +103,6 @@ jobs:
         env:
           ASSIGNMENT_REPO_FULLNAME: ${{ matrix.assignment }}
           BISC195_BOT_KEY: ${{ secrets.BISC195_BOT_KEY }}
-        with:
-          token: ${{ secrets.BISC195_BOT_KEY }}
         run: |
           cd assignment-repo
 
@@ -113,7 +113,7 @@ jobs:
 
           # The commit message assumes that one push maps to exactly one commit
           # If a push contains several commits, the commit message will only link to the last one
-          git commit -m "🤖 Sync org-wide files to upstream repo" -m "More info: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
+          git commit -m "🤖 Sync assignment files to upstream repo" -m "More info: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
 
           # Push commitq
           git push "$GITHUB_SERVER_URL/$ASSIGNMENT_REPO_FULLNAME.git"
