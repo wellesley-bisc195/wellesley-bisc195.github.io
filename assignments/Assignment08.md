@@ -1,6 +1,7 @@
 +++
 number = 8
 title = "Getting set up"
+release = Date(2021, 06, 23)
 due_date = Date(2021,07,2)
 +++
 

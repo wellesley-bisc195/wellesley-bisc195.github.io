@@ -1,7 +1,8 @@
 +++
 number = 5
-title = "Getting set up"
-due_date = Date(2021,06,22)
+title = ""
+release = Date(2021, 06, 14)
+due_date = Date(2021, 06, 22)
 +++
 
 {{assignment_preamble}}
