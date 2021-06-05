@@ -43,7 +43,6 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
           path: main
-          token: ${{ secrets.BISC195_BOT_KEY }}
 
       - name: Checkout assignment repo
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
@@ -52,20 +51,6 @@ jobs:
           path: assignment-repo
           fetch-depth: 0
           token: ${{ secrets.BISC195_BOT_KEY }}
-
-      - name: Checkout new branch on assignment repo
-        id: branch
-        env:
-          ASSIGNMENT: ${{ matrix.assignment }}
-        run: |
-          cd assignment-repo
-
-          # github.run_number is a unique ID for each workflow run in a repo
-          # WARNING: the run_number will NOT be updated if a workflow is re-run
-          branch="🤖/wellesley-bisc195/${{ github.run_number }}"
-          git checkout -b "$branch"
-
-          echo "::set-output name=name::$branch"
 
       - name: Copy synced files to assignment repo
         env:
