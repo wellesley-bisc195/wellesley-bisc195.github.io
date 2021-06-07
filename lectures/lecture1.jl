@@ -56,7 +56,7 @@ md"- Programming languages are **literal**"
 42 / 2
 
 # ╔═╡ ec3df912-c678-42f0-9510-2ebbbb44d4fa
-5 + "2"
+# 5 + "2"
 
 # ╔═╡ dbda9c56-7928-4256-a223-4582a015f078
 md"- Programming languages are **procedural**"
@@ -68,10 +68,10 @@ let
 end
 
 # ╔═╡ 58a181c0-38e7-4db5-b8ad-13d75646a57d
-let
-	bar(10)
-	bar(y) = y + 2
-end
+# let
+# 	bar(10)
+# 	bar(y) = y + 2
+# end
 
 # ╔═╡ 6819cf44-3749-4645-9ee3-64d8f7e1dbf9
 md"""
@@ -97,6 +97,28 @@ md"""
 - anything that you can google (though knowing *how* to google is!)
 """
 
+# ╔═╡ 6ba80841-45fb-48d1-9dcb-19432471af1b
+# tell me a bit about yourself, eg what are you studying, why do you want to learn programming, what's an interesting fact about you?
+people = Dict(
+	"Kevin" => md"""
+	PhD in Immunology, but now working as a computational biologist,
+	studying the human microbiome and its effect on	cognitive development in kids.
+	Senior Research Scientist at Wellesley.
+	
+	Married to [Rachel Rynick](rachelrynick.com), have a 2 year old son (Isaiah).
+	""",
+	
+	)
+
+# ╔═╡ cea5640e-313f-43d2-82d6-a095202d7a06
+md"""
+## Who are you?
+
+$(@bind person Select([p=>p for p in keys(people)]))
+
+$(people[person])
+"""
+
 # ╔═╡ 97c129ad-7793-4e34-8793-eb7d6c72f6cd
 md"""
 ## Course Components
@@ -104,8 +126,9 @@ md"""
 - Free online textbook, [*Think Julia*](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
 - [BISC 195 course website](http://wellesley-bisc195.github.io)
   - "Lessons" contain additional written content, and links to other components
-- "Lectures" are what we're doing now!
-  - Scheduled course times (Tu/F) will be mix of lecture and "lab" (time to work on assignments)
+- Scheduled course times (Tu/F) will be mix of "lecture" and "lab" 
+  - Lectures are what we're doing now!
+  - Labs will be a mix of activities, pair-programming, and chances to work on assignments
 - "Assignments" are due ~ 2 / week, and are the primary source of your grade
   - Submitted / auto graded through [github classroom](https://classroom.github.com/classrooms/49307558-bisc195-summer2021)
 - A "Final Project" will be designed and built in the last 2 weeks of class.
@@ -184,8 +207,10 @@ reverse_complement(seq)
 # ╠═5f979bec-07e3-4421-a961-a8d8b3d3fc1c
 # ╠═58a181c0-38e7-4db5-b8ad-13d75646a57d
 # ╟─6819cf44-3749-4645-9ee3-64d8f7e1dbf9
-# ╠═62c332ac-9cf0-46b4-851f-ee072a6285c0
-# ╠═97c129ad-7793-4e34-8793-eb7d6c72f6cd
+# ╟─62c332ac-9cf0-46b4-851f-ee072a6285c0
+# ╟─cea5640e-313f-43d2-82d6-a095202d7a06
+# ╟─6ba80841-45fb-48d1-9dcb-19432471af1b
+# ╟─97c129ad-7793-4e34-8793-eb7d6c72f6cd
 # ╟─416b2a6f-4678-466c-a4b6-ba55398d2e30
 # ╟─4478f450-d5d6-4ac8-b917-bd91d00fdc7e
 # ╟─68c93e75-0af0-4e17-9e57-68ca97e27e32
