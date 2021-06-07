@@ -1,8 +1,8 @@
 +++
 number = 9
 title = "Types and methods"
-date = Date(2021,7,9)
-release = Date(2021,6,12)   
+date = Date(2021,7,6)
+release = Date(2021,6,25)   
 chapters = [17,18]
 +++
 

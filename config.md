@@ -11,14 +11,13 @@ The website_* must be defined for the RSS to work
 @def course_calendar = "https://calendar.google.com/calendar/u/0?cid=Y192ZHJxM243cTh0czluOGZ1aGpzZnVmMHFzMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t"
 
 @def mintoclevel = 2
-<!-- @def ignore = filter(isdir, [(joinpath.(Ref(root), dirs) for (root, dirs, files) in walkdir("assignment_repos"))...]) -->
 
 <!--
 Add here files or directories that should be ignored by Franklin, otherwise
 these files might be copied and, if markdown, processed by Franklin which
 you might not want. Indicate directories by ending the name with a `/`.
 -->
-@def ignore = ["node_modules/", "franklin", "franklin.pub", "assignment_repos/"]
+@def ignore = ["node_modules/", "franklin", "franklin.pub", "assignment_repos/", "labs"]
 
 <!--
 Add here global latex commands to use throughout your
