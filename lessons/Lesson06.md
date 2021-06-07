@@ -1,7 +1,7 @@
 +++
 number = 6
 title = "Arrays"
-date = Date(2021,06,22)
+date = Date(2021,06,25)
 assignments = [5]
 chapters = [8, 10]
 concepts = [

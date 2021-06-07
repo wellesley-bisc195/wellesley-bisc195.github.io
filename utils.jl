@@ -213,8 +213,6 @@ end
 
 function hfun_literate_assignment(n)
     ln = parse(Int, first(n))
-    isdir("_literate/") || mkdir("_literate/")
-    Downloads.download("https://raw.githubusercontent.com/wellesley-bisc195/Assignment$(lpad(ln, 2, '0'))/main/src/assignment.jl", "_literate/assignment$(lpad(ln, 2, '0')).jl")
     return Franklin.fd2html("""
     ## Assignment$(lpad(ln, 2, '0')) code
 
@@ -223,5 +221,5 @@ function hfun_literate_assignment(n)
     If you're interested in how that works, check out [Literate.jl](https://fredrikekre.github.io/Literate.jl/v2/)
 
 
-    \\literate{/_literate/assignment$(lpad(ln, 2, '0')).jl}""", internal=true)
+    \\literate{/assignment_repos/Assignment$(lpad(ln, 2, '0'))/src/assignment.jl}""", internal=true)
 end

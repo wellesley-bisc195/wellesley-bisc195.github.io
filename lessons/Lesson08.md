@@ -1,7 +1,7 @@
 +++
 number = 8
 title = "Putting it all together"
-date = Date(2021,6,29)
+date = Date(2021,7,9)
 chapters = [15,16]
 assignments = [8]
 skills = []

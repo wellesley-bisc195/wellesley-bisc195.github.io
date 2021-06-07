@@ -1,7 +1,7 @@
 +++
 number = 7
 title = "Miscellany"
-date = Date(2021,06,25)
+date = Date(2021,06,29)
 chapters = [9,14]
 assignments = [7]
 concepts = [

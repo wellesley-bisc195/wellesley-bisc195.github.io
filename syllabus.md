@@ -127,10 +127,14 @@ life experiences, and aspirations of every member of our community.
 - [Assignments](/assignments/): 70%
   - 10 assignments each worth 7 points
   - Assignments are complete when automated tests all pass
-- Final Project: 30%
+- Labs: 10%
+  - In-class activities, graded only on participation.
+  - All activities can be completed outside of class as well
+    (though often will have opportunities to work in groups to complete).
+- Final Project: 20%
   - You will design and build a julia package building on the work
     you do in the later assignments
-  - 30 points; a rubric will be provided, but points will be based on:
+  - 20 points; a rubric will be provided, but points will be based on:
     - correct use of concepts from class (eg types, functions)
     - sensible and well-implemented application programming interface (API)
     - documentation
