@@ -149,7 +149,7 @@ When that's finished, and you see the command prompt (`$`) again, run the follow
 Note: this is a case when you should probably use copy/paste.
 
 ```
-$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ==> This script will install:
 /usr/local/bin/brew
 /usr/local/share/doc/homebrew
@@ -441,7 +441,7 @@ Your terminal application should open, running julia:
   (_)     | (_) (_)    |
    _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
   | | | | | | |/ _` |  |
-  | | |_| | | | (_| |  |  Version 1.4.0 (2020-03-21)
+  | | |_| | | | (_| |  |  Version 1.6.0 (2021-03-24)
  _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
 |__/                   |
 
@@ -490,7 +490,7 @@ But first, you need to tell the terminal where to look for the julia program.
 Mac users, execute the following in your terminal:
 
 ```
-$ echo 'export PATH=$PATH:/Applications/Julia-1.4.app/Contents/Resources/julia/bin/' >> ~/.bash_profile
+$ echo 'export PATH=$PATH:/Applications/Julia-1.6.app/Contents/Resources/julia/bin/' >> ~/.bash_profile
 ```
 
 @@colbox-aqua

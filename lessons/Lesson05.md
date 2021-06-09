@@ -441,7 +441,7 @@ If we want to know the composition of all of the bases in DNA
 that would be easy to write out by hand,
 because there are only 4 options.
 You'll do this for real in Assignment04,
-but the [psedocode](https://en.wikipedia.org/wiki/Pseudocode) might look something like this:
+but the [pseudocode](https://en.wikipedia.org/wiki/Pseudocode) might look something like this:
 
 ```plaintext
 set variables a,c,g,t to 0
