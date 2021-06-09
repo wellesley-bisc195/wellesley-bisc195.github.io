@@ -29,7 +29,7 @@ md"""
 **Kevin Bonham, PhD**\
 **2021-06-08**
 
-**`Assignments = [1,2]`**
+**`Lessons = [1,2]`**
 """
 
 # ╔═╡ 598254c8-8dc6-4065-9d0e-837ccf061f80
@@ -42,7 +42,7 @@ function hello(x)
 end
 
 # ╔═╡ 215d8f14-5854-4251-a515-602862e32b1e
-hello("students")
+hello("world")
 
 # ╔═╡ c25e2dfd-62a1-4033-bb9b-30bfa6ad0454
 md"""
@@ -53,10 +53,10 @@ md"""
 md"- Programming languages are **literal**"
 
 # ╔═╡ 8508a37a-b131-4cef-baa4-f9c878537f45
-42 / 2
+42 + 10
 
 # ╔═╡ ec3df912-c678-42f0-9510-2ebbbb44d4fa
-# 5 + "2"
+5 + "2"
 
 # ╔═╡ dbda9c56-7928-4256-a223-4582a015f078
 md"- Programming languages are **procedural**"
@@ -68,20 +68,20 @@ let
 end
 
 # ╔═╡ 58a181c0-38e7-4db5-b8ad-13d75646a57d
-# let
-# 	bar(10)
-# 	bar(y) = y + 2
-# end
+let
+	bar(10)
+	bar(y) = y + 2
+end
 
 # ╔═╡ 6819cf44-3749-4645-9ee3-64d8f7e1dbf9
 md"""
-## Programs are just things and actions
+## Programs (algorithms) are just things and actions
 
 - "Things" in computer code are data
 - "Actions" in computer code are generally called "functions"
-- Real life is filled with programs
+- Real life is filled with algorithms
 
-**Question:** What are some "programs" you run in real life?"""
+**Question:** What are some algorithms you run in real life?"""
 
 # ╔═╡ 62c332ac-9cf0-46b4-851f-ee072a6285c0
 md"""
@@ -107,22 +107,63 @@ people = Dict(
 	
 	Married to [Rachel Rynick](rachelrynick.com), have a 2 year old son (Isaiah).
 	""",
-	
-	)
+	"Shelley" => md"""
+	- Works with Vanja as research associate.
+	- Biogeochemist working with USGS for microbes in extreme environment (eg As in Mono Lake)
+	- Interested in learning about how to deal with eg sequencing data etc in computational way""",
+	"Ellie" => md"""
+	- rising senior
+	- bio major (premed, but enjoying research)
+	- internship working in lab studying JDM (juvenile muscular dermatomyocytis) using AI""",
+	"Emily" => md"""
+	- rising sophmore
+	- born / raised in Bejing, living in CA for 8 years
+	- enjoyed CS course and biology
+	- Likes everything associated matcha""",
+	"Jen" => md"""
+	- rising sophmore interested in CS and biology
+	- previously took data structures course""",
+	"Anika" => md"""
+	- rising Junior (biochem major / music minor)
+	- Took beta (β) version of the course last summer
+	- works with Kevin on computational project""",
+	"Andrea" => md"""
+	- rising junior (biochem major), maybe poli-sci double major
+	- some experience in javascript and python
+	- public health interest""",
+	"Deniz" => md"""
+	- rising junior
+	- bio major (english minor maybe)
+	- biostats course, enjoyed coding part (R)
+	""",
+	"Steph" => md"""
+	- rising Senior in VKC lab (Vanja Klepac-Ceraj)
+	- in the lab since freshman year
+	- Kevin talks crazy talk
+	- Psych major, originally interested in Law School, now premed.
+	- From South FL, danced competitively
+	- no code experience - here to learn!""",
+	"Jessica" => md"""
+	- non-traditional student (started in 2016)
+	- self-taught a lot of medicine / biochem
+	- Philosophy major (phil. of medicine / bioethics)"""
+	);
 
 # ╔═╡ cea5640e-313f-43d2-82d6-a095202d7a06
 md"""
 ## Who are you?
 
 $(@bind person Select([p=>p for p in keys(people)]))
-
-$(people[person])
 """
+
+# ╔═╡ de3c17c1-1017-49e3-be03-608e8494f66c
+md"$(people[person])"
 
 # ╔═╡ 97c129ad-7793-4e34-8793-eb7d6c72f6cd
 md"""
 ## Course Components
 
+- [Zulip chat](https://bonhamlab.zulipchat.com/); all course communication will happen here.
 - Free online textbook, [*Think Julia*](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
 - [BISC 195 course website](http://wellesley-bisc195.github.io)
   - "Lessons" contain additional written content, and links to other components
@@ -209,6 +250,7 @@ reverse_complement(seq)
 # ╟─6819cf44-3749-4645-9ee3-64d8f7e1dbf9
 # ╟─62c332ac-9cf0-46b4-851f-ee072a6285c0
 # ╟─cea5640e-313f-43d2-82d6-a095202d7a06
+# ╟─de3c17c1-1017-49e3-be03-608e8494f66c
 # ╟─6ba80841-45fb-48d1-9dcb-19432471af1b
 # ╟─97c129ad-7793-4e34-8793-eb7d6c72f6cd
 # ╟─416b2a6f-4678-466c-a4b6-ba55398d2e30

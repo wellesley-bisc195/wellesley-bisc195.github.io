@@ -16,7 +16,7 @@ init       Create an empty Git repository or reinitialize an existing one
 <p>If you&#39;re using a mac and don&#39;t have git installed, enter the following commands into your terminal &#40;excluding the <code>&#36;</code>&#41;, then press <code>enter</code> to execute.</p>
 <pre><code class=language-sh >&#36; xcode-select --install</code></pre>
 <p>This may prompt you to download and install &quot;command line developer tools&quot; from the app store. If it does, click install and follow the prompts. When that&#39;s finished, and you see the command prompt &#40;<code>&#36;</code>&#41; again, run the following command. Note: this is a case when you should probably use copy/paste.</p>
-<pre><code class=language-julia >&#36; /usr/bin/ruby -e &quot;&#36;&#40;curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install&#41;&quot;
+<pre><code class=language-julia >&#36; /bin/bash -c &quot;&#36;&#40;curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh&#41;&quot;
 &#61;&#61;&gt; This script will install:
 /usr/local/bin/brew
 /usr/local/share/doc/homebrew
@@ -144,7 +144,7 @@ nothing to commit, working tree clean</code></pre>
   &#40;_&#41;     | &#40;_&#41; &#40;_&#41;    |
    _ _   _| |_  __ _   |  Type &quot;?&quot; for help, &quot;&#93;?&quot; for Pkg help.
   | | | | | | |/ _&#96; |  |
-  | | |_| | | | &#40;_| |  |  Version 1.4.0 &#40;2020-03-21&#41;
+  | | |_| | | | &#40;_| |  |  Version 1.6.0 &#40;2021-03-24&#41;
  _/ |\__&#39;_|_|_|\__&#39;_|  |  Official https://julialang.org/ release
 |__/                   |
 
@@ -161,7 +161,7 @@ julia&gt;</code></pre>
 <h3 id=running_julia_from_the_command_line ><a href="#running_julia_from_the_command_line" class=header-anchor >Running julia from the command line</a></h3>
 <p>You can also execute short snippets of code from the command line. But first, you need to tell the terminal where to look for the julia program.</p>
 <p>Mac users, execute the following in your terminal:</p>
-<pre><code class=language-julia >&#36; echo &#39;export PATH&#61;&#36;PATH:/Applications/Julia-1.4.app/Contents/Resources/julia/bin/&#39; &gt;&gt; ~/.bash_profile</code></pre>
+<pre><code class=language-julia >&#36; echo &#39;export PATH&#61;&#36;PATH:/Applications/Julia-1.6.app/Contents/Resources/julia/bin/&#39; &gt;&gt; ~/.bash_profile</code></pre>
 <div class=colbox-aqua ><div class=title >Windows Users</div>
 <p>Your situation is a bit more complicated. You&#39;ll need a separate julia installation for your linux operating system in order to run julia from the command line.</p>
 <p>I will write up complete instructions soon.</p></div>
