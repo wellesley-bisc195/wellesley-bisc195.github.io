@@ -1,6 +1,7 @@
 using Parameters
 using Dates
 using Downloads
+using Pluto
 
 @with_kw struct Lesson
     number::Int = 99
@@ -27,29 +28,23 @@ end
     number::Int = 99
     release::Date = Date(0)
     title::String = ""
-    date::String = ""
-    link::String = ""
+    date::Date = Date(0)
 end
 
-
-function default_pagevar(path, var, default)
-    val = pagevar(path, var)
-    return isnothing(val) ? default : val
-end
 
 function Lesson(path)
     m = match(r"Lesson(\d+)", path)
     number = isnothing(m) ? 99 : parse(Int, m.captures[1])
-    title = default_pagevar(path, :title, "")
-    release = default_pagevar(path, :release, Date(0))
-    date = default_pagevar(path, :date, Date(0))
-    lectures = default_pagevar(path, :lectures, Int[])
-    assignments = default_pagevar(path, :assignments, Int[])
-    chapters = default_pagevar(path, :chapters, Any[])
-    skills = default_pagevar(path, :skills, String[])
-    concepts = default_pagevar(path, :concepts, String[])
+    title = pagevar(path, :title; default = "")
+    release = pagevar(path, :release; default = Date(0))
+    date = pagevar(path, :date; default = Date(0))
+    lectures = pagevar(path, :lectures; default = Int[])
+    assignments = pagevar(path, :assignments; default = Int[])
+    chapters = pagevar(path, :chapters; default = Any[])
+    skills = pagevar(path, :skills; default = String[])
+    concepts = pagevar(path, :concepts; default = String[])
     learning_objectives = (; concepts, skills)
-    tasks = default_pagevar(path, :tasks, String[])
+    tasks = pagevar(path, :tasks; default = String[])
     return Lesson(
         number,
         title,
@@ -66,13 +61,27 @@ end
 Lesson(n::Int) = Lesson("lessons/Lesson$(lpad(n, 2, '0')).md")
 getpath(l::Lesson) = joinpath("/lessons", "Lesson$(lpad(l.number, 2, '0'))")
 
+function Lecture(path)
+    number = pagevar(path, :number; default = 99)
+    release = pagevar(path, :release; default = Date(0))
+    title = pagevar(path, :title; default = "")
+    date = pagevar(path, :date; default = Date(0))
+    return Lecture(number, release, title, date)
+end
+
+Lecture(n::Int) = Lecture("lectures-labs/Lecture$(lpad(n, 2, '0')).md")
+getpath(l::Lecture) = joinpath("lectures-labs", "Lecture$(lpad(l.number, 2, '0')).md")
+getfilepath(l::Lecture) = joinpath("lectures-labs", "slides/lecture$(lpad(l.number, 2, '0'))_slides.jl")
+getslidespath(l::Lecture) = joinpath("/lectures-labs", "slides/Lecture$(lpad(l.number, 2, '0'))")
+
+
 function Assignment(path)
-    number = default_pagevar(path, :number, 99)
-    release = default_pagevar(path, :release, Date(0))
-    title = default_pagevar(path, :title, "")
-    due_date = default_pagevar(path, :due_date, Date(0))
-    link = default_pagevar(path, :link, "")
-    classroom = default_pagevar(path, :classroom, "")
+    number = pagevar(path, :number; default = 99)
+    release = pagevar(path, :release; default = Date(0))
+    title = pagevar(path, :title; default = "")
+    due_date = pagevar(path, :due_date; default = Date(0))
+    link = pagevar(path, :link; default = "")
+    classroom = pagevar(path, :classroom; default = "")
     return Assignment(number, release, title, due_date, link, classroom)
 end
 
@@ -92,7 +101,7 @@ lesson_badge(l::Lesson) = string(
     "-purple?style=for-the-badge)](", getpath(l), ")"
 )
 
-date_badge(l::Lesson) = string(
+date_badge(l::Union{Lecture, Lesson}) = string(
     "!", "[lesson", l.number, "date]",
     "(https://img.shields.io/badge/Date-", 
     replace(string(l.date), "-"=>"--"),
@@ -122,6 +131,12 @@ chapter_badge(chap::Union{Int,String}) = string(
     "[!", "[book chapter $chap]",
     "(https://img.shields.io/badge/Book-", 
     chap,"-blue?style=for-the-badge)](", chapter_link(chap), ")"
+)
+
+slides_badge(l::Lecture) = string(
+    "[!", "[Lecture", l.number, " slides]",
+    "(https://img.shields.io/badge/Slides-", 
+    l.number,"-blue?style=for-the-badge)](", getslidespath(l), ")"
 )
 
 
@@ -211,6 +226,20 @@ function hfun_assignment_preamble()
     return String(take!(io))
 end
 
+function hfun_lecture_preamble()
+    lecture = Lecture(locvar(:number))
+    io = IOBuffer()
+    make_lecture_slides(lecture)
+    write(io, Franklin.fd2html("""
+        # [Lecture $(lecture.number) - $(lecture.title)]($(getpath(lecture)))
+        
+        @@badges
+        $(date_badge(lecture)) $(slides_badge(lecture))
+        @@
+        """, internal=true))
+    return String(take!(io))
+end
+
 function hfun_literate_assignment(n)
     ln = parse(Int, first(n))
     return Franklin.fd2html("""
@@ -222,4 +251,26 @@ function hfun_literate_assignment(n)
 
 
     \\literate{/assignment_repos/Assignment$(lpad(ln, 2, '0'))/src/assignment.jl}""", internal=true)
+end
+
+function make_lecture_slides(lecture)
+    s = Pluto.ServerSession();
+    nb = Pluto.SessionActions.open(s, getfilepath(lecture); run_async=false)
+    html_contents = Pluto.generate_html(nb)
+    write("lectures-labs/slides/Lecture$(lpad(lecture.number, 2, '0')).html", html_contents)
+end
+
+function hfun_include_lab()
+    lecture = Lecture(locvar(:number))
+    lab = pagevar(locvar())
+    io = IOBuffer()
+    write(io, Franklin.fd2html("""
+         [Lab $(assignment.number) - $(assignment.title)]($(getpath(assignment)))
+        
+        @@badges
+        $(classroom_badge(assignment))
+        $(due_badge(assignment))
+        @@
+        """, internal=true))
+    return String(take!(io))
 end
