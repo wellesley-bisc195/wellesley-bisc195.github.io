@@ -45,9 +45,9 @@ end
 end
 
 @testset "Question 5" begin
-    @test question4 isa Float64
-    @test 0 < question4 < 1
-    @test question4 ≈ 7//10
+    @test question5 isa Float64
+    @test 0 < question5 < 1
+    @test question5 ≈ 7//10
 end
 
 end # testset Assignment01
