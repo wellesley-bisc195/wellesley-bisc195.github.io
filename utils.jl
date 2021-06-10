@@ -229,7 +229,7 @@ end
 function hfun_lecture_preamble()
     lecture = Lecture(locvar(:number))
     io = IOBuffer()
-    make_lecture_slides(lecture)
+    # make_lecture_slides(lecture)
     write(io, Franklin.fd2html("""
         # [Lecture $(lecture.number) - $(lecture.title)]($(getpath(lecture)))
         
