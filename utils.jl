@@ -70,7 +70,7 @@ function Lecture(path)
 end
 
 Lecture(n::Int) = Lecture("lectures-labs/Lecture$(lpad(n, 2, '0')).md")
-getpath(l::Lecture) = joinpath("lectures-labs", "Lecture$(lpad(l.number, 2, '0')).md")
+getpath(l::Lecture) = joinpath("/lectures-labs", "Lecture$(lpad(l.number, 2, '0')).md")
 getfilepath(l::Lecture) = joinpath("lectures-labs", "slides/lecture$(lpad(l.number, 2, '0'))_slides.jl")
 getslidespath(l::Lecture) = joinpath("/lectures-labs", "slides/lecture$(lpad(l.number, 2, '0'))_slides.pdf")
 
@@ -133,11 +133,28 @@ chapter_badge(chap::Union{Int,String}) = string(
     chap,"-blue?style=for-the-badge)](", chapter_link(chap), ")"
 )
 
-slides_badge(l::Lecture) = string(
-    "[!", "[Lecture", l.number, " slides]",
-    "(https://img.shields.io/badge/Slides-", 
-    l.number,"-blue?style=for-the-badge)](", getslidespath(l), ")"
+lecture_badge(l::Lecture) = string(
+    "[!", "[lecture", l.number, "link]",
+    "(https://img.shields.io/badge/Lecture-", l.number,
+    "-purple?style=for-the-badge)](", getpath(l), ")"
 )
+
+function slides_badge(l::Lecture)
+    path = getslidespath(l)
+    if isfile(lstrip(path, '/'))
+        return string(
+        "[!", "[Lecture", l.number, " slides]",
+        "(https://img.shields.io/badge/Slides-", 
+        l.number,"-blue?style=for-the-badge)](", path, ")"
+        )
+    else
+        return string(
+        "[!", "[Lecture", l.number, " slides]",
+        "(https://img.shields.io/badge/Slides-NA",
+        "-blue?style=for-the-badge)](#)"
+        )
+    end
+end
 
 
 function hfun_include_lessons()
@@ -178,6 +195,26 @@ function hfun_include_assignments()
     end
     return String(take!(io))
 end
+
+function hfun_include_lectures()
+    lectures = [Lecture(joinpath("lectures-labs", p)) for p in filter(f-> startswith(f, "Lecture"), readdir("lectures-labs/"))]
+    io = IOBuffer()
+    for lecture in lectures
+        lecture.release > today() && continue
+
+        write(io, Franklin.fd2html("""
+            ### Lecture $(lecture.number) - [$(lecture.title)]($(getpath(lecture)))
+            
+            @@badges
+            $(lecture_badge(lecture))
+            $(date_badge(lecture))
+            $(slides_badge(lecture))
+            @@
+            """, internal=true))
+    end
+    return String(take!(io))
+end
+
 
 function hfun_lesson_preamble()
     lesson = Lesson(locvar(:number))
