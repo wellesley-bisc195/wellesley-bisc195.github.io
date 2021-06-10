@@ -70,7 +70,7 @@ function Lecture(path)
 end
 
 Lecture(n::Int) = Lecture("lectures-labs/Lecture$(lpad(n, 2, '0')).md")
-getpath(l::Lecture) = joinpath("/lectures-labs", "Lecture$(lpad(l.number, 2, '0')).md")
+getpath(l::Lecture) = joinpath("/lectures-labs", "Lecture$(lpad(l.number, 2, '0'))")
 getfilepath(l::Lecture) = joinpath("lectures-labs", "slides/lecture$(lpad(l.number, 2, '0'))_slides.jl")
 getslidespath(l::Lecture) = joinpath("/lectures-labs", "slides/lecture$(lpad(l.number, 2, '0'))_slides.pdf")
 
