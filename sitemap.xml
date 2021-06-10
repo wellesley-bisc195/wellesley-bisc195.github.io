@@ -163,16 +163,4 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
-<url>
-    <loc>http://bisc195.wellesley.edu/lectures-labs/slides/Lecture01/</loc>
-    <lastmod>2021-06-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-</url>
-<url>
-    <loc>http://bisc195.wellesley.edu/lectures-labs/slides/Lecture01_slides/</loc>
-    <lastmod>2021-06-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-</url>
 </urlset>
