@@ -72,7 +72,7 @@ julia&gt; function nelly&#40;some_arg&#41;
 nelly &#40;generic function with 1 method&#41;
 
 julia&gt; nelly&#40;other_arg&#41;
-# ... what do you expect?</code></pre> <div class=colbox-orange ><div class=title >Checking Question</div> <p>What do you to be the output of <code>nelly&#40;other_arg&#41;</code>?</p> <p>Try it out and see if you&#39;re right.</p></div> <p>When we call <code>nelly&#40;other_arg&#41;</code>, we&#39;re passing the value <code>&quot;Huzzah&quot;</code> as the argument. So <em>inside</em> the scope of the function, <code>some_arg</code> is <code>&quot;Huzzah&quot;</code>.</p> <p>What about <code>some_arg</code> outside of the function?</p> <pre><code class=language-julia-repl >julia&gt; some_arg
+# ... what do you expect?</code></pre> <div class=colbox-orange ><div class=title >Checking Question</div> <p>What do you expect to be the output of <code>nelly&#40;other_arg&#41;</code>?</p> <p>Try it out and see if you&#39;re right.</p></div> <p>When we call <code>nelly&#40;other_arg&#41;</code>, we&#39;re passing the value <code>&quot;Huzzah&quot;</code> as the argument. So <em>inside</em> the scope of the function, <code>some_arg</code> is <code>&quot;Huzzah&quot;</code>.</p> <p>What about <code>some_arg</code> outside of the function?</p> <pre><code class=language-julia-repl >julia&gt; some_arg
 &quot;Woah&quot;</code></pre> <p>Here, we&#39;re <em>outside</em> of the function scope, so <code>some_arg</code> is <code>&quot;Woah&quot;</code>.</p> <p>Because of this possibility for confusion, it&#39;s usually a good idea to name your function arguments and your variables different things. </p> <div class=colbox-green ><div class=title >Tip</div> <p>Just to reiterate, use different names for variables that refer to data and function arguments.</p> <p>And typically, it&#39;s also good practice to make your code &quot;self-documenting&quot;, which means that the names of functions, variables, and arguments tells you something about what they&#39;re used for.</p></div> <h3 id=practice ><a href="#practice" class=header-anchor >Practice</a></h3> <p>The following examples are intended to reinforce and extend what you&#39;ve learned. In many cases, they are intended to expose behavior that may be unintuitive, or lead to errors that are worth understanding.</p> <div class=colbox-orange ><div class=title >Checking Questions</div> <ol> <li><p>For each of the expressions ending with <code># ?</code>, try to predict what the output will be. Then, run them in the REPL and see if you were correct.</p> </ol> <pre><code class=language-julia-repl >julia&gt; x &#61; 4; # putting &#96;;&#96; prevents the &quot;print&quot; part &quot;read-eval-print-loop&quot;
 
 julia&gt; x # ?</code></pre> <pre><code class=language-julia-repl >julia&gt; y &#61; 2.0;
@@ -120,7 +120,7 @@ in the following shell commands?</p>
 </p>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: June 10, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: June 11, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>
