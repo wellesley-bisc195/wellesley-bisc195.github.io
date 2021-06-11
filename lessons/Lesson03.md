@@ -318,7 +318,7 @@ julia> nelly(other_arg)
 @@title
 Checking Question
 @@
-What do you to be the output of `nelly(other_arg)`?
+What do you expect to be the output of `nelly(other_arg)`?
 
 Try it out and see if you're right.
 @@
