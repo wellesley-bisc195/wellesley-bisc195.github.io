@@ -194,7 +194,7 @@ unless you're writing literally everything by hand.
 ### Recognizing functions
 
 Functions are bits of code that do things.
-Remember the [video from Lesson 1](@ref first-steps)?
+Remember the [video from Lesson 1](/lessons/Lesson01/)?
 (seriously, go back and watch it if you didn't before).
 The kids are providing dad a list of functions.
 
