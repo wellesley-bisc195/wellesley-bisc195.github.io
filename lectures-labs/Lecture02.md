@@ -73,7 +73,8 @@ Learning to describe tasks and how to interpret those descriptions
 are very useful skills!
 It will also help you learn to think of these things in a different way.
 Trade roles frequently.
-Keep track of the answers in a text file.
+
+**Keep track of the answers in a text file.**
 
 If you find problems with the hunt - take note!
 You will [have an opportunity](#bonus_help_me_improve_the_scavenger_hunt) to help me improve it.
