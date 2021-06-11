@@ -10,11 +10,12 @@ Course Code: BISC 195\\
 Course Title: Essential Skills for Computational Biology
 
 ### Instructor
-| **Name:**         | Kevin Bonham, PhD      |
-|:------------------|:----------------------:|
-| **Role:**         | Instructor             |
-| **E-mail:**        | kbonham@wellesley.edu |
-| **Github:**       | `kescobo`              |
+
+| **Name:**         | Kevin Bonham, PhD      | Clara Kim ('23)   |
+|:------------------|:----------------------:|:-----------------:|
+| **Role:**         | Instructor             | Tutor             |
+| **E-mail:**       | kbonham@wellesley.edu  | tk2@wellesley.edu |
+| **Github:**       | `kescobo`              | `clarakim11`      |
 
 ### Course Run Info - Wellesley Summer 2021
 
@@ -23,7 +24,10 @@ Course Title: Essential Skills for Computational Biology
 #### Course Meeting Times
 
 - **Tu/F 1:30-4:45**: Lecture / Lab
-- **TBD**: Office hours
+- **TBD**: Kevin office hours
+- **W 8pm - 10pm**: Clara office hours
+  - Zoom link: https://wellesley.zoom.us/j/5592518955
+  - Meeting ID: 559 251 8955
 
 ## Description
 
