@@ -247,7 +247,7 @@ is called a "Pull request" (often shortened to "PR").
 When you've forked a repo, and made changes,
 guthub will give you a handy prompt that you can make a PR with your new changes.
 
-![start PR](https://imgur.com/AiFwuXz)
+![start PR](https://imgur.com/AiFwuXz.png)
 
 Click the big green button and follow the prompts.
 I may ask you to make some changes or add new things.
