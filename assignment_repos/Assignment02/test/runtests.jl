@@ -67,7 +67,7 @@ end
     @test Assignment02.ce_2_2_2 isa Bool
     @test Assignment02.ce_2_2_2 
     @test Assignment02.ce_2_3_1 isa Float64
-    @test isapprox(Assignment02.ce_2_3_1, 4 / 3 * π * 5^2, atol = 1e-2)
+    @test isapprox(Assignment02.ce_2_3_1, 4 / 3 * π * 5^3, atol = 1e-2)
     @test Assignment02.ce_2_3_2 isa Float64
     @test isapprox(Assignment02.ce_2_3_2, (24.95 * 0.6) * 60 + 3 + 59 * 0.75, atol = 1e-2)
 end
