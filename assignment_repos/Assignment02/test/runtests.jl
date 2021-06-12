@@ -7,10 +7,11 @@ using Suppressor
 
 @testset "Setup" begin
     @test isdefined(Assignment02, :generate_sequence)
-    Random.seed!(1)
     s = generate_sequence(4)
     @test length(s) == 4
-    #@test s == "GGTC"
+    # # Doesn't make sense to do this since rng changes with julia versions
+    # Random.seed!(1)
+    # @test s == "GGTC"
 end
 
 @testset "Question 1" begin
@@ -78,4 +79,4 @@ end
     @test isapprox(bookprice(1, 0, 1), 4.0)
 end
 
-end # "Assignment02"()
+end # "Assignment02"
