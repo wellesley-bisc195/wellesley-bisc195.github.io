@@ -1,4 +1,4 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Functions, conditions, recursion, Oh My!</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <div class=badges ><h1 id=a_hrefassignmentsassignment03assignment_3_-_functions_conditions_recursion_oh_my ><a href="#a_hrefassignmentsassignment03assignment_3_-_functions_conditions_recursion_oh_my" class=header-anchor ><a href="/assignments/Assignment03">Assignment 3 - Functions, conditions, recursion, Oh My&#33;</a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/6BGGjSBx"><img src="https://img.shields.io/badge/Github&#37;20-3-darkblue?style&#61;for-the-badge" alt=assignment3link  /></a> <img src="https://img.shields.io/badge/Due-2021--06--15-red?style&#61;for-the-badge" alt=assignment3due  /></div> </div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>Hopefully, this process is familiar by now. Click the assignment 3 invitation above, clone the repository, and follow the instructions in <code>src/assignment.jl</code>. Remember, an easier-to-read version of the assignment script can also be viewed by clicking the &quot;Script&quot; badge above.</p> <p>Also, recall that you may run the automated tests on your own computer:</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Functions, conditions, recursion, Oh My!</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <div class=badges ><h1 id=a_hrefassignmentsassignment03assignment_3_-_functions_conditions_recursion_oh_my ><a href="#a_hrefassignmentsassignment03assignment_3_-_functions_conditions_recursion_oh_my" class=header-anchor ><a href="/assignments/Assignment03">Assignment 3 - Functions, conditions, recursion, Oh My&#33;</a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/6BGGjSBx"><img src="https://img.shields.io/badge/Github&#37;20-3-darkblue?style&#61;for-the-badge" alt=assignment3link  /></a> <img src="https://img.shields.io/badge/Due-2021--06--15-red?style&#61;for-the-badge" alt=assignment3due  /></div> </div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>Hopefully, this process is familiar by now. Click the assignment 3 invitation above, clone the repository, and follow the instructions in <code>src/assignment.jl</code>. Remember, an easier-to-read version of the assignment script can also be viewed <a href="#assignment03_code">at the bottom of this page</a>.</p> <p>Also, recall that you may run the automated tests on your own computer:</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
 <h2 id=using_the_vs_code_julia_extension ><a href="#using_the_vs_code_julia_extension" class=header-anchor >Using the VS Code julia extension</a></h2>
 <p>There are a number of tools that can turn VS code into a more useful development environment. One of them is the <code>julia</code> plugin.</p>
 <p>To install plugins, click the &quot;Extensions&quot; button on the left hand side of the VS code application window.</p>
@@ -20,22 +20,22 @@ For example, let&#39;s say I write,</p>
 end
 
 s &#61; &quot;Students&quot;
-a &#61; &quot;Auditors&quot;
+t &#61; &quot;Tutors&quot;
 
 hello&#40;s&#41;
-hello&#40;a&#41;</code></pre>
+hello&#40;t&#41;</code></pre>
 <p>And then execute the whole thing in VS code.
-Later on, I decide I don&#39;t need to say hello to the Auditors
-so I delete the line <code>a &#61; &quot;Auditors&quot;</code>,
-but forget to delete <code>hello&#40;a&#41;</code>. 
+Later on, I decide I don&#39;t need to say hello to the Tutors
+so I delete the line <code>t &#61; &quot;Tutors&quot;</code>,
+but forget to delete <code>hello&#40;t&#41;</code>. 
 
 As I continue to run the code in the same julia session,
 there are no problems because,
-even though I deleted <code>a &#61; &quot;Auditors&quot;</code>,
+even though I deleted <code>t &#61; &quot;Tutors&quot;</code>,
 there&#39;s no way to unassign <code>a</code> - it&#39;s still defined.
 But, if I come back later and try to run the file in a new julia session,
 I will get an <code>UndefinedVariableError</code>
-when the program tries to execute <code>hello&#40;a&#41;</code>.</p></div>
+when the program tries to execute <code>hello&#40;t&#41;</code>.</p></div>
 <h2 id=assignment03_code ><a href="#assignment03_code" class=header-anchor >Assignment03 code</a></h2>
 <p>For each assignment, the contents of the assignment code script will be rendered as html at the bottom of the assignment description page. If you&#39;re interested in how that works, check out <a href="https://fredrikekre.github.io/Literate.jl/v2/">Literate.jl</a></p>
 <h1 id=instructions_for_assignment03 ><a href="#instructions_for_assignment03" class=header-anchor >Instructions for Assignment03</a></h1>
@@ -227,7 +227,7 @@ end</code></pre>
 
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: June 12, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: June 13, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>
