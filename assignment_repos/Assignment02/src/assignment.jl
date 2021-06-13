@@ -62,7 +62,7 @@ question1 = ""
 # and you're returned to a julia prompt
 #
 # Evaluate the following function, including the docstring, in the REPL
-# (that is, copy from the tripple quotes down to the "end"
+# (that is, copy from the triple quotes down to the "end"
 # and paste it into the REPL, then hit enter)
 
 """

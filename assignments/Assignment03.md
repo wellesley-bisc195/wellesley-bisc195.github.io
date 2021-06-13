@@ -15,7 +15,7 @@ Click the assignment 3 invitation above,
 clone the repository, and follow the instructions
 in `src/assignment.jl`.
 Remember, an easier-to-read version of the assignment
-script can also be viewed by clicking the "Script" badge above.
+script can also be viewed [at the bottom of this page](#assignment03_code).
 
 Also, recall that you may run the automated tests on your own computer:
 
@@ -92,24 +92,24 @@ function hello(x)
 end
 
 s = "Students"
-a = "Auditors"
+t = "Tutors"
 
 hello(s)
-hello(a)
+hello(t)
 ```
 
     And then execute the whole thing in VS code.
-    Later on, I decide I don't need to say hello to the Auditors
-    so I delete the line `a = "Auditors"`,
-    but forget to delete `hello(a)`. 
+    Later on, I decide I don't need to say hello to the Tutors
+    so I delete the line `t = "Tutors"`,
+    but forget to delete `hello(t)`. 
 
     As I continue to run the code in the same julia session,
     there are no problems because,
-    even though I deleted `a = "Auditors"`,
+    even though I deleted `t = "Tutors"`,
     there's no way to unassign `a` - it's still defined.
     But, if I come back later and try to run the file in a new julia session,
     I will get an `UndefinedVariableError`
-    when the program tries to execute `hello(a)`.
+    when the program tries to execute `hello(t)`.
 @@
 
 {{literate_assignment 3}}

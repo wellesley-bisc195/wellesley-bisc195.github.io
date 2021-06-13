@@ -384,7 +384,7 @@ Just remember that you can't use your mouse to move the cursor.
 Note
 @@
 Copying back and forth between the REPL and a file
-may introduce some weird spacing. Eg.
+may introduce some weird spacing.
 
 Mostly, julia doesn't care about whitespace like spaces and newlines,
 and in the REPL, it doesn't matter much.
