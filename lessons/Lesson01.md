@@ -273,7 +273,7 @@ you will see a new prompt.
 **NOTE:** These code blocks will often be followed by a block
 that does **not** start with a `$`.
 This is the expected output;
-you shouldn't try to copy-past this into your terminal.
+you shouldn't try to copy-paste this into your terminal.
 @@
 
 Let's take a look around.
