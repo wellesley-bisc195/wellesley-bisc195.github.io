@@ -1,0 +1,159 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Functions, functions, and more functions!</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hreflectures-labslecture03lecture_3_-_functions_functions_and_more_functions ><a href="#a_hreflectures-labslecture03lecture_3_-_functions_functions_and_more_functions" class=header-anchor ><a href="/lectures-labs/Lecture03">Lecture 3 - Functions, functions, and more functions&#33;</a></a></h1> <div class=badges ><img src="https://img.shields.io/badge/Date-2021--06--15-orange?style&#61;for-the-badge" alt=lesson3date  /> <a href="/lectures-labs/slides/lecture03_slides.pdf"><img src="https://img.shields.io/badge/Slides-3-blue?style&#61;for-the-badge" alt="Lecture3 slides" /></a></div> <h2 id=lab_3_-_needleman-wunch_aligner_part_1 ><a href="#lab_3_-_needleman-wunch_aligner_part_1" class=header-anchor >Lab 3 - Needleman-Wunch Aligner, Part 1</a></h2> <p>In this lab, you will begin constructing a sequence aligner based on the <a href="https://en.wikipedia.org/wiki/Needleman&#37;E2&#37;80&#37;93Wunsch_algorithm">Needleman-Wunch algorithm</a>. This is a classic bioinformatics method, and quite accessible.</p> <h3 id=fork_and_clone_the_lab_repository ><a href="#fork_and_clone_the_lab_repository" class=header-anchor >Fork and clone the lab repository</a></h3> <p>We&#39;ll be keeping track of all of your labs in a single git repository. Follow the instructions laid out in the <a href="/lectures-labs/Lecture02/#bonus_help_me_improve_the_scavenger_hunt">Lab 2 bonus</a>, for forking and making a pull request, but use the <a href="https://github.com/wellesley-bisc195/BISC195Labs"><code>BISC195Labs</code> repository</a>.</p> <p>Here&#39;s a summary - more details are available at the link above.</p> <ol> <li><p>Fork the <code>BISC195Labs</code> repo</p> <li><p>Clone the repo with <code>git clone &lt;url&gt;</code></p> <li><p>Make a new branch with <code>git branch &lt;branchname&gt;</code> &#40;note: don&#39;t include the <code>&lt;</code> or <code>&gt;</code> in your branch&#39;s name&#41;</p> <li><p>Checkout the branch with <code>git checkout &lt;branchname&gt;</code> &#40;note: you can combine steps 2 and 3 with <code>git checkout -b &lt;branchname&gt;</code>&#41;</p> <li><p>This is going to be a julia package, so add yourself as an author to the <a href="https://github.com/wellesley-bisc195/BISC195Labs/blob/main/Project.toml#L3"><code>Project.toml</code></a>. This field is like a julia array, so it should take the form <code>&#91;&quot;Kevin Bonham, PhD&quot;, &quot;Your name&quot;&#93;</code></p> <li><p>Push the changes using <code>git push -u origin &lt;branchname&gt;</code></p> <li><p>Open a pull request to the main repo</p> </ol> <p>Please include your name in the PR title.</p> <h3 id=step_1_-_take_a_look_around ><a href="#step_1_-_take_a_look_around" class=header-anchor >Step 1 - Take a look around</a></h3> <p>Like your assignments, this lab repo is structured like a julia package. We&#39;ll talk more about the various compenents a lot more as the course progresses; for now, notice that there are some code files found in the <code>src/</code> directory, including the <code>BISC195Labs.jl</code> file, which defines the <code>BISC195Labs</code> module &#40;more on that later&#41;, and <code>include</code>s the file <code>needleman_wunch.jl</code>.</p> <p>The <code>needleman_wunch.jl</code> file contains several methods for a function called <code>nwscore&#40;&#41;</code>. The first method, which takes two <code>Char</code>s as arguments, is currently empty. The other methods take a <code>Char</code> and a <code>Nothing</code> &#40;what&#39;s going on with the 3rd method??&#41;, or two <code>Nothing</code>s as arguments. Can you infer what they&#39;re doing?</p> <p>There&#39;s also a <code>test/</code> directory that includes a <code>runtests.jl</code> file, which already contains some unit tests for the <code>nwscore&#40;&#41;</code> function. Based on the unit tests, can you get a sense of what the function is supposed to do?</p> <p>What happens if you run the tests? A reminder, you can run tests from the command line by doing</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
+<p>or from the julia REPL by typing <code>&#93;</code> to get the Pkg REPL, then running <code>test</code>.</p>
+
+<script id=asciicast-xBnvAzIMLKp90LPFekzuPiet7  src="https://asciinema.org/a/xBnvAzIMLKp90LPFekzuPiet7.js" async></script>
+
+<p>Notice how many tests pass, how many fail, and how many error.</p>
+<h3 id=step_2_-_begin_working_on_your_function ><a href="#step_2_-_begin_working_on_your_function" class=header-anchor >Step 2 - Begin working on your function</a></h3>
+<p>The first thing to nail down in the NW algorithm is a function that will score two bases, as either a match or a mismatch. At first, just assume you&#39;re using the scoring from the original Needleman-Wunch paper from 1970 - matches should score <code>&#43;1</code> and mismatches should score <code>-1</code>.</p>
+<p>Add code to the first method that will accept two bases &#40;<code>Char</code>s&#41; and return the correct score.</p>
+<p>Once this is accomplished, you should go from 8 passing tests to 18. Nice&#33; There&#39;s still a ways to go though.</p>
+<h2 id=step_3_-_adding_keyword_arguments_kwargs ><a href="#step_3_-_adding_keyword_arguments_kwargs" class=header-anchor >Step 3 - adding keyword arguments &#40;kwargs&#41;</a></h2>
+<p>In julia, function arguments can be &quot;positional&quot; &#40;determined based on their order in the function call&#41; or &quot;keyword&quot; arguments &#40;an identifier is used in the function call&#41;.</p>
+<p>Keyword arguments &#40;often called &quot;kwargs&quot;&#41; are separated from positional arguments by a <code>;</code>.</p>
+<p>For example:</p>
+<pre><code class=language-julia-repl >julia&gt; function testing_args&#40;pos1, pos2; kwarg1, kwarg2&#41;
+           @info &quot;Pos 1 arg always comes first&quot; pos1
+           @info &quot;Pos 2 arg always comes second&quot; pos2
+           @info &quot;Kwargs can come in any order&quot; kwarg1 kwarg2
+       end
+testing_args &#40;generic function with 1 method&#41;
+
+julia&gt; testing_args&#40;1, 2; kwarg1 &#61; 3, kwarg2 &#61; 4&#41;
+┌ Info: Pos 1 arg always comes first
+└   pos1 &#61; 1
+┌ Info: Pos 2 arg always comes second
+└   pos2 &#61; 2
+┌ Info: Kwargs can come in any order
+│   kwarg1 &#61; 3
+└   kwarg2 &#61; 4
+
+julia&gt; testing_args&#40;2, 1; kwarg2 &#61; 4, kwarg1 &#61; 3&#41;
+┌ Info: Pos 1 arg always comes first
+└   pos1 &#61; 2
+┌ Info: Pos 2 arg always comes second
+└   pos2 &#61; 1
+┌ Info: Kwargs can come in any order
+│   kwarg1 &#61; 3
+└   kwarg2 &#61; 4</code></pre>
+<p>Kwargs are often given default values so that a function will work without them, but can be tuned according to the caller&#39;s needs.</p>
+<p>We want our <code>nwscore&#40;&#41;</code> function to be able to accept alternative scoring systems. In principle, this could be done with positional arguments, but that would require the user to remember the order that the scores are entered, and potentially make it necessary to include extra arguments, even if only changing one default. Eg, if I wrote the function with positional arguments in the order <code>gap</code>, <code>mismatch</code>, <code>gap</code>, then if I wanted to call this with a gap score of <code>-2</code>, but defaults for match and mismatch, I&#39;d still have to call <code>nwscore&#40;base1, base2, 1, -1, -2&#41;</code>, whereas with kwargs, I can call <code>nwscore&#40;base1, base2; gap&#61;-2&#41;</code>.</p>
+<p>Rewrite your first method to include keyword arguments for setting the <code>match</code> and <code>mismatch</code> score.</p>
+<div class=colbox-blue ><div class=title >Tip</div>
+<p>Don&#39;t forget us actually <em>use</em> those arguments in the body of your function.</p></div>
+<p>We&#39;re getting closer&#33; Once this step is finished, we should be up to 28 passing tests.</p>
+<h3 id=step_4_-_deal_with_different_gap_scores ><a href="#step_4_-_deal_with_different_gap_scores" class=header-anchor >Step 4 - Deal with different gap scores</a></h3>
+<p>Repeat the same procedure with the methods for gaps, including a keyword argument for setting the gap score. You&#39;ll need to modify both methods - how does the second gap method work?</p>
+<p>Woo&#33; The tests should now all pass&#33; But we&#39;re not done...</p>
+<h3 id=step_5_-_kwarg_compatibility ><a href="#step_5_-_kwarg_compatibility" class=header-anchor >Step 5 - kwarg compatibility</a></h3>
+<p>This is all well and good if someone knows ahead of time whether they are scoring a match/mismatch or a gap, but what happens if someone scores a gap, but includes different scores for <code>match</code> or <code>mismatch</code> &#40;or vise versa&#41;?</p>
+<pre><code class=language-julia-repl >julia&gt; nwscore&#40;&#39;A&#39;, &#39;T&#39;&#41;
+-1
+
+julia&gt; nwscore&#40;&#39;A&#39;, &#39;T&#39;; mismatch&#61;-2, match &#61; 3&#41;
+-2
+
+julia&gt; nwscore&#40;&#39;A&#39;, &#39;T&#39;; mismatch&#61;-2, match &#61; 3, gap&#61;-2&#41;
+ERROR: MethodError: no method matching nwscore&#40;::Char, ::Char; mismatch&#61;-2, match&#61;3, gap&#61;-2&#41;</code></pre>
+<ol>
+<li><p>Add a few test cases that deal with different combinations of this situation. They should throw errors as your code currently stands.</p>
+
+<li><p>Add a <code>gap</code> keyword argument to the <code>nwscore</code> method that takes 2 <code>Char</code>s and <code>match</code> and <code>mismatch</code> kwargs to the methods that take a <code>Char</code> and a <code>Nothing</code>. Do your tests pass now? If not, did you write the tests incorrectly, or the methods?</p>
+
+</ol>
+<h3 id=step_6_-_test_double_gap ><a href="#step_6_-_test_double_gap" class=header-anchor >Step 6 - Test double gap</a></h3>
+<p>The final method defined in the lab template is designed to throw an error if it gets two <code>nothing</code> values. How do we test that, since <code>@test</code> only deals with <code>true</code> or <code>false</code> &#40;boolean values&#41;?</p>
+<p>Julia&#39;s testing library has a special macro <code>@test_throws</code>, to check if an expression throws an error. It takes the form <code>@test_throws &lt;error type&gt; &lt;expr&gt;</code>, where <code>&lt;error type&gt;</code> is something that&#39;s a subtype of <code>Exception</code>, and <code>&lt;expr&gt;</code> is any julia expression.</p>
+<p>For example:</p>
+<pre><code class=language-julia-repl >julia&gt; using Test
+
+julia&gt; sqrt&#40;-2&#41;
+ERROR: DomainError with -2.0:
+sqrt will only return a complex result if called with a complex argument. Try sqrt&#40;Complex&#40;x&#41;&#41;.
+Stacktrace:
+ &#91;1&#93; throw_complex_domainerror&#40;f::Symbol, x::Float64&#41;
+   @ Base.Math ./math.jl:33
+ &#91;2&#93; sqrt
+   @ ./math.jl:582 &#91;inlined&#93;
+ &#91;3&#93; sqrt&#40;x::Int64&#41;
+   @ Base.Math ./math.jl:608
+ &#91;4&#93; top-level scope
+   @ REPL&#91;8&#93;:1
+
+julia&gt; @test_throws DomainError sqrt&#40;-2&#41;
+Test Passed
+      Thrown: DomainError
+
+julia&gt; @test_throws BoundsError sqrt&#40;-2&#41;
+Test Failed at REPL&#91;10&#93;:1
+  Expression: sqrt&#40;-2&#41;
+    Expected: BoundsError
+      Thrown: DomainError
+ERROR: There was an error during testing</code></pre>
+<p>Write a tests that check to make sure that <code>nwscore&#40;nothing, nothing&#41;</code> throws the correct error. Be sure to also test the function with different keyword arguments...</p>
+<h3 id=step_7_-_document_your_function ><a href="#step_7_-_document_your_function" class=header-anchor >Step 7 - Document your function</a></h3>
+<p>In the doc string for <code>nwscore</code>, write out the new signature, and describe its functionality for someone that&#39;s never used it before. You can use the docstrings in your assignments, or the ones from your favorite julia functions as inspiration.</p>
+<div class=colbox-blue ><div class=title >Tip</div>
+<p>Remember that you can type <code>?</code> in the julia REPL to bring up the help REPL</p>
+<pre><code class=language-julia-repl >help?&gt; isa
+search: isa isascii isapprox isabspath isassigned isabstracttype disable_sigint isnan ispath isvalid ismarked istaskdone istaskfailed istaskstarted isreal
+
+  isa&#40;x, type&#41; -&gt; Bool
+
+
+  Determine whether x is of the given type. Can also be used as an infix operator, e.g. x isa type.
+
+  Examples
+  ≡≡≡≡≡≡≡≡≡≡
+
+  julia&gt; isa&#40;1, Int&#41;
+  true
+
+  julia&gt; isa&#40;1, Matrix&#41;
+  false
+
+  julia&gt; isa&#40;1, Char&#41;
+  false
+
+  julia&gt; isa&#40;1, Number&#41;
+  true
+
+  julia&gt; 1 isa Number
+  true</code></pre></div>
+<p>You may spread your documentation out accross all of the methods, or do a single docstring that contains information about all methods.</p>
+<h3 id=step_8_-_test-driven_development ><a href="#step_8_-_test-driven_development" class=header-anchor >Step 8 - Test-driven development</a></h3>
+<p>In preparation for completing the Needleman Wunch alignment, you should start thinking about how it will actually work. Assume that you want to write a function <code>nwalign&#40;&#41;</code> that takes 2 sequences and a scoring system, and returns the best alignment.</p>
+<p>Some things to consider:</p>
+<ol>
+<li><p>What is the form of the returned value? Eg. is it a String, a Tuple? Do you return the score as well?</p>
+
+<li><p>What happens when there&#39;s only 1 best alignment? What happens when there&#39;s more than 1?</p>
+
+<li><p>What kinds of inputs are allowed? Are there multiple methods of your function?</p>
+
+</ol>
+<p>There are many things to consider when developing functionality, but thinking about inputs and outputs is generally a good way to start.</p>
+<p>Create a new testset in <code>test/runtests.jl</code> that includes some tests for how you think <code>nwalign&#40;&#41;</code> should work. Also create a skeleton function in <code>src/needleman_wunch.jl</code>, eg</p>
+<pre><code class=language-julia >function nwalign&#40;&#41;
+    # aligner
+end</code></pre>
+<p>and add it to the exports in <code>src/BISC195Labs.jl</code>. Take a look at your assignments if you&#39;re unsure how to make a new testset, or how to do exports.</p>
+<p>Once you&#39;ve done this, you should see your new testset with failing tests when you run them - if you get a <code>LoadError</code> or something else that prevents your tests from running at all, you&#39;ve probably just got an issue with syntax.</p>
+<h3 id=step_9_-_push_your_code_to_github ><a href="#step_9_-_push_your_code_to_github" class=header-anchor >Step 9 - Push your code to github</a></h3>
+<p>If you set up your pull request correctly in Step 1, you should just be able to <code>git push</code>, and your pull request will update.</p>
+<p>You don&#39;t need to wait until you&#39;ve finished to push your code. Push early and often, I say&#33;</p>
+<div class=page-foot >
+  <div class=copyright >
+    &copy; Kevin Bonham, PhD. Last modified: June 15, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div>
+      </div>  
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+    <label for=sidebar-checkbox  class=sidebar-toggle ></label>
