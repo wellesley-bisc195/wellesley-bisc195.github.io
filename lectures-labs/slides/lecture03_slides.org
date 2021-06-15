@@ -1,0 +1,64 @@
+#+TITLE: Functions, functions, functions!
+#+Author: Kevin Bonham, PhD
+#+OPTIONS: H:2
+#+BEAMER_THEME: Goettingen  [height=40pt]
+#+LaTeX_CLASS_OPTIONS: [smaller]
+
+* Using Functions
+
+** Functions are reusable bits of code
+- Some functions don't take arguments
+  + =pwd= in the terminal
+  + =now()= in =julia=
+- Some functions always take arguments
+  + =mv <source> <destination>= (shell)
+  + =parse(Int, "42")= (julia)
+- Some functions /can/ take arguments, but have defaults
+  + =ls= lists the current directory (equivalent of =ls $(pwd)=
+  + =ls <path>= lists the contents of =<path>=
+  + =println()= just prints an empty line
+  + =println(args...)= prints all =args= concatenated
+
+    #+begin_src julia
+  println("some string", " ", "other string")
+    #+end_src
+** Julia functions may have many "methods"
+- a method of a function is one that takes different numbers or kinds of arguments
+- any function may have any number of methods
+  + No args:
+    #+begin_src julia
+  function foo()
+      println("Base foo! No args")
+  end
+    #+end_src
+  + 1 arg:
+    #+begin_src julia
+  function foo(arg1)
+      println("One arg foo!")
+      println(arg1)
+  end
+    #+end_src
+  + more specific 1 arg:
+    #+begin_src julia
+  function foo(arg1::Number)
+      println("Number foo! $arg1")
+      return arg1 * 10
+  end
+    #+end_src
+** Julia functions can have "default" args
+
+- defaults are shortcuts for defining multiple methods
+
+  #+begin_src julia
+  function my_func(a = 1)
+      @info "the value of a is" a
+  end # how many methods does this lead to?
+  #+end_src
+
+- Be careful! Using defaults can overwrite conflict with other methods
+
+  #+begin_src julia
+  function my_func()
+      @info "wait wait"
+  end
+  #+end_src

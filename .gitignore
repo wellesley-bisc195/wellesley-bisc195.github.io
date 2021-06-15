@@ -4,3 +4,6 @@ franklin
 franklin.pub
 node_modules/
 _literate/
+lectures-labs/slides/*
+!lectures-labs/slides/*.org
+!lectures-labs/slides/*.pdf
