@@ -130,7 +130,7 @@ but that would require the user to remember the order that the scores are entere
 and potentially make it necessary to include extra arguments,
 even if only changing one default.
 Eg, if I wrote the function with positional arguments in the order
-`gap`, `mismatch`, `gap`,
+`match`, `mismatch`, `gap`,
 then if I wanted to call this with a gap score of `-2`,
 but defaults for match and mismatch,
 I'd still have to call `nwscore(base1, base2, 1, -1, -2)`,
@@ -225,7 +225,7 @@ Test Failed at REPL[10]:1
 ERROR: There was an error during testing
 ```
 
-Write a tests that check to make sure that `nwscore(nothing, nothing)`
+Write tests that check to make sure that `nwscore(nothing, nothing)`
 throws the correct error.
 Be sure to also test the function with different keyword arguments...
 
