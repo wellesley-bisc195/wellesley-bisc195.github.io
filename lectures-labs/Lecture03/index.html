@@ -37,7 +37,7 @@ julia&gt; testing_args&#40;2, 1; kwarg2 &#61; 4, kwarg1 &#61; 3&#41;
 │   kwarg1 &#61; 3
 └   kwarg2 &#61; 4</code></pre>
 <p>Kwargs are often given default values so that a function will work without them, but can be tuned according to the caller&#39;s needs.</p>
-<p>We want our <code>nwscore&#40;&#41;</code> function to be able to accept alternative scoring systems. In principle, this could be done with positional arguments, but that would require the user to remember the order that the scores are entered, and potentially make it necessary to include extra arguments, even if only changing one default. Eg, if I wrote the function with positional arguments in the order <code>gap</code>, <code>mismatch</code>, <code>gap</code>, then if I wanted to call this with a gap score of <code>-2</code>, but defaults for match and mismatch, I&#39;d still have to call <code>nwscore&#40;base1, base2, 1, -1, -2&#41;</code>, whereas with kwargs, I can call <code>nwscore&#40;base1, base2; gap&#61;-2&#41;</code>.</p>
+<p>We want our <code>nwscore&#40;&#41;</code> function to be able to accept alternative scoring systems. In principle, this could be done with positional arguments, but that would require the user to remember the order that the scores are entered, and potentially make it necessary to include extra arguments, even if only changing one default. Eg, if I wrote the function with positional arguments in the order <code>match</code>, <code>mismatch</code>, <code>gap</code>, then if I wanted to call this with a gap score of <code>-2</code>, but defaults for match and mismatch, I&#39;d still have to call <code>nwscore&#40;base1, base2, 1, -1, -2&#41;</code>, whereas with kwargs, I can call <code>nwscore&#40;base1, base2; gap&#61;-2&#41;</code>.</p>
 <p>Rewrite your first method to include keyword arguments for setting the <code>match</code> and <code>mismatch</code> score.</p>
 <div class=colbox-blue ><div class=title >Tip</div>
 <p>Don&#39;t forget us actually <em>use</em> those arguments in the body of your function.</p></div>
@@ -90,7 +90,7 @@ Test Failed at REPL&#91;10&#93;:1
     Expected: BoundsError
       Thrown: DomainError
 ERROR: There was an error during testing</code></pre>
-<p>Write a tests that check to make sure that <code>nwscore&#40;nothing, nothing&#41;</code> throws the correct error. Be sure to also test the function with different keyword arguments...</p>
+<p>Write tests that check to make sure that <code>nwscore&#40;nothing, nothing&#41;</code> throws the correct error. Be sure to also test the function with different keyword arguments...</p>
 <h3 id=step_7_-_document_your_function ><a href="#step_7_-_document_your_function" class=header-anchor >Step 7 - Document your function</a></h3>
 <p>In the doc string for <code>nwscore</code>, write out the new signature, and describe its functionality for someone that&#39;s never used it before. You can use the docstrings in your assignments, or the ones from your favorite julia functions as inspiration.</p>
 <div class=colbox-blue ><div class=title >Tip</div>
@@ -144,7 +144,7 @@ end</code></pre>
 <p>You don&#39;t need to wait until you&#39;ve finished to push your code. Push early and often, I say&#33;</p>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: June 15, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: June 16, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>

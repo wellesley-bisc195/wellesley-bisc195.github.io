@@ -184,6 +184,12 @@ Example
     CCCGG
     GC Content:
     1.0
+
+    julia> question4("CCCGT"); # note the semicolon
+    Sequence:
+    CCCGG
+    GC Content:
+    0.8
 """
 function question4(sequence)
     # Your code here
