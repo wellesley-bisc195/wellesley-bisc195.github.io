@@ -23,8 +23,10 @@ Course Title: Essential Skills for Computational Biology
 
 #### Course Meeting Times
 
-- **Tu/F 1:30-4:45**: Lecture / Lab
-- **TBD**: Kevin office hours
+- **Tu/F 1:30pm - 4:45pm**: Lecture / Lab
+- **Th 12pm - 2pm**: Kevin office hours
+  - Zoom link: https://wellesley.zoom.us/j/572452111
+  - Meeting ID: 572 452 1116
 - **W 8pm - 10pm**: Clara office hours
   - Zoom link: https://wellesley.zoom.us/j/5592518955
   - Meeting ID: 559 251 8955
