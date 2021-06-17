@@ -46,7 +46,24 @@ this is the easiest case.
 Simply check out a new branch from where you left off (`git checkout -b lab4`),
 push it to github (`git push -u origin lab4`)
 
-If you previously worked with a partner, and want to 
+If you previously worked with a partner, and want to continue on your own,
+particularly if you weren't the one committing, it's a bit more complicated.
+Your best bet is to do the following (see the beginning of the last two labs for more details):
+
+1. Fork the main repo at https://github.com/wellesley-bisc195/BISC195Labs
+2. Clone your fork to your own computer
+3. Add your partner's fork as a remote. Eg if I were your partner,
+   you would do `git remote add kevin https://github.com/kescobo/BISC195Labs.git`
+4. "Fetch" your partner's repo - this downloads the information,
+   but doesn't take any action. In the above example, you'd write `git fetch kevin`.
+5. Check out the lab3 branch. If the branch was called `ksb123`,
+   you'd do `git checkout ksb123`.
+6. Start a new branch off of of this one 
+```sh
+$ git branch lab4-branch
+$ git checkout lab4-branch 
+```
+7. Once you've made changes, commit and push them.
 
 ### Intro to Matrix - a 2D array
 
