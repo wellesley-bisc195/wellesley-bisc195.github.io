@@ -6,10 +6,10 @@ date = Date(2021, 06, 15)
 
 {{lecture_preamble}}
 
-## Lab 3 - Needleman-Wunch Aligner, Part 1
+## Lab 3 - Needleman-Wunsch Aligner, Part 1
 
 In this lab, you will begin constructing a sequence aligner
-based on the [Needleman-Wunch algorithm](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm).
+based on the [Needleman-Wunsch algorithm](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm).
 This is a classic bioinformatics method, and quite accessible.
 
 ### Fork and clone the lab repository
@@ -40,9 +40,9 @@ Like your assignments, this lab repo is structured like a julia package.
 We'll talk more about the various compenents a lot more as the course progresses;
 for now, notice that there are some code files found in the `src/` directory,
 including the `BISC195Labs.jl` file, which defines the `BISC195Labs` module
-(more on that later), and `include`s the file `needleman_wunch.jl`.
+(more on that later), and `include`s the file `needleman_wunsch.jl`.
 
-The `needleman_wunch.jl` file contains several methods
+The `needleman_wunsch.jl` file contains several methods
 for a function called `nwscore()`.
 The first method, which takes two `Char`s as arguments, is currently empty.
 The other methods take a `Char` and a `Nothing` (what's going on with the 3rd method??),
@@ -73,7 +73,7 @@ Notice how many tests pass, how many fail, and how many error.
 
 The first thing to nail down in the NW algorithm is a function
 that will score two bases, as either a match or a mismatch.
-At first, just assume you're using the scoring from the original Needleman-Wunch
+At first, just assume you're using the scoring from the original Needleman-Wunsch
 paper from 1970 - matches should score `+1` and mismatches should score `-1`.
 
 Add code to the first method that will accept two bases (`Char`s)
@@ -276,7 +276,7 @@ or do a single docstring that contains information about all methods.
 
 ### Step 8 - Test-driven development
 
-In preparation for completing the Needleman Wunch alignment,
+In preparation for completing the Needleman Wunsch alignment,
 you should start thinking about how it will actually work.
 Assume that you want to write a function `nwalign()`
 that takes 2 sequences and a scoring system,
@@ -297,7 +297,7 @@ but thinking about inputs and outputs is generally a good way to start.
 
 Create a new testset in `test/runtests.jl` that includes some tests
 for how you think `nwalign()` should work.
-Also create a skeleton function in `src/needleman_wunch.jl`, eg
+Also create a skeleton function in `src/needleman_wunsch.jl`, eg
 
 ```julia
 function nwalign()
