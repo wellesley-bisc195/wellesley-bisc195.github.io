@@ -1,4 +1,170 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title></title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hrefassignmentsassignment05assignment_5_- ><a href="#a_hrefassignmentsassignment05assignment_5_-" class=header-anchor ><a href="/assignments/Assignment05">Assignment 5 - </a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/"><img src="https://img.shields.io/badge/Github&#37;20-5-darkblue?style&#61;for-the-badge" alt=assignment5link  /></a> <img src="https://img.shields.io/badge/Due-2021--06--22-red?style&#61;for-the-badge" alt=assignment5due  /></div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>Click the assignment 5 invitation above, clone the repository, and follow the instructions in <code>src/assignment.jl</code>. Remember, an easier-to-read version of the assignment script can also be viewed by clicking the &quot;Script&quot; badge above.</p> <p>Also, recall that you may run the automated tests on your own computer:</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>What a lovely... complement</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hrefassignmentsassignment05assignment_5_-_what_a_lovely_complement ><a href="#a_hrefassignmentsassignment05assignment_5_-_what_a_lovely_complement" class=header-anchor ><a href="/assignments/Assignment05">Assignment 5 - What a lovely... complement</a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/B9QjRjNK"><img src="https://img.shields.io/badge/Github&#37;20-5-darkblue?style&#61;for-the-badge" alt=assignment5link  /></a> <img src="https://img.shields.io/badge/Due-2021--06--24-red?style&#61;for-the-badge" alt=assignment5due  /></div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>Click the assignment 5 invitation above, clone the repository, and follow the instructions in <code>src/assignment.jl</code>.</p> <p>Also, recall that you may run the automated tests on your own computer:</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
+<h2 id=assignment05_code ><a href="#assignment05_code" class=header-anchor >Assignment05 code</a></h2>
+<p>For each assignment, the contents of the assignment code script will be rendered as html at the bottom of the assignment description page. If you&#39;re interested in how that works, check out <a href="https://fredrikekre.github.io/Literate.jl/v2/">Literate.jl</a></p>
+<h1 id=instructions_for_assignment05 ><a href="#instructions_for_assignment05" class=header-anchor >Instructions for Assignment05</a></h1>
+<h2 id=introduction ><a href="#introduction" class=header-anchor >Introduction</a></h2>
+<p>Note: this file is runnable in its current state, but is incomplete. You can run the file from the command line, or use the VS Code julia extension to run individual lines.</p>
+<h2 id=question_1_-_dubugging_practice ><a href="#question_1_-_dubugging_practice" class=header-anchor >Question 1 - Dubugging Practice</a></h2>
+<p>At the end of <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#deb08">Chapter 8 of <em>Think Julia</em></a>, there is an exercise &#40;8-6&#41; intended to help you debug a string traversal function. Below is the initial code with errors. Fix it up as described in the chapter.</p>
+<p>Note: you should always be completing the exercises from the book, by actually writing and executing the code, either in a file or in the REPL.</p>
+<pre><code class=language-julia >function isreverse&#40;word1, word2&#41;
+    if length&#40;word1&#41; &#33;&#61; length&#40;word2&#41;
+        return false
+    end
+    i &#61; firstindex&#40;word1&#41;
+    j &#61; lastindex&#40;word2&#41;
+    while j &gt;&#61; 0
+        j &#61; prevind&#40;word2, j&#41;
+        if word1&#91;i&#93; &#33;&#61; word2&#91;j&#93;
+            return false
+        end
+        i &#61; nextind&#40;word1, i&#41;
+    end
+    true
+end</code></pre>
+<h2 id=question_2_-_reverse_complement ><a href="#question_2_-_reverse_complement" class=header-anchor >Question 2 - Reverse complement</a></h2>
+<p>In Assignment03, you created a function called <code>complement&#40;&#41;</code>, that took a DNA base as an argument, and returned its complement &#40;<code>A &lt;-&gt; T</code> or <code>G &lt;-&gt; C</code>&#41;. This function does the same thing, using a slightly different method. Look it over and see if it makes sense. If it doesn&#39;t, try running some individual pieces in the REPL, But don&#39;t modify the code &#40;or if you do, make sure you know how to get it back&#41;</p>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    complement&#40;base&#41;
+
+Get the DNA complement of the provided base:
+
+    A &lt;-&gt; T
+    G &lt;-&gt; C
+
+Accepts uppercase or lowercase &#96;String&#96; or &#96;Char&#96;,
+but always returns an uppercase &#96;Char&#96;.
+If a valid base is not provided, the function throws an error.
+&quot;&quot;&quot;
+function complement&#40;base&#41;
+    complements &#61; Dict&#40;&quot;A&quot; &#61;&gt; &#39;T&#39;,
+                       &quot;T&quot; &#61;&gt; &#39;A&#39;,
+                       &quot;G&quot; &#61;&gt; &#39;C&#39;,
+                       &quot;C&quot; &#61;&gt; &#39;G&#39;&#41;
+
+    base &#61; uppercase&#40;string&#40;base&#41;&#41;
+
+    &#33;&#40;base in keys&#40;complements&#41;&#41; &amp;&amp; error&#40;&quot;Invalid base &#36;base&quot;&#41;
+    return complements&#91;base&#93;
+end</code></pre>
+<p>The &quot;reverse complement&quot; of a DNA sequence is valuable to know, since it represents the complementary sequence in the expected orientation &#40;5&#39; -&gt; 3&#39;&#41;. If you haven&#39;t taken molecular biology and this sounds like gibberish, you may want to read up a bit on it <a href="https://en.wikipedia.org/wiki/Complementarity_&#40;molecular_biology&#41;">here</a></p>
+<p>Now, write a function like <code>isreverse&#40;&#41;</code> above, but that checks whether two sequences are the reverse AND complement of one another. Note one other difference here - rather than returning <code>false</code> if the sequences are different lengths, this function should error.</p>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    isreversecomplement&#40;seq1, seq2&#41;
+
+Boolean function that checks whether two DNA seqences
+are the reverse complement of one another, irrespective of capitalization.
+Returns true if yes, false otherwise.
+
+If any invalid bases are encountered,
+or if sequences are different length, throws an error.
+
+Examples
+≡≡≡≡≡≡≡≡≡≡
+
+    julia&gt; isreversecomplement&#40;&quot;aaatttcg&quot;, &quot;cgaaattt&quot;&#41;
+    true
+
+    julia&gt; if isreversecomplement&#40;&quot;C&quot;, &quot;A&quot;&#41;
+               println&#40;&quot;Yes&#33;&quot;&#41;
+           else
+               println&#40;&quot;No&#33;&quot;&#41;
+           end
+    No&#33;
+
+    julia&gt; isreversecomplement&#40;&quot;TX&quot;, &quot;AG&quot;&#41;
+    Error: Invalid base X
+
+    julia&gt; isreversecomplement&#40;&quot;G&quot;, &quot;CC&quot;&#41;
+    Error: Cannot compare sequuences of different length
+&quot;&quot;&quot;
+function isreversecomplement&#40;seq1, seq2&#41;
+    # your code here
+end</code></pre>
+<h2 id=question_3 ><a href="#question_3" class=header-anchor >Question 3</a></h2>
+<p>Now let&#39;s work on creating a function that <em>makes</em> the reverse complement of a sequence, instead of just checking it. First, it&#39;s probably helpful to know that julia has a built in <code>reverse&#40;&#41;</code> function that can take a <code>String</code> or <code>Vector</code> and return it with the indecies reversed.</p>
+<pre><code class=language-julia >julia&gt; reverse&#40;&#91;4,3,2,1&#93;&#41;
+4-element Array&#123;Int64,1&#125;:
+ 1
+ 2
+ 3
+ 4
+
+julia&gt; reverse&#40;&quot;beep boop&quot;&#41;
+&quot;poob peeb&quot;</code></pre>
+<p>Now, create a function that takes a sequence and returns the reverse complement. The easiest way to do this is probably to perform a &quot;map&quot; of the <code>complement&#40;&#41;</code> function to each character in the sequence, then reverse it &#40;or reverse, then map&#41;. You can write the mapping by hand as in the book, or use <code>map&#40;&#41;</code> as described in the lesson.</p>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    reverse_complement&#40;sequence&#41;
+
+Takes a DNA sequence and returns the reverse complement
+of that sequence.
+
+Takes lowercase or uppercase sequences,
+but always returns uppercase.
+
+Examples
+≡≡≡≡≡≡≡≡≡≡
+    julia&gt; reverse_complement&#40;&quot;AAATTT&quot;&#41;
+    &quot;AAATTT&quot;
+
+    julia&gt; reverse_complement&#40;&quot;GCAT&quot;&#41;
+    &quot;ATGC&quot;
+
+    julia&gt; rc &#61; reverse_complement&#40;&quot;TTGGG&quot;&#41;;
+
+    julia&gt; println&#40;rc&#41;
+    CCCAA
+&quot;&quot;&quot;
+function reverse_complement&#40;sequence&#41;
+    # your code here
+end</code></pre>
+<h2 id=question_4a ><a href="#question_4a" class=header-anchor >Question 4a</a></h2>
+<p><a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#reading_word_lists">Chapter 9</a> begins to describe how to work with files. The file <code>words.txt</code> from <em>Think Julia</em> is in the <code>data/</code> directory of the assignment repository. First, look at the file from the shell &#40;not a julia REPL&#41; using the <code>head</code> command.</p>
+<pre><code class=language-sh >&#36; head data/words.txt</code></pre>
+<p>By default, <code>head</code> prints the first 10 lines. How can you change this behavior to show the first 15 lines? &#40;Hint: you may need a search engine&#41;. Put the <em>shell command</em> to show the first 15 words of <code>data/words.txt</code> in a String assigned to the variable <code>first15</code></p>
+<pre><code class=language-julia >first15 &#61; &quot;#&#61; put shell command here &#61;#&quot;</code></pre>
+<h2 id=question_4b ><a href="#question_4b" class=header-anchor >Question 4b</a></h2>
+<p>What about the shell command to view the last 15 lines of <code>data/words.txt</code>? Put this command in a string assigned to the variable <code>last15</code></p>
+<pre><code class=language-julia >last15 &#61; &quot;#&#61; put shell command here &#61;#&quot;</code></pre>
+<h2 id=question_5 ><a href="#question_5" class=header-anchor >Question 5</a></h2>
+<p>Write a function that reads through the words in a file with a <code>for</code> loop and returns an array with only the words that are valid DNA sequences. Note: there may be one or more functions from previous Assignments that are useful to reuse here.</p>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    find_dna&#40;file&#41;
+
+In a file with one word per line,
+returns an array with all words that are valid DNA sequences
+&#40;that is, they contain only a, t, g, or c&#41;.
+
+Words may be upper- or lowercase,
+but returned array will contain only uppercase letters.
+
+Example
+≡≡≡≡≡≡≡≡≡
+    julia&gt; find_dna&#40;&quot;data/words.txt&quot;&#41; # assumes you&#39;re in Assignment05 directory
+    13-element Array&#123;Any,1&#125;:
+      &quot;AA&quot;
+      &quot;ACT&quot;
+      &quot;ACTA&quot;
+      &quot;AGA&quot;
+      &quot;AT&quot;
+      &quot;CAT&quot;
+      &quot;GAG&quot;
+      &quot;GAGA&quot;
+      &quot;GAT&quot;
+      &quot;TA&quot;
+      &quot;TACT&quot;
+      &quot;TAG&quot;
+      &quot;TAT&quot;
+&quot;&quot;&quot;
+function find_dna&#40;file&#41;
+    # 1. You probably want to make an empty array
+
+    for line in eachline&#40;file&#41;
+        # if the line is valid dna, put it in the array
+    end
+end</code></pre>
+
+
 <div class=page-foot >
   <div class=copyright >
     &copy; Kevin Bonham, PhD. Last modified: June 22, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.

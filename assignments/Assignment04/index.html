@@ -1,4 +1,182 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Sequence Merry Go Round</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hrefassignmentsassignment04assignment_4_-_sequence_merry_go_round ><a href="#a_hrefassignmentsassignment04assignment_4_-_sequence_merry_go_round" class=header-anchor ><a href="/assignments/Assignment04">Assignment 4 - Sequence Merry Go Round</a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/frFBMRDR"><img src="https://img.shields.io/badge/Github&#37;20-4-darkblue?style&#61;for-the-badge" alt=assignment4link  /></a> <img src="https://img.shields.io/badge/Due-2021--06--18-red?style&#61;for-the-badge" alt=assignment4due  /></div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>Click the assignment 4 invitation above, clone the repository, and follow the instructions in <code>src/assignment.jl</code>. Remember, an easier-to-read version of the assignment script can also be viewed by clicking the &quot;Script&quot; badge above.</p> <p>Also, recall that you may run the automated tests on your own computer:</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Sequence Merry Go Round</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hrefassignmentsassignment04assignment_4_-_sequence_merry_go_round ><a href="#a_hrefassignmentsassignment04assignment_4_-_sequence_merry_go_round" class=header-anchor ><a href="/assignments/Assignment04">Assignment 4 - Sequence Merry Go Round</a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/frFBMRDR"><img src="https://img.shields.io/badge/Github&#37;20-4-darkblue?style&#61;for-the-badge" alt=assignment4link  /></a> <img src="https://img.shields.io/badge/Due-2021--06--18-red?style&#61;for-the-badge" alt=assignment4due  /></div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>Click the assignment 4 invitation above, clone the repository, and follow the instructions in <code>src/assignment.jl</code>.</p> <p>Also, recall that you may run the automated tests on your own computer:</p> <pre><code class=language-sh >&#36; julia --project -e &#39;using Pkg; Pkg.test&#40;&#41;&#39;</code></pre>
+<h2 id=assignment04_code ><a href="#assignment04_code" class=header-anchor >Assignment04 code</a></h2>
+<p>For each assignment, the contents of the assignment code script will be rendered as html at the bottom of the assignment description page. If you&#39;re interested in how that works, check out <a href="https://fredrikekre.github.io/Literate.jl/v2/">Literate.jl</a></p>
+<h1 id=instructions_for_assignment04 ><a href="#instructions_for_assignment04" class=header-anchor >Instructions for Assignment04</a></h1>
+<h2 id=introduction ><a href="#introduction" class=header-anchor >Introduction</a></h2>
+<p>Note: this file is runnable in its current state, but is incomplete. You can run the file from the command line, or use the VS Code julia extension to run individual lines.</p>
+<h2 id=base_composition ><a href="#base_composition" class=header-anchor >Base Composition</a></h2>
+<p>We&#39;ve already seen how to calculate GC content of a DNA sequence but sometimes it might be useful to have more information about the overall base composition. To do this, we can loop through a DNA sequence and count each type of base as it occurs.</p>
+<p>But first, let&#39;s write a &quot;helper&quot; function that does some work to make sure that sequences are normalized into a particular form. In particular, we&#39;ll make sure they&#39;re always uppercase, are <code>String</code>s rather than <code>Char</code>s, and don&#39;t contain any invalid bases. Note: you can convert a <code>Char</code> to a <code>String</code> with <code>string&#40;c&#41;</code>.</p>
+<h3 id=question_1 ><a href="#question_1" class=header-anchor >Question 1</a></h3>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    normalizeDNA&#40;sequence&#41;
+
+Normalizes DNA sequences or bases to uppercase &#96;String&#96;s.
+Throws an error if invalid bases are encountered.
+
+Examples
+≡≡≡≡≡≡≡≡≡≡
+
+    julia&gt; normalizeDNA&#40;&quot;aaatg&quot;&#41;
+    &quot;AAATG&quot;
+
+    julia&gt; normalizeDNA&#40;&quot;XTG&quot;&#41;
+    ERROR: Invalid base X encountered
+
+    julia&gt; normalizeDNA&#40;5&#41;
+    ERROR: Invalid base 5 encountered
+
+    julia&gt; normalizeDNA&#40;&#39;G&#39;&#41;
+    &quot;G&quot;
+
+    julia&gt; b &#61; normalizeDNA&#40;&#39;G&#39;&#41;;
+
+    julia&gt; typeof&#40;b&#41;
+    String
+&quot;&quot;&quot;
+function normalizeDNA&#40;sequence&#41;
+    # 1. make sequence into a String
+    # 2. make sequence uppercase
+
+    for base in sequence
+        if &#33;occursin&#40;base, &quot;ACGT&quot;&#41;
+            error&#40;&quot;Invalid base &#36;base encountered&quot;&#41;
+        end
+    end
+
+    # return the normalized sequence
+end</code></pre>
+<h3 id=question_2 ><a href="#question_2" class=header-anchor >Question 2</a></h3>
+<p>Now, we should be able to set <code>sequence &#61; normalizeDNA&#40;sequence&#41;</code> in all of our other functions, and never worry about the form of the input.</p>
+<p>The following function returns a <code>Tuple</code>, which is an immutable structure that contains multiple values.</p>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    basecomposition&#40;sequence&#41;
+
+Counts the number of each type of base
+in a DNA sequence and returns a tuple those counts
+in the order A, C, G, T
+
+Examples
+≡≡≡≡≡≡≡≡≡≡
+
+    julia&gt; basecomposition&#40;&quot;AATCGGG&quot;&#41;
+    &#40;2, 1, 3, 1&#41;
+
+    julia&gt; basecomposition&#40;&#39;C&#39;&#41;
+    &#40;0, 1, 0, 0&#41;
+
+    julia&gt; A,C,G,T &#61; basecomposition&#40;&quot;accgggtttt&quot;&#41;
+    &#40;1, 2, 3, 4&#41;
+
+    julia&gt; A
+    1
+
+    julia&gt; T
+    4
+
+    julia&gt; basecomposition&#40;&quot;BACCGGGTTTT&quot;&#41;
+    ERROR: Invalid base B encountered
+&quot;&quot;&quot;
+function basecomposition&#40;sequence&#41;
+    sequence &#61; normalizeDNA&#40;sequence&#41; # make uppercase string, check invalid bases
+    a &#61; c &#61; g &#61; t &#61; 0 # sets all 4 variables to &#96;0&#96;
+
+    for base in sequence
+        # add 1 to each base as it occurs
+    end
+
+    return a,c,g,t
+end</code></pre>
+<p>Hint: If all of your base counts are zeros, What&#39;s the type of <code>base</code> as you loop through a <code>String</code>?</p>
+<h3 id=question_3 ><a href="#question_3" class=header-anchor >Question 3</a></h3>
+<p>Now let&#39;s rewrite our <code>gc_content&#40;&#41;</code> function from Assignment03 using our <code>basecomposition&#40;&#41;</code> function. This one has the same docstring, but should require substantially less code.</p>
+<pre><code class=language-julia >&quot;&quot;&quot;
+    gc_content&#40;sequence&#41;
+
+Calculates the GC ratio of a DNA sequence.
+The GC ratio is the total number of G and C bases divided by the total length of the sequence.
+For more info about GC content, see here:
+
+Examples
+≡≡≡≡≡≡≡≡≡≡
+
+    julia&gt; gc_content&#40;&quot;AATG&quot;&#41;
+    0.25
+
+    julia&gt; gc_content&#40;&quot;cccggg&quot;&#41; * 100
+    100.0
+
+    julia&gt; gc_content&#40;&quot;ATta&quot;&#41;
+    0.0
+
+    julia&gt; gc_content&#40;&quot;ATty&quot;&#41;
+    Error: Invalid base Y encountered
+&quot;&quot;&quot;
+function gc_content&#40;sequence&#41;
+    # Be sure to use &#96;basecomposition&#40;&#41;&#96; in your answer.
+    # Note: Since &#96;basecomposition&#40;&#41;&#96; already calls &#96;normalizeDNA&#96;,
+    # there&#39;s no need to call it here.
+end</code></pre>
+<h2 id=kmer_composition ><a href="#kmer_composition" class=header-anchor >Kmer Composition</a></h2>
+<p>Be sure that you&#39;ve read the sections of Lesson 5 on kmers and dictionaries before attempting the following questions.</p>
+<p>What we&#39;d like to do is to get a count of all of the unique kmers in a DNA sequence But we can&#39;t simply generate all possible kmers &#40;there are too many for even small-ish values of k&#41;.</p>
+<h3 id=question_4 ><a href="#question_4" class=header-anchor >Question 4</a></h3>
+<p>Let&#39;s think of the process in pseudocode, a plain-language high-level description of what we want to happen. Here, <code>sequence</code> represents some DNA sequence, and <code>k</code> is an integer representing the length of each kmer.</p>
+<pre><code class=language-julia >make a dictionary to store kmers
+for each base in sequence
+  get a kmer of the base and the next &#40;k-1&#41; bases
+  make sure the kmer is a valid DNA sequence
+  if this kmer is a key in the dictionary
+      add 1 to the value referenced by that kmer
+  otherwise
+      make a new entry in the dictionary with a value of 1</code></pre>
+<pre><code class=language-julia >&quot;&quot;&quot;
+   kmercount&#40;sequence, k&#41;
+
+Finds all kmers in a sequence,
+returning a dictionary of those kmers
+and the number of times they appear in the sequence.
+
+Examples
+≡≡≡≡≡≡≡≡≡≡
+
+    julia&gt; kmercount&#40;&quot;ggg&quot;, 3&#41;
+    Dict&#123;Any,Any&#125; with 1 entry:
+    &quot;GGG&quot; &#61;&gt; 1
+
+    julia&gt; kmercount&#40;&quot;ATATATATA&quot;, 4&#41;
+    Dict&#123;Any,Any&#125; with 2 entries:
+    &quot;TATA&quot; &#61;&gt; 3
+    &quot;ATAT&quot; &#61;&gt; 3
+
+    julia&gt; kmercount&#40;&quot;ATATATATAx&quot;, 4&#41;
+    ERROR: Invalid base X encountered
+
+    julia&gt; kmercount&#40;&quot;A&quot;, 2&#41;
+    ERROR: k must be a positive integer less than the length of the sequence
+&quot;&quot;&quot;
+function  kmercount&#40;sequence, k&#41;
+    1 &lt;&#61; k &lt;&#61; length&#40;sequence&#41; || error&#40;&quot;k must be a positive integer less than the length of the sequence&quot;&#41;
+    kmers &#61; Dict&#40;&#41; # initialize dictionary
+
+    # We&#39;re going to loop through the string with numerical index,
+    # each time grabbing the bases at position i through i&#43;k-1.
+    # What is the last index that we should search?
+    stopindex &#61; 0
+
+    for i in 1:stopindex
+        kmer &#61; &quot;&quot; # Change to index the sequence from i to i&#43;k-1
+        kmer &#61; normalizeDNA&#40;kmer&#41;
+        #   if this kmer is a key the dictionary
+        #       add 1 to the value referenced by that kmer
+        #   otherwise
+        #       make a new entry in the dictionary with a value of 1
+
+    end
+    return kmers
+end</code></pre>
+
+
 <div class=page-foot >
   <div class=copyright >
     &copy; Kevin Bonham, PhD. Last modified: June 22, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.

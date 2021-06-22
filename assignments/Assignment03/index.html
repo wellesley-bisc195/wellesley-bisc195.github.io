@@ -13,10 +13,9 @@
 <p>Once the plugin is installed, open <code>src/assignment.jl</code> in your Assignment03 directory from within VS Code. Then, put the cursor on the line with <code>function complement&#40;base&#41;</code>, press and hold the <code>alt</code> key, then press <code>return</code>.</p>
 <p>A julia REPL will open inside VS Code, and the entire function body should be copied into it and executed. This will allow you to experiment with the code inside the assignment and do <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#incremental_development">incremental development</a> of your functions without needing to run the entire file each time you make a change.</p>
 <div class=colbox-green ><div class=title >Tip</div>
-<p>Sometimes, you can confuse yourself by running things out of order.
-For example, let&#39;s say I write,</p>
+<p>Sometimes, you can confuse yourself by running things out of order. For example, let&#39;s say I write,</p>
 <pre><code class=language-julia >function hello&#40;x&#41;
-    println&#40;&quot;Hello, &#36;&#40;x&#41;&#33;&quot;&#41;
+println&#40;&quot;Hello, &#36;&#40;x&#41;&#33;&quot;&#41;
 end
 
 s &#61; &quot;Students&quot;
@@ -24,18 +23,8 @@ t &#61; &quot;Tutors&quot;
 
 hello&#40;s&#41;
 hello&#40;t&#41;</code></pre>
-<p>And then execute the whole thing in VS code.
-Later on, I decide I don&#39;t need to say hello to the Tutors
-so I delete the line <code>t &#61; &quot;Tutors&quot;</code>,
-but forget to delete <code>hello&#40;t&#41;</code>. 
-
-As I continue to run the code in the same julia session,
-there are no problems because,
-even though I deleted <code>t &#61; &quot;Tutors&quot;</code>,
-there&#39;s no way to unassign <code>a</code> - it&#39;s still defined.
-But, if I come back later and try to run the file in a new julia session,
-I will get an <code>UndefinedVariableError</code>
-when the program tries to execute <code>hello&#40;t&#41;</code>.</p></div>
+<p>And then execute the whole thing in VS code. Later on, I decide I don&#39;t need to say hello to the Tutors so I delete the line <code>t &#61; &quot;Tutors&quot;</code>, but forget to delete <code>hello&#40;t&#41;</code>. </p>
+<p>As I continue to run the code in the same julia session, there are no problems because, even though I deleted <code>t &#61; &quot;Tutors&quot;</code>, there&#39;s no way to unassign <code>a</code> - it&#39;s still defined. But, if I come back later and try to run the file in a new julia session, I will get an <code>UndefinedVariableError</code> when the program tries to execute <code>hello&#40;t&#41;</code>.</p></div>
 <h2 id=assignment03_code ><a href="#assignment03_code" class=header-anchor >Assignment03 code</a></h2>
 <p>For each assignment, the contents of the assignment code script will be rendered as html at the bottom of the assignment description page. If you&#39;re interested in how that works, check out <a href="https://fredrikekre.github.io/Literate.jl/v2/">Literate.jl</a></p>
 <h1 id=instructions_for_assignment03 ><a href="#instructions_for_assignment03" class=header-anchor >Instructions for Assignment03</a></h1>
