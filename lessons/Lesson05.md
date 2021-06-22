@@ -426,7 +426,7 @@ $\sum{counts_{seq}} = |seq| - k + 1$
 @@
 1. How many 4mers are in the sequence "ATTCCGTCA"
     (the length of the sequence is 9)
-2. All of the 5mers in the above sequence are unique.
+2. All of the 4mers in the above sequence are unique.
     What are they? 
     Answer below[^ans], but don't peek until you've tried it!
 @@
@@ -466,7 +466,7 @@ What follows is a very brief introduction to dictionaries,
 we'll learn more about them next week. 
 
 Dictionaries store data as `key => value` pairs,
-where the `key` can by (almost) any type and is used to access
+where the `key` can be (almost) any type and is used to access
 or alter the `value`.
 This is probably confusing, but may be clearer with some examples.
 

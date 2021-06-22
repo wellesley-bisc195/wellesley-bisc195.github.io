@@ -202,7 +202,7 @@ Now, add a keyword argument to `nwsetupmatrix()`
 that allows you to give it a gap score, with a default of `-1`.
 Add code that fills in the scores for the first row and column.
 
-All of your tests except the last one should still work, except for the last one.
+All of your tests should still work, except for the last one.
 Here are some more:
 
 ```julia

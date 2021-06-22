@@ -19679,9 +19679,9 @@ complied
 complier
 compliers
 complies
-compliment
-complimentary
-compliments
+complement
+complementary
+complements
 complin
 compline
 complines
@@ -105595,7 +105595,7 @@ uncommon
 uncommoner
 uncommonest
 uncommonly
-uncomplimentary
+uncomplementary
 uncompromising
 unconcerned
 unconcernedlies

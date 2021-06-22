@@ -69,7 +69,7 @@ and then you can browse and open folders inside linux.
 
 Once the plugin is installed, open `src/assignment.jl`
 in your Assignment03 directory from within VS Code.
-Then, put the cursor on the line with `function compliment(base)`,
+Then, put the cursor on the line with `function complement(base)`,
 press and hold the `alt` key, then press `return`.
 
 A julia REPL will open inside VS Code,

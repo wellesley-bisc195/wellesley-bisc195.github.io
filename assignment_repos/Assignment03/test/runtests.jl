@@ -10,14 +10,14 @@ pyr = ('T','C')
 @testset "Assignment03" begin
 
 @testset "Question 1" begin
-    @test all(x-> compliment(x) isa Char, bases)
+    @test all(x-> complement(x) isa Char, bases)
     
     for i in 1:4
-        @test compliment(bases[i]) == cbases[i]
-        @test compliment(bases[i+4]) == cbases[i]
+        @test complement(bases[i]) == cbases[i]
+        @test complement(bases[i+4]) == cbases[i]
     end
     for b in notbases
-        @test_throws ErrorException compliment(b)
+        @test_throws ErrorException complement(b)
     end
 end
 
@@ -52,7 +52,7 @@ end
 end
 
 @testset "Question 5" begin
-    for b in bases, f in [compliment, ispurine, ispyrimidine, base_type]
+    for b in bases, f in [complement, ispurine, ispyrimidine, base_type]
         @test f(b) == f(lowercase(b))
     end
 end
