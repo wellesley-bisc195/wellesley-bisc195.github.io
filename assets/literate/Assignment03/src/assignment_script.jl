@@ -7,9 +7,9 @@
 # see https://wellesley-bisc195.github.io/assignments/Assignment03/#assignment03_code
 
 """
-    compliment(base)
+    complement(base)
 
-Get the DNA compliment of the provided base:
+Get the DNA complement of the provided base:
 
     A <-> T
     G <-> C
@@ -20,20 +20,20 @@ If a valid base is not provided, the function throws an error.
 Examples
 ≡≡≡≡≡≡≡≡≡≡
 
-    julia> compliment('A')
+    julia> complement('A')
     'T'
 
-    julia> compliment("G")
+    julia> complement("G")
     'C'
 
-    julia> compliment("T")
+    julia> complement("T")
     'A'
 
-    julia> compliment('C')
+    julia> complement('C')
     'G'
 """
-function compliment(base)
-    # See Lesson 3 for more info
+function complement(base)
+    # See Lesson 4 for more info
 end
 
 """

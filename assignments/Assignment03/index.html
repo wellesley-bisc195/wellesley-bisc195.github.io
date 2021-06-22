@@ -10,7 +10,7 @@
 <p>Just after you install the plugin, it may take a bit of time for the &quot;language&quot; server to get going. If the stuff below doesn&#39;t work at first, just wait a couple of minutes.</p></div>
 <div class=colbox-aqua ><div class=title >&quot;Windows Users&quot;</div>
 <p>You should also install the &quot;WSL remote&quot; extension. This allows you to access your Ubuntu installation as if it were a remote computer. Once it&#39;s installed, press the &quot;Remote Explorer&quot; button on the left toolbar, and you should see your Ubuntu installation. Click the <code>&#43;</code> icon next Ubuntu, and then you can browse and open folders inside linux.</p></div>
-<p>Once the plugin is installed, open <code>src/assignment.jl</code> in your Assignment03 directory from within VS Code. Then, put the cursor on the line with <code>function compliment&#40;base&#41;</code>, press and hold the <code>alt</code> key, then press <code>return</code>.</p>
+<p>Once the plugin is installed, open <code>src/assignment.jl</code> in your Assignment03 directory from within VS Code. Then, put the cursor on the line with <code>function complement&#40;base&#41;</code>, press and hold the <code>alt</code> key, then press <code>return</code>.</p>
 <p>A julia REPL will open inside VS Code, and the entire function body should be copied into it and executed. This will allow you to experiment with the code inside the assignment and do <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#incremental_development">incremental development</a> of your functions without needing to run the entire file each time you make a change.</p>
 <div class=colbox-green ><div class=title >Tip</div>
 <p>Sometimes, you can confuse yourself by running things out of order.
@@ -48,11 +48,11 @@ when the program tries to execute <code>hello&#40;t&#41;</code>.</p></div>
 <p>We&#39;ve already done a fair amount of work in assignment 2 and in lesson 3 to make some functions for understanding DNA sequences. Below, I&#39;ve put a couple of function signatures with docstrings, but you can &#40;and should&#33;&#41; copy the necessary functionality out of the functions you&#39;ve already defined, if applicable.</p>
 <div class=colbox-blue ><div class=title >Tip</div>
 <p>If you defined those functions in the julia REPL, you can go find them from the command line or the julia REPL&#33; In VS Code, open ~/.julia/logs/repl_history.jl.</p></div>
-<h2 id=question_1_-_a_compliment_function ><a href="#question_1_-_a_compliment_function" class=header-anchor >Question 1 - a <code>compliment</code> function</a></h2>
+<h2 id=question_1_-_a_complement_function ><a href="#question_1_-_a_complement_function" class=header-anchor >Question 1 - a <code>complement</code> function</a></h2>
 <pre><code class=language-julia >&quot;&quot;&quot;
-    compliment&#40;base&#41;
+    complement&#40;base&#41;
 
-Get the DNA compliment of the provided base:
+Get the DNA complement of the provided base:
 
     A &lt;-&gt; T
     G &lt;-&gt; C
@@ -63,20 +63,20 @@ If a valid base is not provided, the function throws an error.
 Examples
 ≡≡≡≡≡≡≡≡≡≡
 
-    julia&gt; compliment&#40;&#39;A&#39;&#41;
+    julia&gt; complement&#40;&#39;A&#39;&#41;
     &#39;T&#39;
 
-    julia&gt; compliment&#40;&quot;G&quot;&#41;
+    julia&gt; complement&#40;&quot;G&quot;&#41;
     &#39;C&#39;
 
-    julia&gt; compliment&#40;&quot;T&quot;&#41;
+    julia&gt; complement&#40;&quot;T&quot;&#41;
     &#39;A&#39;
 
-    julia&gt; compliment&#40;&#39;C&#39;&#41;
+    julia&gt; complement&#40;&#39;C&#39;&#41;
     &#39;G&#39;
 &quot;&quot;&quot;
-function compliment&#40;base&#41;
-    # See Lesson 3 for more info
+function complement&#40;base&#41;
+    # See Lesson 4 for more info
 end</code></pre>
 <h2 id=question_2_-_some_boolean_functions ><a href="#question_2_-_some_boolean_functions" class=header-anchor >Question 2 - some boolean functions</a></h2>
 <pre><code class=language-julia >&quot;&quot;&quot;
@@ -227,7 +227,7 @@ end</code></pre>
 
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: June 17, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: June 22, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>
