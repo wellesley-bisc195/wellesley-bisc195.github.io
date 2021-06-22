@@ -157,7 +157,7 @@ end
 
 # ## Kmer Composition
 #
-# Be sure that you've read the sections of Lesson 4
+# Be sure that you've read the sections of Lesson 5
 # on kmers and dictionaries before attempting the following questions.
 # 
 # What we'd like to do is to get a count of all of the unique kmers in a DNA sequence
@@ -176,7 +176,7 @@ end
 # for each base in sequence
 #   get a kmer of the base and the next (k-1) bases
 #   make sure the kmer is a valid DNA sequence 
-#   if this kmer is a key the dictionary
+#   if this kmer is a key in the dictionary
 #       add 1 to the value referenced by that kmer
 #   otherwise
 #       make a new entry in the dictionary with a value of 1

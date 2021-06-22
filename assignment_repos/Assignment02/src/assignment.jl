@@ -50,7 +50,7 @@ question1 = ""
 
 # ## Question 2
 # 
-# The function bellow has a documentation string or "doc string",
+# The function below has a documentation string or "doc string",
 # which explains what the function should do.
 # Many julia functions have doc strings, 
 # which makes it easy to get help right from the REPL

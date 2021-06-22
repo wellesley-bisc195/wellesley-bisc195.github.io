@@ -1,6 +1,6 @@
 module Assignment03
 
-export compliment,
+export complement,
        ispurine,
        ispyrimidine,
        base_type,
