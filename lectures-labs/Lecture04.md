@@ -292,3 +292,11 @@ julia> nwscorematrix("ACGAT", "AGGT")
 ```
 
 [^cq1ans]: The matrix should be $(l_1 + 1) \times (l_2 + 1)$. Note that it doesn't matter which sequence consititutes the rows, and which the columns, but be consistent! Since in julia dimension 1 is the row index, I suggest making $s_1$ be the vertical.
+
+
+m == [  0  -1  -2  -3  -4
+       -1   1   0  -1  -2
+       -2   0   0  -1  -2
+       -3  -1   1   1   0
+       -4  -2   0   0   0
+       -5  -3  -1  -1   1 ]
