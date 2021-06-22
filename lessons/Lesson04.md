@@ -281,7 +281,7 @@ Not exactly what we wanted...
 2. Evaluate `'G' == "G"` - did you expect it to be `true` or `false`?
 3. What are the types of `'G'` and `"G"`?
 4. Use the `||` operator to modify the `if`/`elseif` statements
-    in your [`complement()` function](@ref booleans) from above
+    in your `complement()` function) from above
     so that it works with either single-quoted or double-quoted ACGT.
 
     **Note:** you should have no more than 3 `elseif`s in your function,

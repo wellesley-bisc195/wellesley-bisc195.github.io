@@ -1,7 +1,7 @@
 +++
 number = 9
 title = "Getting set up"
-release = Date(2021, 07, 01)
+release = Date(2021,07,05)
 due_date = Date(2021,07,9)
 +++
 
@@ -21,14 +21,14 @@ That is, if you edit the source code after `using` the package,
 it is not easy to get these changes to show up in your julia session
 without restarting julia.
 
-For example, start a julia REPL (not in VS Code[1]),
+For example, start a julia REPL (not in VS Code[^vscode]),
 change directories to your analysis repo,
 activate the environment, then load your bioinformatics package.
 
 ```julia
 julia> cd("repos/CoVAnalysis")
 
-@v1.4> activate .
+@v1.6> activate .
 
 julia> using BioinformaticsBISC195
 ```
@@ -216,7 +216,7 @@ but the algorithms for aligning sequences are a bit beyond the scope of this cou
 
 Instead, we can do a quick-and-dirty analysis
 by comparing the unique kmers in a sequence.
-Look back to [Assignment04](@ref assignment04),
+Look back to [Assignment04](/assignments/Assignment04),
 where you created a function to count the kmers in a sequence.
 
 ## Unique kmers
@@ -350,4 +350,4 @@ to learn something about the evolution of SARS-related coronaviruses.
 - [ ] Unique kmer function that discards kmers with ambiguous bases
 - [ ] Kmer set distance function that returns a distance metric
 
-[1]: The Julia language extension of VS Code loads `Revise.jl` automatically if you have it installed
+[^vscode]: The Julia language extension of VS Code loads `Revise.jl` automatically if you have it installed

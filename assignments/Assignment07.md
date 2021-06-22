@@ -1,8 +1,9 @@
 +++
 number = 7
-title = "Getting set up"
-release = Date(2021, 06, 21)
-due_date = Date(2021,06,29)
+title = "Now for something completely different"
+release = Date(2021, 06, 28)
+due_date = Date(2021,07,2)
+classroom = "FR7wld34"
 +++
 
 {{assignment_preamble}}
@@ -22,7 +23,7 @@ so read on.
 Let's take a look at it from the command line.
 
 1. Change your current working directory to the assignment directory.
-2. List the contents of the directory (take a look back at [Lesson 1](@ref lesson01)
+2. List the contents of the directory (take a look back at [Lesson 1](/lessons/Lesson01)
    if you don't remember how).
 
    In the main directory, you should see (among other things)
@@ -40,7 +41,7 @@ Let's take a look at it from the command line.
    version = "0.1.0"
    
    [compat]
-   julia = "1.4"
+   julia = "1.6"
    ```
 
    This file is written in a format called `toml`
@@ -55,10 +56,17 @@ Let's take a look at it from the command line.
    and activate the project
 
    ```julia
-   (@v1.4) pkg> activate .
+   (@v1.6) pkg> activate .
    Activating environment at `~/repos/courses/assignment07/Project.toml`
    
    (Assignment07) pkg>
+   ```
+
+   Now add the package `BioSequences.jl` - a package that contains
+   a lot of useful functionality for dealing with biological sequences.
+
+   ```julia
+   (Assignment07) add BioSequences
    ```
 
    Now, look at `Project.toml` again -
@@ -94,7 +102,7 @@ end
 A `module` is a container for code that can be called with `using`.
 You can define a module right in your REPL:
 
-```julia
+```julia-repl
 julia> module MyModule
 
        function somefunction()
@@ -116,7 +124,7 @@ by typing `MyModule.somefunction()`.
 In order to make the function available
 without specifying its module, the module must `export` it.
 
-```julia
+```julia-repl
 julia> module MyModule
 
        export somefunction,
@@ -185,7 +193,6 @@ in your previous assignments,
 and the module file of `BioSequences` linked above.
 They all follow this pattern.
 @@
-
 
 Write and export the following functions in the `Assignment07` module.
 You may copy as much code as you like from previous assignments,
@@ -261,13 +268,12 @@ you must do an "import": `import BioSequences: composition`
 @@title
 Tip
 @@
+This may be true for some other functions too...
+read the documentation,
+be sure that your functions meet the specifications.
+To use `import` on multiple functions, separate them by commas:
 
-        This may be true for some other functions too...
-        read the documentation,
-        be sure that your functions meet the specifications.
-        To use `import` on multiple functions, separate them by commas:
-
-        Eg. `import PackageA: func1, func2`
+Eg. `import PackageA: func1, func2`
 @@
 @@
 
@@ -301,6 +307,9 @@ but extra bonus if you can accommodate `String`s as well.
    except that it should accomodate ambiguous bases
    (the complement of `N` is `N`),
    and should work on `String`s rather than `Char`.
+
+   Note: Depending on when you accepted Assignment 5,
+   you might need to change the spelling from `compliment`.
 
 @@colbox-green
 @@title
@@ -375,11 +384,6 @@ julia> complement("ATTAGC")
 
    ```julia
    julia> ex1 = parse_fasta("data/ex1.fasta");
-
-   julia> ex1[1]]
-   ERROR: syntax: extra token "]" after end of expression
-   Stacktrace:
-    [1] top-level scope at REPL[6]:1
    
    julia> ex1[1]
    2-element Array{String,1}:

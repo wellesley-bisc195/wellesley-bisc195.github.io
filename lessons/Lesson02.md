@@ -430,7 +430,7 @@ and this section will get you acquaninted with a couple of them.
 
 ### The julia REPL
 
-Open julia, which you [should have installed](@ref install_julia)
+Open julia, which you should have installed
 in the [first lesson](../lessons/Lesson01/#install_julia).
 
 Your terminal application should open, running julia:

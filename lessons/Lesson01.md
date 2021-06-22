@@ -558,7 +558,7 @@ This is a signal that you should replace that text
 with the appropriate value.
 @@
 
-### [Create and explore directories and files](@id directories-and-files)
+### Create and explore directories and files
 
 ```sh
 $ mkdir ~/Documents/bisc195
@@ -1014,7 +1014,7 @@ bisc195 $
 
 ## More info on loops
 
-Here's some more information about the loop you [ran earlier](@ref directories-and-files),
+Here's some more information about the loop you [ran earlier](#create_and_explore_directories_and_files),
 but at least for now,
 it's not necessary to understand it.
 The code

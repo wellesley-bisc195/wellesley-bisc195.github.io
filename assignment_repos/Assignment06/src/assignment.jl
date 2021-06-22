@@ -188,7 +188,7 @@ end
 #    Make sure each expression does what you think it does.
 #    
 #    For example, if you make a `for` loop to go through each line of the file,
-#    add `println()` statements to check the value of each variable
+#    add `@info` statements to check the value of each variable
 #    in each loop.
 
 # ## Question 4 - Sequence Statistics

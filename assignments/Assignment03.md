@@ -83,12 +83,12 @@ of your functions without needing to run the entire file each time you make a ch
 Tip
 @@
 
-    Sometimes, you can confuse yourself by running things out of order.
-    For example, let's say I write,
+Sometimes, you can confuse yourself by running things out of order.
+For example, let's say I write,
 
 ```julia
 function hello(x)
-    println("Hello, $(x)!")
+println("Hello, $(x)!")
 end
 
 s = "Students"
@@ -98,18 +98,18 @@ hello(s)
 hello(t)
 ```
 
-    And then execute the whole thing in VS code.
-    Later on, I decide I don't need to say hello to the Tutors
-    so I delete the line `t = "Tutors"`,
-    but forget to delete `hello(t)`. 
+And then execute the whole thing in VS code.
+Later on, I decide I don't need to say hello to the Tutors
+so I delete the line `t = "Tutors"`,
+but forget to delete `hello(t)`. 
 
-    As I continue to run the code in the same julia session,
-    there are no problems because,
-    even though I deleted `t = "Tutors"`,
-    there's no way to unassign `a` - it's still defined.
-    But, if I come back later and try to run the file in a new julia session,
-    I will get an `UndefinedVariableError`
-    when the program tries to execute `hello(t)`.
+As I continue to run the code in the same julia session,
+there are no problems because,
+even though I deleted `t = "Tutors"`,
+there's no way to unassign `a` - it's still defined.
+But, if I come back later and try to run the file in a new julia session,
+I will get an `UndefinedVariableError`
+when the program tries to execute `hello(t)`.
 @@
 
 {{literate_assignment 3}}

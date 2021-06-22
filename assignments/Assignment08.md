@@ -1,8 +1,8 @@
 +++
 number = 8
 title = "Getting set up"
-release = Date(2021, 06, 23)
-due_date = Date(2021,07,2)
+release = Date(2021,07,1)
+due_date = Date(2021,07,6)
 +++
 
 {{assignment_preamble}}
@@ -26,20 +26,19 @@ which Kevin will add to your github repo once you've created it and shared it wi
 
 ## Wrapping up Assignment07 Package
 
-In the [previous assignment](@ref assignment07),
+In the [previous assignment](/assignments/Assignment07),
 we created a julia package that you're going to be re-using
 for the rest of the course.
 But it doesn't have a very good name,
-and at the moment, your assignments are in private repos, 
+and at the moment, your assignments are in private repos,
 which makes some stuff (like using it for automated tests) harder.
 
 @@colbox-orange
 @@title
-
+Warning
 @@
-
-    Before continuing, make sure that you've successfully completed
-    assignment 7 and all of the tests are passing
+Before continuing, make sure that you've successfully completed
+assignment 7 and all of the tests are passing
 @@
 
 First, let's make a new, public home for your bioinformatics package.
@@ -102,7 +101,7 @@ separate from code that is used for one specific purpose.
    then enter `git init` to make this into a git repository.
 2. On github, create a new repository, copy its url,
    and use `git remote add` to set this as `origin`
-   (refer [back to lesson 1](@ref git-version-control) if you need
+   (refer [back to lesson 2](/lessons/Lesson02)) if you need
    a reminder about how these commands work).
 
    ```sh
@@ -242,7 +241,7 @@ Add and commit the `Project.toml` and `Manifest.toml` files,
 In the `notebooks/1-sequence-stats.md` file,
 write julia code to calculate the mean and standard deviation
 of the lengths and gc content of your coronavirus genomes,
-as you did in [Assignment 6](@ref assignment06).
+as you did in [Assignment 6](/assignments/Assignment06).
 Include a title (with header format)
 and a description of what your code is doing. 
 

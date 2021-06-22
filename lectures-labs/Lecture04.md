@@ -68,7 +68,7 @@ $ git checkout lab4-branch
 ### Intro to Matrix - a 2D array
 
 A matrix is a 2 dimensional "array" -
-you'll learn more about arrays in [Lesson 6](/lessons/Lesson05),
+you'll learn more about arrays in [Lesson 6](/lessons/Lesson06),
 but for now, think of it like a table in excel or google sheets
 with rows and columns.
 

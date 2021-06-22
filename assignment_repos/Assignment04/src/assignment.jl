@@ -24,7 +24,7 @@
 # But first, let's write a "helper" function
 # that does some work to make sure that sequences
 # are normalized into a particular form.
-# In particular, we'll make sure they're allways uppercase,
+# In particular, we'll make sure they're always uppercase,
 # are `String`s rather than `Char`s,
 # and don't contain any invalid bases.
 # Note: you can convert a `Char` to a `String` with `string(c)`.
@@ -58,8 +58,8 @@ Examples
     String
 """
 function normalizeDNA(sequence)
-    # 1. make sequence into a String
-    # 2. make sequence uppercase
+    ## 1. make sequence into a String
+    ## 2. make sequence uppercase
 
     for base in sequence
         if !occursin(base, "ACGT")
@@ -67,7 +67,7 @@ function normalizeDNA(sequence)
         end
     end
 
-    # return the normalized sequence
+    ## return the normalized sequence
 end
 
 # ### Question 2
@@ -111,7 +111,7 @@ function basecomposition(sequence)
     a = c = g = t = 0 # sets all 4 variables to `0`
 
     for base in sequence
-        # add 1 to each base as it occurs
+        ## add 1 to each base as it occurs
     end
     
     return a,c,g,t
@@ -150,9 +150,9 @@ Examples
     Error: Invalid base Y encountered
 """
 function gc_content(sequence)
-    # Be sure to use `basecomposition()` in your answer.
-    # Note: Since `basecomposition()` already calls `normalizeDNA`,
-    # there's no need to call it here.
+    ## Be sure to use `basecomposition()` in your answer.
+    ## Note: Since `basecomposition()` already calls `normalizeDNA`,
+    ## there's no need to call it here.
 end
 
 # ## Kmer Composition
@@ -211,18 +211,18 @@ function  kmercount(sequence, k)
     1 <= k <= length(sequence) || error("k must be a positive integer less than the length of the sequence")
     kmers = Dict() # initialize dictionary
     
-    # We're going to loop through the string with numerical index,
-    # each time grabbing the bases at position i through i+k-1.
-    # What is the last index that we should search?    
+    ## We're going to loop through the string with numerical index,
+    ## each time grabbing the bases at position i through i+k-1.
+    ## What is the last index that we should search?    
     stopindex = 0
 
     for i in 1:stopindex
         kmer = "" # Change to index the sequence from i to i+k-1
         kmer = normalizeDNA(kmer) 
-        #   if this kmer is a key the dictionary
-        #       add 1 to the value referenced by that kmer
-        #   otherwise
-        #       make a new entry in the dictionary with a value of 1
+        ##   if this kmer is a key the dictionary
+        ##       add 1 to the value referenced by that kmer
+        ##   otherwise
+        ##       make a new entry in the dictionary with a value of 1
 
     end
     return kmers

@@ -27,7 +27,7 @@ to wrap up code that can then be used over and over and over and...
 
 But there are plenty more opportunities for re-using code,
 especially "loops."
-In the 🐢exercise from [Chapter 4](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04)
+In the 🐢 exercise from [Chapter 4](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html#chap04)
 you've seen one use of the `for` loop.
 
 ```julia

@@ -1,8 +1,8 @@
 +++
 number = 8
-title = "Putting it all together"
+title = "Using Code for Data Analysis"
 date = Date(2021,7,2)
-release = Date(2021,6,21)   
+release = Date(2021,6,27)   
 chapters = [15,16]
 assignments = [8]
 skills = []
@@ -186,7 +186,7 @@ end
 
 ### Use notebooks for analysis
 
-[Assignment08](@ref assignment08) has 2 parts -
+[Assignment08](/assignments/Assignment08) has 2 parts -
 one where you continue to develop your bioinformatics
 analysis package from Lesson 7,
 and another where you use this code to do some analysis
@@ -197,6 +197,6 @@ it probably doesn't make sense to use the same workflow for both.
 For one, there's no need to wrap the analysis code into a package.
 
 But just like you should keep a lab notebook to record the results of experiments,
-it's important to keep track of the code you write 
+it's important to keep track of the code you write
 and the results that you get.
 To do this, we can use markdown files.

@@ -4,4 +4,4 @@ authors = ["Kevin Bonham, PhD <kbonham@wellesley.edu>"]
 version = "0.1.0"
 
 [compat]
-julia = "1.4"
+julia = "1.6"

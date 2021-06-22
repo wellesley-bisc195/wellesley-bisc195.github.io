@@ -1,1 +1,1 @@
-# Assignment 07 - Building a package
+# Assignment 07 - Now for something completely different

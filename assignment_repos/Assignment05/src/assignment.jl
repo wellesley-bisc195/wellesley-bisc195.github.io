@@ -117,7 +117,7 @@ Examples
     Error: Cannot compare sequuences of different length
 """
 function isreversecomplement(seq1, seq2)
-    # your code here
+    ## your code here
 end
 
 # ## Question 3
@@ -170,7 +170,7 @@ Examples
     CCCAA
 """
 function reverse_complement(sequence)
-    # your code here
+    ## your code here
 end
 
 # ## Question 4a
@@ -237,9 +237,9 @@ Example
       "TAT"
 """
 function find_dna(file)
-    # 1. You probably want to make an empty array
+    ## 1. You probably want to make an empty array
     
     for line in eachline(file)
-        # if the line is valid dna, put it in the array
+        ## if the line is valid dna, put it in the array
     end
 end
