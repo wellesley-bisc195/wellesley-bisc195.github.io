@@ -86,6 +86,12 @@
     <priority>0.5</priority>
 </url>
 <url>
+    <loc>http://bisc195.wellesley.edu/lectures-labs/Lecture05/index.html</loc>
+    <lastmod>2021-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
     <loc>http://bisc195.wellesley.edu/assignments/index.html</loc>
     <lastmod>0001-01-01</lastmod>
     <changefreq>monthly</changefreq>
