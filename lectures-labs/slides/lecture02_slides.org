@@ -1,0 +1,31 @@
+#+TITLE: Why the terminal?
+#+AUTHOR: Kevin Bonham, PhD
+
+* Introducing Clara Kim
+ - tk2@wellesley.edu (she's in Zulip chat too @**Clara Kim**
+ - Summer session tutor - ask her to help!
+   + OK to share assignment code with her
+   + She doesn' report to me
+* Reasons to use the terminal
+- many bioinformatics tools are only usable via "Command Line Interfaces" (CLIs)
+- Many biological file types are enormous and will break your GUI application
+- Most “big data” or “-omics” type of analysis must be done on High-performance clusters (HPCs), most of which run headless linux
+- Concepts needed for effective terminal use (eg paths) are useful / necessary in all kinds of programming
+- It’s fun! (no, really)
+- Once you’re over the learning curve, many common tasks are easier
+* Terminal gotchas
+** Terminal gotcha #1 - no mouse
+**Solutions**
+- use arrow keys
+  + =alt + ←= and =alt + →= (Mac) or =ctrl + ←= and =ctrl + →= (Linux/Windows) can move whole words at a time
+- Some useful shortcuts:
+- =ctrl + a= : jump to beginning of line
+- =ctrl + e= : jump to end of line
+- =ctrl + u= : delete from cursor to beginning of line
+- =ctrl + k= : delete from cursor to end of line
+** Terminal gotcha #2 - less visual
+- use =ls=, =pwd=, =git status= etc. frequently to keep track of where you are
+- Use =TAB= for completions
+
+* Handy terminal tricks
+* Customizing your terminal

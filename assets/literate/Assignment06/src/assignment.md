@@ -20,7 +20,7 @@ This is a very simple format, where each "record" (sequence) contains:
 For example, in the `data/` directory of this assignment,
 there is a file called `cov2_genomes.fasta`,
 which contains some genome sequences of Sars-CoV2
-isolated from humans in the last month.
+isolated from humans early in the pandemic.
 Use the shell to take a look at the first 10 lines (`head`)
 of the file.
 
