@@ -422,12 +422,12 @@ $\sum{counts_{seq}} = |seq| - k + 1$
 
 @@colbox-orange
 @@title
- "Checking questions"
+"Checking questions"
 @@
 1. How many 4mers are in the sequence "ATTCCGTCA"
     (the length of the sequence is 9)
 2. All of the 4mers in the above sequence are unique.
-    What are they? 
+    What are they?
     Answer below[^ans], but don't peek until you've tried it!
 @@
 
@@ -459,11 +459,11 @@ where each amino acid might be one of 20 options,
 or for kmers where the number of possibilities
 increases exponentially with `k`
 (there are 16 possible DNA 2mers, 64 possible DNA 3mers, etc)
-that would be untenable. 
+that would be untenable.
 
 Another option is to use a data structure called a "Dictionary."
 What follows is a very brief introduction to dictionaries,
-we'll learn more about them next week. 
+we'll learn more about them next week.
 
 Dictionaries store data as `key => value` pairs,
 where the `key` can be (almost) any type and is used to access
@@ -491,7 +491,7 @@ julia> my_dict["strawberries"] * 2
 ```
 
 We can check if a dictionary has a particular key
-with the boolean function `haskey()`. 
+with the boolean function `haskey()`.
 
 ```julia-repl
 julia> haskey(my_dict, "apples")
