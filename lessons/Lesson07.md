@@ -3,7 +3,7 @@ number = 7
 title = "Miscellany"
 date = Date(2021,06,29)
 chapters = [9,14]
-assignments = [7]
+assignments = [6]
 concepts = [
    "Compare and contrast plain text and binary file formats",
    "Select the best data structure for different types of data"
@@ -15,6 +15,7 @@ skills = [
 +++
 
 {{lesson_preamble}}
+
 ## Beyond `Base` - Statistics
 
 All of the functionality we've used thus far

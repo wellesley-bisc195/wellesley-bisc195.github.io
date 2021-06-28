@@ -1,7 +1,7 @@
 +++
 number = 7
 title = "Now for something completely different"
-release = Date(2021, 06, 28)
+release = Date(2021, 06, 29)
 due_date = Date(2021,07,2)
 classroom = "FR7wld34"
 +++
@@ -34,15 +34,15 @@ Let's take a look at it from the command line.
 3. Look at the contents of `Project.toml`
    (do you remember how to do this from the command line?).
 
-   ```toml
-   name = "Assignment07"
-   uuid = "67893044-1481-44cf-8ab6-de350e09ee4e"
-   authors = ["Kevin Bonham, PhD <kbonham@wellesley.edu>"]
-   version = "0.1.0"
-   
-   [compat]
-   julia = "1.6"
-   ```
+```toml
+name = "Assignment07"
+uuid = "67893044-1481-44cf-8ab6-de350e09ee4e"
+authors = ["Kevin Bonham, PhD <kbonham@wellesley.edu>"]
+version = "0.1.0"
+
+[compat]
+julia = "1.6"
+```
 
    This file is written in a format called `toml`
    (for [Tom's obvious, minimal language](https://en.wikipedia.org/wiki/TOML)).
@@ -120,7 +120,7 @@ Hi! I'm a function in MyModule
 
 Note that `somefunction()` is not available by itself,
 you need to tell julia that it's found in `MyModule`
-by typing `MyModule.somefunction()`. 
+by typing `MyModule.somefunction()`.
 In order to make the function available
 without specifying its module, the module must `export` it.
 
@@ -311,11 +311,21 @@ but extra bonus if you can accommodate `String`s as well.
    Note: Depending on when you accepted Assignment 5,
    you might need to change the spelling from `compliment`.
 
+   Examples:
+   
+```julia
+julia> complement("ATTN")
+"TAAN"
+
+julia> complement("ATTAGC")
+"TAATCG"
+```
+
 @@colbox-green
 @@title
 Tip
 @@
-In julia, you can write functions with the same name for different types.
+As we've seen, in julia, you can write functions with the same name for different types.
 These different versions are called the "methods" of the function.
 
 For example, you could define one version of `complement` that works on `Char`,
@@ -344,17 +354,8 @@ julia> complement('C')
 julia> complement("ABC")
 string version!
 ```
-
-Examples:
-
-```julia
-julia> complement("ATTN")
-"TAAN"
-
-julia> complement("ATTAGC")
-"TAATCG"
-```
 @@
+
 
 3. `reverse_complement(sequence)`:
    Exactly like `reverse_complement()` from Assignment 5,
@@ -363,13 +364,13 @@ julia> complement("ATTAGC")
 
    Examples:
 
-   ```julia
-   julia> reverse_complement("ATTAGC")
-   "GCTAAT"
-   
-   julia> reverse_complement("ATN")
-   "NAT"
-   ```
+```julia
+julia> reverse_complement("ATTAGC")
+"GCTAAT"
+
+julia> reverse_complement("ATN")
+"NAT"
+```
 
 4. `parse_fasta(path)`:
    Similar to `parse_fasta()` from Assignment 6,
@@ -382,22 +383,22 @@ julia> complement("ATTAGC")
 
    Examples:
 
-   ```julia
-   julia> ex1 = parse_fasta("data/ex1.fasta");
-   
-   julia> ex1[1]
-   2-element Array{String,1}:
-    "ex1.1 | easy"
-    "ex1.2 | multiline"
-   
-   julia> ex1[2]
-   2-element Array{String,1}:
-    "AATTATAGC"
-    "CGCCCCCCAGTCGGATT"
-   
-   julia> ex2 = parse_fasta("data/ex2.fasta");
-   ERROR: invalid base H
-   ```
+```julia
+julia> ex1 = parse_fasta("data/ex1.fasta");
+
+julia> ex1[1]
+2-element Array{String,1}:
+   "ex1.1 | easy"
+   "ex1.2 | multiline"
+
+julia> ex1[2]
+2-element Array{String,1}:
+   "AATTATAGC"
+   "CGCCCCCCAGTCGGATT"
+
+julia> ex2 = parse_fasta("data/ex2.fasta");
+ERROR: invalid base H
+```
 
 @@colbox-orange
 @@title

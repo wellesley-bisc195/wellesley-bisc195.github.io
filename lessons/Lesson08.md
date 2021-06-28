@@ -4,7 +4,7 @@ title = "Using Code for Data Analysis"
 date = Date(2021,7,2)
 release = Date(2021,6,27)   
 chapters = [15,16]
-assignments = [8]
+assignments = [7]
 skills = []
 concepts = []
 +++
