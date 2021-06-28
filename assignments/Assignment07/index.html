@@ -1,10 +1,10 @@
 <!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Now for something completely different</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hrefassignmentsassignment07assignment_7_-_now_for_something_completely_different ><a href="#a_hrefassignmentsassignment07assignment_7_-_now_for_something_completely_different" class=header-anchor ><a href="/assignments/Assignment07">Assignment 7 - Now for something completely different</a></a></h1> <div class=badges ><a href="https://classroom.github.com/a/FR7wld34"><img src="https://img.shields.io/badge/Github&#37;20-7-darkblue?style&#61;for-the-badge" alt=assignment7link  /></a> <img src="https://img.shields.io/badge/Due-2021--07--02-red?style&#61;for-the-badge" alt=assignment7due  /></div> <h2 id=instructions ><a href="#instructions" class=header-anchor >Instructions</a></h2> <p>Click the assignment 7 invitation above and clone the repository. This assignment is going to be a bit different than assignments in the past, so read on.</p> <h3 id=building_a_package ><a href="#building_a_package" class=header-anchor >Building a package</a></h3> <p><code>Assignment07</code> is a julia package &#40;actually, all of your assignments have been julia packages&#41;. Let&#39;s take a look at it from the command line.</p> <ol> <li><p>Change your current working directory to the assignment directory.</p> <li><p>List the contents of the directory &#40;take a look back at <a href="/lessons/Lesson01">Lesson 1</a> if you don&#39;t remember how&#41;.</p> <p>In the main directory, you should see &#40;among other things&#41; the <code>src/</code> directory, which contains the main project code, the <code>test/</code> directory, which contains the automated tests, and the <code>Project.toml</code> file, which describes the properties of the package.</p> <li><p>Look at the contents of <code>Project.toml</code> &#40;do you remember how to do this from the command line?&#41;.</p> </ol> <pre><code class=language-toml >name &#61; &quot;Assignment07&quot;
-   uuid &#61; &quot;67893044-1481-44cf-8ab6-de350e09ee4e&quot;
-   authors &#61; &#91;&quot;Kevin Bonham, PhD &lt;kbonham@wellesley.edu&gt;&quot;&#93;
-   version &#61; &quot;0.1.0&quot;
-   
-   &#91;compat&#93;
-   julia &#61; &quot;1.6&quot;</code></pre> <p>This file is written in a format called <code>toml</code> &#40;for <a href="https://en.wikipedia.org/wiki/TOML">Tom&#39;s obvious, minimal language</a>&#41;. It&#39;s not julia code, but it has some similar features.</p> <p>Open the file in VS Code, and add your name to the list of <code>authors</code>. Arrays in <code>toml</code> files have the same syntax as in <code>julia</code></p> <ol start=4 > <li><p>Open a julia REPL, and set the working directory <code>Assignment07-&lt;username&gt;/</code> Open the Pkg REPL prompt &#40;with <code>&#93;</code>&#41;, and activate the project</p> </ol> <pre><code class=language-julia >&#40;@v1.6&#41; pkg&gt; activate .
+uuid &#61; &quot;67893044-1481-44cf-8ab6-de350e09ee4e&quot;
+authors &#61; &#91;&quot;Kevin Bonham, PhD &lt;kbonham@wellesley.edu&gt;&quot;&#93;
+version &#61; &quot;0.1.0&quot;
+
+&#91;compat&#93;
+julia &#61; &quot;1.6&quot;</code></pre> <p>This file is written in a format called <code>toml</code> &#40;for <a href="https://en.wikipedia.org/wiki/TOML">Tom&#39;s obvious, minimal language</a>&#41;. It&#39;s not julia code, but it has some similar features.</p> <p>Open the file in VS Code, and add your name to the list of <code>authors</code>. Arrays in <code>toml</code> files have the same syntax as in <code>julia</code></p> <ol start=4 > <li><p>Open a julia REPL, and set the working directory <code>Assignment07-&lt;username&gt;/</code> Open the Pkg REPL prompt &#40;with <code>&#93;</code>&#41;, and activate the project</p> </ol> <pre><code class=language-julia >&#40;@v1.6&#41; pkg&gt; activate .
    Activating environment at &#96;~/repos/courses/assignment07/Project.toml&#96;
    
    &#40;Assignment07&#41; pkg&gt;</code></pre> <p>Now add the package <code>BioSequences.jl</code> - a package that contains a lot of useful functionality for dealing with biological sequences.</p> <pre><code class=language-julia >&#40;Assignment07&#41; add BioSequences</code></pre>
@@ -35,7 +35,7 @@ julia&gt; using .MyModule # the leading &#96;.&#96; is necessary for modules tha
 
 julia&gt; MyModule.somefunction&#40;&#41;
 Hi&#33; I&#39;m a function in MyModule</code></pre>
-<p>Note that <code>somefunction&#40;&#41;</code> is not available by itself, you need to tell julia that it&#39;s found in <code>MyModule</code> by typing <code>MyModule.somefunction&#40;&#41;</code>.  In order to make the function available without specifying its module, the module must <code>export</code> it.</p>
+<p>Note that <code>somefunction&#40;&#41;</code> is not available by itself, you need to tell julia that it&#39;s found in <code>MyModule</code> by typing <code>MyModule.somefunction&#40;&#41;</code>. In order to make the function available without specifying its module, the module must <code>export</code> it.</p>
 <pre><code class=language-julia-repl >julia&gt; module MyModule
 
        export somefunction,
@@ -136,10 +136,16 @@ julia&gt; d&#91;DNA_T&#93;
 <ol start=2 >
 <li><p><code>complement&#40;sequence&#41;</code>: Like <code>complement&#40;&#41;</code> from Assignment 5, except that it should accomodate ambiguous bases &#40;the complement of <code>N</code> is <code>N</code>&#41;, and should work on <code>String</code>s rather than <code>Char</code>.</p>
 <p>Note: Depending on when you accepted Assignment 5, you might need to change the spelling from <code>compliment</code>.</p>
+<p>Examples:</p>
 
 </ol>
+<pre><code class=language-julia >julia&gt; complement&#40;&quot;ATTN&quot;&#41;
+&quot;TAAN&quot;
+
+julia&gt; complement&#40;&quot;ATTAGC&quot;&#41;
+&quot;TAATCG&quot;</code></pre>
 <div class=colbox-green ><div class=title >Tip</div>
-<p>In julia, you can write functions with the same name for different types. These different versions are called the &quot;methods&quot; of the function.</p>
+<p>As we&#39;ve seen, in julia, you can write functions with the same name for different types. These different versions are called the &quot;methods&quot; of the function.</p>
 <p>For example, you could define one version of <code>complement</code> that works on <code>Char</code>, and a different one that works on <code>String</code>s.</p>
 <pre><code class=language-julia >julia&gt; function complement&#40;base::Char&#41;
          comp &#61; Dict&#40;&#39;A&#39;&#61;&gt;&#39;T&#39;,
@@ -161,23 +167,17 @@ julia&gt; complement&#40;&#39;C&#39;&#41;
 &#39;G&#39;: ASCII/Unicode U&#43;0047 &#40;category Lu: Letter, uppercase&#41;
 
 julia&gt; complement&#40;&quot;ABC&quot;&#41;
-string version&#33;</code></pre>
-<p>Examples:</p>
-<pre><code class=language-julia >julia&gt; complement&#40;&quot;ATTN&quot;&#41;
-&quot;TAAN&quot;
-
-julia&gt; complement&#40;&quot;ATTAGC&quot;&#41;
-&quot;TAATCG&quot;</code></pre></div>
+string version&#33;</code></pre></div>
 <ol start=3 >
 <li><p><code>reverse_complement&#40;sequence&#41;</code>: Exactly like <code>reverse_complement&#40;&#41;</code> from Assignment 5, except that it should accomodate ambiguous bases &#40;the complement of <code>N</code> is <code>N</code>&#41;.</p>
 <p>Examples:</p>
 
 </ol>
 <pre><code class=language-julia >julia&gt; reverse_complement&#40;&quot;ATTAGC&quot;&#41;
-   &quot;GCTAAT&quot;
-   
-   julia&gt; reverse_complement&#40;&quot;ATN&quot;&#41;
-   &quot;NAT&quot;</code></pre>
+&quot;GCTAAT&quot;
+
+julia&gt; reverse_complement&#40;&quot;ATN&quot;&#41;
+&quot;NAT&quot;</code></pre>
 <ol start=4 >
 <li><p><code>parse_fasta&#40;path&#41;</code>: Similar to <code>parse_fasta&#40;&#41;</code> from Assignment 6, with a few changes:</p>
 <ul>
@@ -190,25 +190,25 @@ julia&gt; complement&#40;&quot;ATTAGC&quot;&#41;
 
 </ol>
 <pre><code class=language-julia >julia&gt; ex1 &#61; parse_fasta&#40;&quot;data/ex1.fasta&quot;&#41;;
-   
-   julia&gt; ex1&#91;1&#93;
-   2-element Array&#123;String,1&#125;:
-    &quot;ex1.1 | easy&quot;
-    &quot;ex1.2 | multiline&quot;
-   
-   julia&gt; ex1&#91;2&#93;
-   2-element Array&#123;String,1&#125;:
-    &quot;AATTATAGC&quot;
-    &quot;CGCCCCCCAGTCGGATT&quot;
-   
-   julia&gt; ex2 &#61; parse_fasta&#40;&quot;data/ex2.fasta&quot;&#41;;
-   ERROR: invalid base H</code></pre>
+
+julia&gt; ex1&#91;1&#93;
+2-element Array&#123;String,1&#125;:
+   &quot;ex1.1 | easy&quot;
+   &quot;ex1.2 | multiline&quot;
+
+julia&gt; ex1&#91;2&#93;
+2-element Array&#123;String,1&#125;:
+   &quot;AATTATAGC&quot;
+   &quot;CGCCCCCCAGTCGGATT&quot;
+
+julia&gt; ex2 &#61; parse_fasta&#40;&quot;data/ex2.fasta&quot;&#41;;
+ERROR: invalid base H</code></pre>
 <div class=colbox-orange ><div class=title >Bonus Challenge</div>
 <p>If you want an extra extra challenge, try using the <code>FASTX.jl</code> package to parse fasta files for you.</p>
 <p>If you&#39;re writing your own, be sure that the sequences stored in your array have the type <code>LongSequence</code> and not String.</p></div>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Kevin Bonham, PhD. Last modified: June 25, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Kevin Bonham, PhD. Last modified: June 28, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div>
