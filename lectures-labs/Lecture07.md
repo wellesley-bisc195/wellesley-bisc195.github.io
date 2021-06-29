@@ -1,21 +1,16 @@
 +++
 number = 7
-title = ""
+title = "Finishing alignments"
 date = Date(2021, 06, 29)
-
 +++
 
 {{lecture_preamble}}
 
-## Completing Needleman-Wunsch
+## Completing Needleman-Wunsch and Smith-Waterman aligners
 
 We now need to add one more component to our scoring algorithm -
 retracing the scoring steps to determine the alignment
-or alignments that lead to the best possible score.
-
-In the example above, there are 3 possible alignments that give the best score:
-those where `seq1` is `"AAATG"` and where `seq2` is either
-`"-AATG"`, `"A-ATG"`, or `"AA-TG"`.
+or alignments[^multiple] that lead to the best possible score.
 
 There are 2 ways to approach this:
 
@@ -26,14 +21,66 @@ There are 2 ways to approach this:
    and then return that information.
 
 There are merits and draw-backs to each approach.
-And I'll leave it to you to decide which route to follow.
-I'll give some pointers for both cases,
-but first we need to consider how we're going to keep track
-of the alignments that we're building.
 
-## Keeping track of a (potentially) ever-expanding group of alignments
+In this lab, you will
 
-Before you run a Needleman-Wunsch alighnment,
+1. Create a function that returns one best alignment from a NW alignment
+2. Create a function that returns one best alignment from a SW alignment
+3. Document your functions
+4. Write unit tests for your functions
+
+You will add your functions to the AlignmentAlgorithms package
+that we've been creating in the previous labs.
+
+[^multiple]: Note - many sequence pairs will have multiple "best" alignments. Initially, I was going to have you write functions that would return all of them, but after working for over an hour to do that myself, I decided that it was too much. If you'd like an additional challenge, you can try to do it too - there are some pointers written below - but you are only required to return **one** best alignment for this lab.
+
+### Steps 1 & 2 - Alignments
+
+As we've seen, we can generate a NW or SW scoring matrix
+from any pair of sequences.
+Now, your task is to return an alignment of those sequences.
+
+For NW, the alignment should be a global alignment,
+tracing the scoring matrix from the lower right,
+and containing all bases from both sequences.
+
+For SW, the alignment should be a local alignment,
+tracing back from the highest score in the matrix
+until the score reaches zero.
+
+In both cases, you should return a `Tuple` of `String`s,
+where the first item is the alignment of `seq1`,
+and the second is the alignment of `seq2`.
+You should represent gaps as a series of `-`.
+
+### Step 3 - Documentation strings
+
+Each of your functions should contain docstrings
+that show the function signature,
+explain what the function does,
+and has some examples of use.
+You may use your assignment repos as inspiration.
+
+### Step 4 - Unit tests
+
+Each of your functions should be tested on a variety of inputs,
+including different scoring systems.
+Test what happens when someone enters the wrong inputs
+(eg a `Char`, empty strings, `Float64` as scores),
+does it throw reasonable errors?
+
+### Keeping track of a (potentially) ever-expanding group of alignments
+
+@@colbox-orange
+@@title
+Bonus Challenge
+@@
+If you are interested in a little extra challenge,
+you may try to modify your functions to return multiple best alignments.
+You are **not** required to read beyond this point to complete this lab.
+@@
+
+Before you run a Needleman-Wunsch or Smith-Waterman alighnment,
 there's no way to know how many different alignments will be maximim scorers.
 For problems where you don't know the shape of the solution ahead of time,
 using a mutable container, like an array or a dictionary
@@ -208,55 +255,12 @@ Just keep in mind:
 2. You need to keep track of both sequence 1 and sequence 2
 3. At any time, your alignment might branch into 2 different possibilities.
 
-### Option 1: Re-tracing your steps
+#### Using custom types and recursion
 
-To follow this approch,
-consider the example given above again:
+Honestly, the best way to do this is probably to use custom types
+and / or recurssive functions.
 
-```julia-repl
-julia> nwscorematrix("AAATG", "AATG")
-6×5 Matrix{Int64}:
-  0  -1  -2  -3  -4
- -1   1   0  -1  -2
- -2   0   2   1   0
- -3  -1   1   1   0
- -4  -2   0   2   1
- -5  -3  -1   1   3
-```
-
-We'll always start from the lower right corner - in this case,
-the `3` at index `[6,5]`.
-
-Now, we can repeat the scoring in reverse:
-which cells could the `6` have come from?
-In this case, only the diagonal, so the last position in the alignment
-should correspond to `G` from `seq1` and `G` from `seq2`.
-
-It's the same for the `2` at `[5,4]` - it could only have come from the diagonal,
-so `T` and `T`.
-
-Now we have our first branch; the `1` at index `[4,3]`
-could be a gap score from `[3,3]`,
-or a match from `[3,2]`.
-In other words, our possible alignments so far are
-
-```
-ATG
--TG
-```
-
-and
-
-```
-ATG
-ATG
-```
-
-Now we need to keep track of and follow both branches...
-
-Keep in mind that before you step through the matrix,
-you cannot know how many different alignments are possible.
-Your function needs to do the following:
-
-1. Step backwards through the matrix from the lower left
-2. 
+In particular, recurssive functions are valuable
+when a problem has a tree-like structure, as this does.
+Both of these topics are really beyond the scope of the course,
+but if you'd like guidance on how to approach this, ask me!
