@@ -223,7 +223,7 @@ function hfun_lesson_preamble()
         # [Lesson $(lesson.number) - $(lesson.title)]($(getpath(lesson)))
         
         @@badges
-        $(date_badge(lesson)) {{Placeholder for slides}} $(join([join([assignment_badge(a), due_badge(a)], ' ') for a in Assignment.(lesson.assignments)], ' '))
+        $(date_badge(lesson)) $(join([join([assignment_badge(a), due_badge(a)], ' ') for a in Assignment.(lesson.assignments)], ' '))
         @@
         """, internal=true))
     

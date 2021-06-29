@@ -17,12 +17,12 @@ which Kevin will add to your github repo once you've created it and shared it wi
   - [ ] tests still passing
 - [ ] Analysis repo complete
   - [ ] README has heading 1 title and bold author line
-  - [ ] `Project.toml` with code repo, `Revise`, `DataFrames`, and `Plots` as dependencies
+  - [ ] `Project.toml` with code repo, `Pluto`, `PlutoUI`, `Revise`, `DataFrames`, and `Plots` as dependencies
   - [ ] `data/` directory with explanation for how to download data
     - [ ] `cov-sequences.fasta`
-  - [ ] `notebooks/` directory with `1-sequence-stats.md`
-    - [ ] Including code and description for calculating mean and standard deviations
-          for sequence length and gc content
+  - [ ] `notebooks/` directory with `1-sequence-stats.jl`
+    - [ ] Including code and description for calculating mean
+          and standard deviations  for sequence length and gc content
 
 ## Wrapping up Assignment07 Package
 
@@ -128,8 +128,7 @@ separate from code that is used for one specific purpose.
 6. Add a file called `data.md` to the `data/` directory -
    This is where we'll describe how to get the data that we're going to analyze,
    but you can leave it blank for now
-7. Add a file called `1-sequence-stats.md` to the `notebooks` directory.
-   Also ok to leave this file blank for now.
+7. Create a file in the `notebooks/` directory called `1-sequence-stats.jl`
 8. Commit and push your changes.
 
 At this point, you should have a git repo with the following structure:
@@ -139,7 +138,7 @@ At this point, you should have a git repo with the following structure:
 ├── data
 │   └── data.md
 ├── notebooks
-│   └── 1-sequence-stats.md
+│   └── 1-sequence-stats.jl
 └── README.md
 ```
 
@@ -160,21 +159,26 @@ and SARS-CoV2 (the virus that causes COVID19).
 
 Refine the search a bit by selecting only complete genomes
 (under "Nucleotide completeness").
-At the time I write this, there are just under 7300 such records,
-though there may be more by the time you search.
+When I wrote this assignment last year, there were just under 7300 such records.
+As I write this in 2021, there are over 360,000.
+There may be more when you search.
+
+To cut this number down a bit,
+restrict the number of ambiguous characters to 50,
+and only take genomes from Asia, South America, and Africa.
 
 The search parameters you enter are stored in the url.
 Copy the url and put it into your `data/data.md` file,
-explaining what it is.
+explaining what it is, and the date you did the search.
 It's always a good idea to keep track of where data comes from
 so that your work is reproducible by someone else.
 
-Click "download", make sure "FASTA Nucleotide" is selected,
-and download all records.
+Click "download", make sure "Nucleotide" under "Sequence data (FASTA format)
+is selected, and download all records.
 When it asks about the FASTA definition line (the header),
 build a custom header and be sure to include the Accession number
 (this is a unique identifier),
-the species, and the Geo location. 
+the species, the isolation source, and the Geo location.
 
 Download the sequences, and put them into your `data/` directory
 with a more descriptive name than `sequences.fasta`.
@@ -185,17 +189,15 @@ Be sure to describe what you did in `data/data.md`.
 Tip
 @@
 
-    Usually, it's not a good idea to add and commit large files
-    like genome sequences to the git repository,
-    especially if those files are likely to change often
-    (since `git` stores a record of all of the different versions). 
-   
-    In this case, our file is not going to change, and it's not **that** big,
-    so it's ok to commit it, but if you want to avoid commiting it,
-    and to make `git` forget about trying to track it,
-    you can create a file called `.gitignore` inside your repo,
-    and put `data/<filename>` in it.
-    Be sure to add and commit the `.gitignore` file!
+Usually, it's not a good idea to add and commit large files
+like genome sequences to the git repository,
+especially if those files are likely to change often
+(since `git` stores a record of all of the different versions).
+
+To avoid commiting it, and to make `git` forget about trying to track it,
+you can create a file called `.gitignore` inside your repo,
+and put `data/<filename>` in it.
+Be sure to add and commit the `.gitignore` file!
 @@
 
 ## Setting up julia project
@@ -213,7 +215,7 @@ to the bioinformatics project directory.
 For example, if it is in your `Documents/` directory,
 you might enter
 
-```
+```julia-repl
 pkg> dev /Users/<username>/Documents/BioinformaticsBISC195
 ```
 
@@ -221,29 +223,39 @@ pkg> dev /Users/<username>/Documents/BioinformaticsBISC195
 @@title
 Note
 @@
-
-    As with `$` in shell prompts, the `pkg>` is an indicator
-    that you should be using the Pkg REPL (accessible by pressing `]`),
-    and isn't part of the actual command.
+As with `$` in shell prompts, the `pkg>` is an indicator
+that you should be using the Pkg REPL (accessible by pressing `]`),
+and isn't part of the actual command.
 @@
 
 Once you've done this, you will be able to do `using BioinformaticsBISC195`
 in your julia code, as long as this julia project is active.
 
 In addition, use `add` to install the packages
-`Revise`, `Plots`, and `DataFrames`. 
+`Pluto`, `PlutoUI`, `Revise`, `Plots`, and `DataFrames` 
 We'll use those a bit more later.
 
 Add and commit the `Project.toml` and `Manifest.toml` files,
 
 ## Using the notebook
 
+There are many different paradigms for "code notebooks",
+such as [R markdown](https://rmarkdown.rstudio.com) and [Jupyter](https://jupyter.org).
+Most of these paradigms are available for julia code as well,
+but we're going to use a platform that's unique to julia - [Pluto.jl](https://www.youtube.com/watch?v=IAF8DjrQSSk) -
+which allows you to generate "reactive" notebooks.
+
+There are a few things different about a Pluto notebook
+than the code that you have tended to write until now,
+But before we see examples of that,
+let's get the pluto notebook up and running.
+
 In the `notebooks/1-sequence-stats.md` file,
 write julia code to calculate the mean and standard deviation
 of the lengths and gc content of your coronavirus genomes,
 as you did in [Assignment 6](/assignments/Assignment06).
 Include a title (with header format)
-and a description of what your code is doing. 
+and a description of what your code is doing.
 
 Remember, you can use the code you've written
 in your bioinformatics package just by doing `using <PackageName>`.
