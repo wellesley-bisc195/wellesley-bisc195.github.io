@@ -1,0 +1,104 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/poole_lanyon.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=stylesheet  href="/css/stackoverflow-light.css"> <link rel=icon  href="/assets/favicon.png"> <title>Finishing alignments</title> <input type=checkbox  class=sidebar-checkbox  id=sidebar-checkbox > <div class=sidebar  id=sidebar > <div class=sidebar-item > <p>A theme adapted from <a href="http://lanyon.getpoole.com/" target=_blank >Lanyon</a>.</p> </div> <nav class=sidebar-nav > <a class="sidebar-nav-item " href="/">Home</a> <a class="sidebar-nav-item " href="/syllabus/">Syllabus</a> <a class="sidebar-nav-item " href="/lessons/">Lessons</a> <a class="sidebar-nav-item " href="/lectures-labs/">Lectures & Labs</a> <a class="sidebar-nav-item " href="/assignments/">Assignments</a> </nav> <div class=sidebar-item > <p>&copy; Kevin Bonham, PhD.</p> </div> </div> <!-- Wrap is the content to shift when toggling the sidebar. We wrap the content to avoid any CSS collisions with our real content. --> <div class=wrap > <div class=masthead > <div class=container > <h3 class=masthead-title > <a href="/" title=Home >Wellesley College - BISC189</a> <small>Essential Skills for Computational Biology</small> </h3> </div> </div> <div class="container content"> <div class=franklin-content > <h1 id=a_hreflectures-labslecture07lecture_7_-_finishing_alignments ><a href="#a_hreflectures-labslecture07lecture_7_-_finishing_alignments" class=header-anchor ><a href="/lectures-labs/Lecture07">Lecture 7 - Finishing alignments</a></a></h1> <div class=badges ><img src="https://img.shields.io/badge/Date-2021--06--29-orange?style&#61;for-the-badge" alt=lesson7date  /> <a href="#"><img src="https://img.shields.io/badge/Slides-NA-blue?style&#61;for-the-badge" alt="Lecture7 slides" /></a></div> <h2 id=completing_needleman-wunsch_and_smith-waterman_aligners ><a href="#completing_needleman-wunsch_and_smith-waterman_aligners" class=header-anchor >Completing Needleman-Wunsch and Smith-Waterman aligners</a></h2> <p>We now need to add one more component to our scoring algorithm - retracing the scoring steps to determine the alignment or alignments<sup id="fnref:multiple"><a href="#fndef:multiple" class=fnref >[1]</a></sup> that lead to the best possible score.</p> <p>There are 2 ways to approach this:</p> <ol> <li><p>Loop back through a completed scoring matrix like the one above, and figure out where the score came from.</p> <li><p>Modify <code>nwscorematrix&#40;&#41;</code> to keep track of whether a given score came from a gap direction and/or the diagonal, and then return that information.</p> </ol> <p>There are merits and draw-backs to each approach.</p> <p>In this lab, you will</p> <ol> <li><p>Create a function that returns one best alignment from a NW alignment</p> <li><p>Create a function that returns one best alignment from a SW alignment</p> <li><p>Document your functions</p> <li><p>Write unit tests for your functions</p> </ol> <p>You will add your functions to the AlignmentAlgorithms package that we&#39;ve been creating in the previous labs.</p> <table class=fndef  id="fndef:multiple"> <tr> <td class=fndef-backref ><a href="#fnref:multiple">[1]</a> <td class=fndef-content >Note - many sequence pairs will have multiple &quot;best&quot; alignments. Initially, I was going to have you write functions that would return all of them, but after working for over an hour to do that myself, I decided that it was too much. If you&#39;d like an additional challenge, you can try to do it too - there are some pointers written below - but you are only required to return <strong>one</strong> best alignment for this lab. </table> <h3 id=steps_1_2_-_alignments ><a href="#steps_1_2_-_alignments" class=header-anchor >Steps 1 &amp; 2 - Alignments</a></h3> <p>As we&#39;ve seen, we can generate a NW or SW scoring matrix from any pair of sequences. Now, your task is to return an alignment of those sequences.</p> <p>For NW, the alignment should be a global alignment, tracing the scoring matrix from the lower right, and containing all bases from both sequences.</p> <p>For SW, the alignment should be a local alignment, tracing back from the highest score in the matrix until the score reaches zero.</p> <p>In both cases, you should return a <code>Tuple</code> of <code>String</code>s, where the first item is the alignment of <code>seq1</code>, and the second is the alignment of <code>seq2</code>. You should represent gaps as a series of <code>-</code>.</p> <h3 id=step_3_-_documentation_strings ><a href="#step_3_-_documentation_strings" class=header-anchor >Step 3 - Documentation strings</a></h3> <p>Each of your functions should contain docstrings that show the function signature, explain what the function does, and has some examples of use. You may use your assignment repos as inspiration.</p> <h3 id=step_4_-_unit_tests ><a href="#step_4_-_unit_tests" class=header-anchor >Step 4 - Unit tests</a></h3> <p>Each of your functions should be tested on a variety of inputs, including different scoring systems. Test what happens when someone enters the wrong inputs &#40;eg a <code>Char</code>, empty strings, <code>Float64</code> as scores&#41;, does it throw reasonable errors?</p> <h3 id=keeping_track_of_a_potentially_ever-expanding_group_of_alignments ><a href="#keeping_track_of_a_potentially_ever-expanding_group_of_alignments" class=header-anchor >Keeping track of a &#40;potentially&#41; ever-expanding group of alignments</a></h3> <div class=colbox-orange ><div class=title >Bonus Challenge</div> <p>If you are interested in a little extra challenge, you may try to modify your functions to return multiple best alignments. You are <strong>not</strong> required to read beyond this point to complete this lab.</p></div> <p>Before you run a Needleman-Wunsch or Smith-Waterman alighnment, there&#39;s no way to know how many different alignments will be maximim scorers. For problems where you don&#39;t know the shape of the solution ahead of time, using a mutable container, like an array or a dictionary is probably the right choice.</p> <p>In <a href="/assignments/Assignment05">Assignment05</a>, you used a dictionary to keep track of the counts of kmers as you encountered them. In this case, your keys could be indices of the matrix, and the values could be a vector of which indices they seed.</p> <p>Alternatively, you could use an array or groups of arrays. Did you know you can nest arrays inside arrays 😲?</p> <p>Here&#39;s an example of how I could build the alignments above, ignoring the details of scoring.</p> <div class=colbox-green ><div class=title >Tip</div> <p>You probably haven&#39;t seen the <code>vcat</code> function before, or you may not remember how it works if you have seen it. Use the help REPL to look at its docstring. Try out a couple of examples, and break down the following expressions in the REPL to see how they work.</p></div> <div class=colbox-orange ><div class=title >Warning</div> <p>The following code is overwhelming&#33; You&#39;ve just been introduced to arrays, and I&#39;m doing a bunch of crazy stuff with them.</p> <p>You are not expected to be able to read this and have it immediately make sense. Pull the code apart, run pieces of it. Try to modify it to do other things. Look at docstrings.</p></div> <pre><code class=language-julia-repl >julia&gt; alignments &#61; &#91;
+               &#91;&#39;A&#39; &#39;A&#39;&#93;, # this is a 1x2 array
+               &#91;&#39;A&#39; &#39;-&#39;&#93;  # col1 is sequence 1, col2 is sequence 2
+                   &#93; # this is a vector or 2D arrays
+2-element Vector&#123;Matrix&#123;Char&#125;&#125;:
+ &#91;&#39;A&#39; &#39;A&#39;&#93;
+ &#91;&#39;A&#39; &#39;-&#39;&#93;
+
+julia&gt; push&#33;&#40;alignments, alignments&#91;1&#93;&#41; # the alignment represented by index 1 branches, so I have one at index 3
+3-element Vector&#123;Matrix&#123;Char&#125;&#125;:
+ &#91;&#39;A&#39; &#39;A&#39;&#93;
+ &#91;&#39;A&#39; &#39;-&#39;&#93;
+ &#91;&#39;A&#39; &#39;A&#39;&#93;
+
+julia&gt; alignments&#91;1&#93; &#61; vcat&#40;alignments&#91;1&#93;, &#91;&#39;A&#39; &#39;A&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;2&#93; &#61; vcat&#40;alignments&#91;2&#93;, &#91;&#39;A&#39; &#39;A&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;3&#93; &#61; vcat&#40;alignments&#91;3&#93;, &#91;&#39;A&#39; &#39;-&#39;&#93;&#41;;
+
+julia&gt; alignments
+3-element Vector&#123;Matrix&#123;Char&#125;&#125;:
+ &#91;&#39;A&#39; &#39;A&#39;; &#39;A&#39; &#39;A&#39;&#93;
+ &#91;&#39;A&#39; &#39;-&#39;; &#39;A&#39; &#39;A&#39;&#93;
+ &#91;&#39;A&#39; &#39;A&#39;; &#39;A&#39; &#39;-&#39;&#93;
+
+julia&gt; alignments&#91;1&#93; &#61; vcat&#40;alignments&#91;1&#93;, &#91;&#39;A&#39; &#39;-&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;2&#93; &#61; vcat&#40;alignments&#91;2&#93;, &#91;&#39;A&#39; &#39;A&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;3&#93; &#61; vcat&#40;alignments&#91;3&#93;, &#91;&#39;A&#39; &#39;A&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;1&#93; &#61; vcat&#40;alignments&#91;1&#93;, &#91;&#39;T&#39; &#39;T&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;2&#93; &#61; vcat&#40;alignments&#91;2&#93;, &#91;&#39;T&#39; &#39;T&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;3&#93; &#61; vcat&#40;alignments&#91;3&#93;, &#91;&#39;T&#39; &#39;T&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;1&#93; &#61; vcat&#40;alignments&#91;1&#93;, &#91;&#39;G&#39; &#39;G&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;2&#93; &#61; vcat&#40;alignments&#91;2&#93;, &#91;&#39;G&#39; &#39;G&#39;&#93;&#41;;
+
+julia&gt; alignments&#91;3&#93; &#61; vcat&#40;alignments&#91;3&#93;, &#91;&#39;G&#39; &#39;G&#39;&#93;&#41;;
+
+julia&gt; alignments
+3-element Vector&#123;Matrix&#123;Char&#125;&#125;:
+ &#91;&#39;A&#39; &#39;A&#39;; &#39;A&#39; &#39;A&#39;; … ; &#39;T&#39; &#39;T&#39;; &#39;G&#39; &#39;G&#39;&#93;
+ &#91;&#39;A&#39; &#39;-&#39;; &#39;A&#39; &#39;A&#39;; … ; &#39;T&#39; &#39;T&#39;; &#39;G&#39; &#39;G&#39;&#93;
+ &#91;&#39;A&#39; &#39;A&#39;; &#39;A&#39; &#39;-&#39;; … ; &#39;T&#39; &#39;T&#39;; &#39;G&#39; &#39;G&#39;&#93;
+
+julia&gt; alignments&#91;1&#93;
+5×2 Matrix&#123;Char&#125;:
+ &#39;A&#39;  &#39;A&#39;
+ &#39;A&#39;  &#39;A&#39;
+ &#39;A&#39;  &#39;-&#39;
+ &#39;T&#39;  &#39;T&#39;
+ &#39;G&#39;  &#39;G&#39;
+
+julia&gt; alignments&#91;2&#93;
+5×2 Matrix&#123;Char&#125;:
+ &#39;A&#39;  &#39;-&#39;
+ &#39;A&#39;  &#39;A&#39;
+ &#39;A&#39;  &#39;A&#39;
+ &#39;T&#39;  &#39;T&#39;
+ &#39;G&#39;  &#39;G&#39;
+
+julia&gt; alignments&#91;3&#93;
+5×2 Matrix&#123;Char&#125;:
+ &#39;A&#39;  &#39;A&#39;
+ &#39;A&#39;  &#39;-&#39;
+ &#39;A&#39;  &#39;A&#39;
+ &#39;T&#39;  &#39;T&#39;
+ &#39;G&#39;  &#39;G&#39;</code></pre> <p>Of course, you won&#39;t be doing this by hand, you&#39;ll need to think about how to do it in loops, keeping track of which branch you&#39;re on, in case you need to copy it to a new branch etc.</p> <p>Here&#39;s a partial example of the dictionary approach &#40;again, doing it by hand&#41;:</p> <pre><code class=language-julia-repl >julia&gt; inds &#61; Dict&#40;&#40;i,j&#41;&#61;&gt;&#91;&#93; for i in 1:5 for j in 1:4&#41;;
+
+julia&gt; push&#33;&#40;inds&#91;&#40;1,2&#41;&#93;, &#40;1,1&#41;&#41;;
+
+julia&gt; push&#33;&#40;inds&#91;&#40;2,1&#41;&#93;, &#40;1,1&#41;&#41;;
+
+julia&gt; push&#33;&#40;inds&#91;&#40;2,2&#41;&#93;, &#40;1,1&#41;&#41;;
+
+julia&gt; append&#33;&#40;inds&#91;&#40;2,3&#41;&#93;, &#91;&#40;1,2&#41;, &#40;2,2&#41;&#93;&#41;; # Cell &#40;2,3&#41; can be scored from diagonal, or horizontal
+
+julia&gt; inds
+Dict&#123;Tuple&#123;Int64, Int64&#125;, Vector&#123;Any&#125;&#125; with 20 entries:
+  &#40;1, 2&#41; &#61;&gt; &#91;&#40;1, 1&#41;&#93;
+  &#40;3, 1&#41; &#61;&gt; &#91;&#93;
+  &#40;1, 3&#41; &#61;&gt; &#91;&#93;
+  &#40;1, 4&#41; &#61;&gt; &#91;&#93;
+  &#40;3, 2&#41; &#61;&gt; &#91;&#93;
+  &#40;3, 3&#41; &#61;&gt; &#91;&#93;
+  &#40;4, 1&#41; &#61;&gt; &#91;&#93;
+  &#40;2, 1&#41; &#61;&gt; &#91;&#40;1, 1&#41;&#93;
+  &#40;3, 4&#41; &#61;&gt; &#91;&#93;
+  &#40;4, 2&#41; &#61;&gt; &#91;&#93;
+  &#40;5, 1&#41; &#61;&gt; &#91;&#93;
+  &#40;2, 2&#41; &#61;&gt; &#91;&#40;1, 1&#41;&#93;
+  &#40;4, 3&#41; &#61;&gt; &#91;&#93;
+  &#40;2, 3&#41; &#61;&gt; &#91;&#40;1, 2&#41;, &#40;2, 2&#41;&#93;
+  &#40;4, 4&#41; &#61;&gt; &#91;&#93;
+  &#40;2, 4&#41; &#61;&gt; &#91;&#93;
+  &#40;1, 1&#41; &#61;&gt; &#91;&#93;
+  &#40;5, 2&#41; &#61;&gt; &#91;&#93;
+  &#40;5, 3&#41; &#61;&gt; &#91;&#93;
+  &#40;5, 4&#41; &#61;&gt; &#91;&#93;</code></pre> <p>Once this is filled out, you could recurssively follow the keys backwards.</p> <p>These are not by any means the only way to accomplish this task. if you want to try something else, by all means, do so. For example, you might keep track of the indicies in the matrix</p> <p>Just keep in mind:</p> <ol> <li><p>You essentially need to build the sequences 1 character at a time</p> <li><p>You need to keep track of both sequence 1 and sequence 2</p> <li><p>At any time, your alignment might branch into 2 different possibilities.</p> </ol> <h4 id=using_custom_types_and_recursion ><a href="#using_custom_types_and_recursion" class=header-anchor >Using custom types and recursion</a></h4> <p>Honestly, the best way to do this is probably to use custom types and / or recurssive functions.</p> <p>In particular, recurssive functions are valuable when a problem has a tree-like structure, as this does. Both of these topics are really beyond the scope of the course, but if you&#39;d like guidance on how to approach this, ask me&#33;</p> <div class=page-foot > <div class=copyright > &copy; Kevin Bonham, PhD. Last modified: June 29, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> </div> </div> <script src="/libs/highlight/highlight.pack.js"></script> <script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: ' '});</script> <label for=sidebar-checkbox  class=sidebar-toggle ></label>
