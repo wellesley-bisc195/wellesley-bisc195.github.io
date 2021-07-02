@@ -28,6 +28,19 @@
 - Analysis plans Due: July 12
 - First drafts code / notebooks Due: July 16
 *** Missing these deadlines will have grading consequences
+* Lab Grading
+** Getting caught up
+- I tried to sort out labs, but it's a bit confusing
+- Please update github pull request *titles* with:
+  + Your name
+  + Lab Partner's name (if applicable)
+  + Lab number
+- Should have separate PRs for
+  + Lab03
+  + Lab04 / 5
+  + Lab06
+  + Lab07 / 8
+- You are not (yet) getting credit unless you have a PR with your name in the title and a "complete" badge.
 * Indices vs values
 ** Confusion between "location" and "thing"
 #+begin_src julia
@@ -77,7 +90,7 @@ julia> findall(<(0.5), newvec)
  3
  4
 
-julia> newvec[findall(<(0.5), newvec)] # index based on result of find or findall
+julia> newvec[findall(<(0.5), newvec)] # index based on result
 3-element Vector{Float64}:
  0.4465775523061499
  0.21788789287837185
@@ -98,7 +111,30 @@ julia> newvec[findall(<(0.5), newvec)] # index based on result of find or findal
 - Use code notebooks for "experiments"
 * Lab08 == Lab07
 ** Alignment tracing for NW and SW
-- start from $M_(i,j)$ which are
+- start from $M_{(i,j)}$ where $i$ and $j$ are
   + the last indices in 1st and 2nd dimension for NW
   + the indices for the matrix with the maximum score in SW
 - Check the score from
+  1. $M_{(i,j-1)}$ (cell to the left), a gap score
+  2. $M_{(i-1,j)}$ (cell above), a gap score
+  3. $M_{(i-1,j-1)}$ (cell from diagonal), a match or mismatch
+- If any match your current cell, push correct characters to alignments
+  1. push gap to =seq1=, character at $j$ to =seq2=
+  2. push character at $i$ to =seq1=, gap to =seq2=
+  3. push character at $i$ to =seq1=, character at $j$ to =seq2=
+- update indices
+** Special considerations
+- Be mindful of what happens when you hit the first row or first column
+  + $i-1$ or $j-1$ may throw bounds error
+- When should your loop stop?
+* What's left in the course?
+** Coming up next
+*** Lectures
+- Lecture 9: using packages, plotting functions
+- Lecture 10: custom structs / advanced programming
+- Lecture 11: Working with code from other languages
+- Lecture 12: Wrap-up
+*** Labs
+- Lab 9: Gap open and gap-extension scores
+- Lab 10: Multiple sequence alignment algorithms
+- Lab 11-12: Work on Final Projects
