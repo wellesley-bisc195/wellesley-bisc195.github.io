@@ -29,3 +29,20 @@ date = Date(2021, 7, 2)
   - $i-1$ or $j-1$ may throw bounds error
 - When should your loop stop?
   - It will be different for Needleman-Wunsch than for Smith-Waterman
+
+### A test suite:
+
+```julia
+@testset "Lab07" begin
+    @test nwalign("AATTGGCC", "AATTTGCC") == ("AATTGGCC", "AATTTGCC")
+    @test any(aln -> aln == nwalign("AATTGGCC", "AAGGTTCC"), [
+            ("AA--TTGGCC", "AAGGTT--CC"),
+            ("AATTGGCC", "AAGGTTCC")])
+    @test nwalign("AATTGGCC", "AAGGTTCC", gap=-2) == ("AATTGGCC", "AAGGTTCC")
+    @test nwalign("AATTGGCC", "AAGGTTCC", mismatch=-2) == ("AA--TTGGCC", "AAGGTT--CC")
+
+    @test swalign("AAT", "AA") == ("AA", "AA")
+    @test swalign("AAAAATTGGCCAAAAA", "ATTGGCCA") == ("ATTGGCCA", "ATTGGCCA")
+    @test swalign("AAAAATTGGCCAAAAA", "ATTGGCAAA") == ("ATTGGCCAAA", "ATTGGC-AAA")
+end
+```
