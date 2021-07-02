@@ -200,3 +200,7 @@ But just like you should keep a lab notebook to record the results of experiment
 it's important to keep track of the code you write
 and the results that you get.
 To do this, we can use markdown files.
+
+Alternatively,
+we can use Pluto.jl notebooks - more detail on that
+on the [assignment page](/assignments/Assignment07).
