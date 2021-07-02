@@ -4,8 +4,28 @@
 #+BEAMER_THEME: Goettingen  [height=40pt]
 #+LaTeX_CLASS_OPTIONS: [smaller]
 
-* Using Functions
+* Some notes on the course
+** Course philosophy
+Scientific literature suggests that the best way to learn is
+- Spaced repition
+- Practice
+- Rapid feedback
+- "Desirable difficulty"
+- Repitition that is spaced out
+** Keep the corrections coming
+- Jess is in the lead with Anika and Clara hot on her tail
+- Never too early to ask if I'm wrong
+  + If I am, you get a point (for bragging rights, not grades)
+  + If I am not, you still might learn something
+- Assignments are meant to make you work, but not /too/ hard (not all difficulty is desirable)
+** Assignments and feedback
+- Ask for review on github issues
+  + if I haven't responded within 2 days, ping me =@kescobo=
+- Check on automated tests (locally or on push)
+- OK to push multiple times, don't wait until you're done
 
+*Lab Grading*: More details in today's lab
+* Using Functions
 ** Functions are reusable bits of code
 - Some functions don't take arguments
   + =pwd= in the terminal
@@ -62,3 +82,55 @@
       @info "wait wait"
   end
   #+end_src
+** Don't rewrite code - call functions!
+#+begin_src julia
+# if you have...
+function complement(sequence)
+    # ...
+end
+function reverse_complement(sequence)
+    rev = reverse(sequence)
+    return complement(rev) # call it!
+end
+#+end_src
+** When functions are getting long, re-write chuncks as functions
+- Smaller units are easier to understand
+- Smaller units are easier to test
+- Smaller units are easier to debug
+* Lab 3: Needleman-Wunsch Alignment, part 1
+** Needleman-Wunsch is a local-alignment algorithm
+*Premise*: Given two sequences, what is the best alignment? Eg.
+
+#+begin_src
+Seq1: AATCAAGTTAGATCGAT
+Seq2: AAGCA--TTAGAC-GGT
+#+end_src
+- What question is an alignment setting out to answer?
+- What does an alignment represent?
+- What does "Best" mean?
+** Composition of alignments
+- Match: Each sequence has the same element (nucleotide or
+amino acid) in that position
+- Mismatch: Each sequence has a different element in that
+position
+- Gap: Also called InDel (insertion/deletion), one sequence has
+an element at a position, while the other does not
+** Alignment scoring
+- Each position can be given a numerical “score”
+- Original paper used
+  + Match: +1
+  + Mismatch: -1
+  + Gap: -1
+- May also distinguish between “Gap open” and “Gap extend”
+scores
+** An alignment represents a hypothesis about evolutionary history
+[[./images/alignment.png]]
+[[http://readiab.org/book/latest/2/1#1][Source]]
+** Watch the video
+- Where indicated, pause video and try to answer the questions
+- Video is ~12 min, will return in 25 min
+- Video link: https://youtu.be/_Id3uWpdXUs
+** Complete the lab
+1. Fork the "AlignmentAlgorithms" repository on Github
+2. Indicate who you're partnered with (use their github handle)
+3. Follow the instructions for Lab3
