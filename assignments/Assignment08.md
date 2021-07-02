@@ -20,7 +20,7 @@ which Kevin will add to your github repo once you've created it and shared it wi
   - [ ] `Project.toml` with code repo, `Pluto`, `PlutoUI`, `Revise`, `DataFrames`, and `Plots` as dependencies
   - [ ] `data/` directory with explanation for how to download data
     - [ ] `cov-sequences.fasta`
-  - [ ] `notebooks/` directory with `1-sequence-stats.jl`
+  - [ ] `notebooks/` directory with `1-sequence-stats.jl` or `1-sequence-stats.md`
     - [ ] Including code and description for calculating mean
           and standard deviations  for sequence length and gc content
 
@@ -128,7 +128,8 @@ separate from code that is used for one specific purpose.
 6. Add a file called `data.md` to the `data/` directory -
    This is where we'll describe how to get the data that we're going to analyze,
    but you can leave it blank for now
-7. Create a file in the `notebooks/` directory called `1-sequence-stats.jl`
+7. Create a file in the `notebooks/` directory called `1-sequence-stats.jl` if you want to use Pluto.jl,
+   or `1-sequence-stats.md` if you want to use a pure markdown notebook.
 8. Commit and push your changes.
 
 At this point, you should have a git repo with the following structure:
@@ -138,13 +139,13 @@ At this point, you should have a git repo with the following structure:
 ├── data
 │   └── data.md
 ├── notebooks
-│   └── 1-sequence-stats.jl
+│   └── 1-sequence-stats.jl # or 1-sequence-stats.md
 └── README.md
 ```
 
 ## Getting the data
 
-An enormous amount of data has already been generated
+An enormous amount of data has been generated
 on SARS-CoV2 (the virus) and COVID-19 (the disease caused by CoV2).
 You can get links to much of it [on NCBI](https://www.ncbi.nlm.nih.gov/sars-cov-2/) -
 the National Center for Biotechnology Information.
@@ -232,7 +233,7 @@ Once you've done this, you will be able to do `using BioinformaticsBISC195`
 in your julia code, as long as this julia project is active.
 
 In addition, use `add` to install the packages
-`Pluto`, `PlutoUI`, `Revise`, `Plots`, and `DataFrames` 
+`Pluto`, `PlutoUI`, `Revise`, `Plots`, and `DataFrames`
 We'll use those a bit more later.
 
 Add and commit the `Project.toml` and `Manifest.toml` files,
