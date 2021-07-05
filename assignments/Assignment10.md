@@ -1,7 +1,7 @@
 +++
 number = 10
 title = "Final Project"
-release = Date(2021,07,06)
+release = Date(2021,07,05)
 due_date = Date(2021,07,23)
 +++
 
@@ -246,4 +246,3 @@ Submission is complete when a `v0.1.x` release is tagged and Kevin is notified.
   rather than narrative description.
 - Plots and other display items are presented without description,
   are poorly formatted, and unclear.
-
