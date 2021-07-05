@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.7
+# v0.14.8
 
 using Markdown
 using InteractiveUtils
@@ -235,8 +235,8 @@ reverse_complement(sequence) = reverse(complement(sequence))
 reverse_complement(seq)
 
 # ╔═╡ Cell order:
-# ╟─296bafc5-fe27-436a-b096-44bb8b9a54d8
-# ╟─068148db-6072-4a80-babb-ec00eb7ab553
+# ╠═296bafc5-fe27-436a-b096-44bb8b9a54d8
+# ╠═068148db-6072-4a80-babb-ec00eb7ab553
 # ╟─598254c8-8dc6-4065-9d0e-837ccf061f80
 # ╠═9d2bc9fc-f2c6-419c-ac69-34a14fe9e1e1
 # ╠═215d8f14-5854-4251-a515-602862e32b1e
