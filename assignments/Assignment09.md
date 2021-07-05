@@ -1,7 +1,7 @@
 +++
 number = 9
 title = "Getting set up"
-release = Date(2021,07,05)
+release = Date(2021,07,06)
 due_date = Date(2021,07,9)
 +++
 
@@ -142,31 +142,31 @@ it's always worth your time to make sure there aren't errors.
 @@title
 To Do
 @@
-    Filter your sequences to remove any that have a length of less than 25k bases.
-    There are a couple of different ways to do this -
-    but keep in mind that,
-    if the headers and sequences from your fasta file are separate,
-    you need to make sure that you remove the headers that correspond to short sequences as well.
+Filter your sequences to remove any that have a length of less than 25k bases.
+There are a couple of different ways to do this -
+but keep in mind that,
+if the headers and sequences from your fasta file are separate,
+you need to make sure that you remove the headers that correspond to short sequences as well.
 
-    Some possibilities:
+Some possibilities:
 
-    1. Add a filter to your `parse_fasta()` function.
-       This is not ideal, since it makes the function less generalizable to other problems.
-    2. Find the index of all the sequences that are less than 25K bases long,
-       then remove the items at those indices from the sequence vector and the headers vector.
-       Take a look at the `findall()` function if you plan to take this path.
-       Warning: if you remove things one by one,
-       you may change the indices of other things in the vector.
-    3. Loop through the sequences, and, if they are long enough, push them into a new vector.
-       Again - be sure to take care of the headers as well.
-    4. Find the index of all of the sequences that are *longer* than 25k bases,
-       and then take a slice of the original vector.
-       Again, `findall()` may be useful here.
+1. Add a filter to your `parse_fasta()` function.
+    This is not ideal, since it makes the function less generalizable to other problems.
+2. Find the index of all the sequences that are less than 25K bases long,
+    then remove the items at those indices from the sequence vector and the headers vector.
+    Take a look at the `findall()` function if you plan to take this path.
+    Warning: if you remove things one by one,
+    you may change the indices of other things in the vector.
+3. Loop through the sequences, and, if they are long enough, push them into a new vector.
+    Again - be sure to take care of the headers as well.
+4. Find the index of all of the sequences that are *longer* than 25k bases,
+    and then take a slice of the original vector.
+    Again, `findall()` may be useful here.
 
-    Whatever you do, you should ensure that:
+Whatever you do, you should ensure that:
 
-    1. The `minimum()` of the sequence length is actually > 25k bases.
-    2. If your sequence and header vectors are separate, they should have the same length.
+1. The `minimum()` of the sequence length is actually > 25k bases.
+2. If your sequence and header vectors are separate, they should have the same length.
 @@
 
 @@colbox-green
@@ -174,19 +174,19 @@ To Do
 Tip
 @@
 
-    You can use `@assert` to make sure that your code did what you expect.
-    `@assert` followed by a boolean expression will throw an error if the expression is `false`.
+You can use `@assert` to make sure that your code did what you expect.
+`@assert` followed by a boolean expression will throw an error if the expression is `false`.
 
-    ```julia
-    julia> @assert 1 == 1
+```julia
+julia> @assert 1 == 1
 
-    julia> @assert 1 == 2
-    ERROR: AssertionError: 1 == 2
-    Stacktrace:
-    [1] top-level scope at REPL[13]:1
-    ```
+julia> @assert 1 == 2
+ERROR: AssertionError: 1 == 2
+Stacktrace:
+[1] top-level scope at REPL[13]:1
+```
 
-    So you might do `@assert length(header_vector) == length(sequence_vector)` for example.
+So you might do `@assert length(header_vector) == length(sequence_vector)` for example.
 @@
 
 ### Plot the result
@@ -211,8 +211,7 @@ Sequences that are closer together are inferred to share a common ancestor
 more recently than sequences that are further apart.
 
 The most widely-used distance metrics typically come
-from [doing an alignment](https://en.wikipedia.org/wiki/Sequence_alignment#Multiple_sequence_alignment),
-but the algorithms for aligning sequences are a bit beyond the scope of this course.
+from [doing an alignment](https://en.wikipedia.org/wiki/Sequence_alignment#Multiple_sequence_alignment).
 
 Instead, we can do a quick-and-dirty analysis
 by comparing the unique kmers in a sequence.
@@ -350,4 +349,4 @@ to learn something about the evolution of SARS-related coronaviruses.
 - [ ] Unique kmer function that discards kmers with ambiguous bases
 - [ ] Kmer set distance function that returns a distance metric
 
-[^vscode]: The Julia language extension of VS Code loads `Revise.jl` automatically if you have it installed
+[^vscode]: The Julia language extension of VS Code loads `Revise.jl` automatically if you have it installed.

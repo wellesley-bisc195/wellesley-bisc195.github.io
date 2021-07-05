@@ -17,7 +17,7 @@ which Kevin will add to your github repo once you've created it and shared it wi
   - [ ] tests still passing
 - [ ] Analysis repo complete
   - [ ] README has heading 1 title and bold author line
-  - [ ] `Project.toml` with code repo, `Pluto`, `PlutoUI`, `Revise`, `DataFrames`, and `Plots` as dependencies
+  - [ ] `Project.toml` with your code repo, `Pluto`, `PlutoUI`, `Revise`, `DataFrames`, and `Plots` as dependencies
   - [ ] `data/` directory with explanation for how to download data
     - [ ] `cov-sequences.fasta`
   - [ ] `notebooks/` directory with `1-sequence-stats.jl` or `1-sequence-stats.md`
@@ -119,7 +119,7 @@ separate from code that is used for one specific purpose.
    Remember, the first time you push, you need to say _where_ to push:
 
    ```sh
-   $ git push --set-upstream origin master
+   $ git push --set-upstream origin main
    ```
 
    Take a look at the repo on github -
