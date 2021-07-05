@@ -45,13 +45,13 @@ First, let's make a new, public home for your bioinformatics package.
 
 1. On github, create a new repository:
 
-   ![Create repo](../assets/img/new-repo.png)
+   ![Create repo](/assets/img/new-repo.png)
 2. Give it a good name - Julia package names usually end with `.jl`.
    Be sure that the repo is set to `public`.
-   ![Create repo](../assets/img/repo-name.png)
+   ![Create repo](/assets/img/repo-name.png)
 3. Copy the url of the repository
    
-   ![Create repo](../assets/img/clone-repo.png)
+   ![Create repo](/assets/img/clone-repo.png)
 4. On your computer, navigate to your `Assignment07-<username>` directory.
    We are now going to point `git` to this new location,
    so that when you make new changes in the future,

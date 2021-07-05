@@ -1,7 +1,7 @@
 +++
 number = 9
 title = "Getting set up"
-release = Date(2021,07,06)
+release = Date(2021,07,05)
 due_date = Date(2021,07,9)
 +++
 
@@ -88,6 +88,10 @@ The `minimum()` and `maximum()` functions
 take vectors as arguments,
 and return the smallest and largest values respectively.
 
+For all of the following task,
+record the results in your analysis notebook repository.
+Be sure to describe the steps you're taking, and explain why.
+
 @@colbox-purple
 @@title
 To Do
@@ -119,7 +123,19 @@ using Plots
 histogram(seq_lengths)
 ```
 
-![coronavirus genome lengths](../assets/img/coronavirus_lengths.png)
+![coronavirus genome lengths](/assets/img/coronavirus_lengths.png)
+
+@@colbox-blue
+@@title
+Note
+@@
+When I first wrote this assignment, 
+There were a bunch of very short sequences.
+This may no longer be correct -
+if your sequences don't contain outliers,
+your results may differ.
+@@
+
 
 @@colbox-purple
 @@title
@@ -142,7 +158,7 @@ it's always worth your time to make sure there aren't errors.
 @@title
 To Do
 @@
-Filter your sequences to remove any that have a length of less than 25k bases.
+Filter your sequences to remove any that have a length of less than 25k bases[^filtering].
 There are a couple of different ways to do this -
 but keep in mind that,
 if the headers and sequences from your fasta file are separate,
@@ -189,6 +205,7 @@ Stacktrace:
 So you might do `@assert length(header_vector) == length(sequence_vector)` for example.
 @@
 
+[^filtering]: if all of your sequences are >25k bases, instead select a length that removes at least 5% of sequences, just to practice. Use the histogram to pick the cutoff. Be sure to describe your process in your notebook.
 ### Plot the result
 
 @@colbox-purple
@@ -200,7 +217,7 @@ Create a new histogram that shows the distribution
 of filtered sequences.
 It should look something like this:
 
-![filtered histogram](../assets/img/filtered_coronavirus_lengths.png)
+![filtered histogram](/assets/img/filtered_coronavirus_lengths.png)
 @@
 
 ## Kmer analysis of coronavirus genomes
