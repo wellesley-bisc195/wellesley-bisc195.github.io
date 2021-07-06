@@ -61,7 +61,7 @@ First, let's make a new, public home for your bioinformatics package.
 
    ```sh
    $ git remote set-url origin <paste URL here>
-   $ git push -u origin trunk
+   $ git push -u origin main
    Enumerating objects: 61, done.
    Counting objects: 100% (61/61), done.
    Delta compression using up to 12 threads
@@ -70,8 +70,8 @@ First, let's make a new, public home for your bioinformatics package.
    Total 61 (delta 21), reused 24 (delta 7), pack-reused 0
    remote: Resolving deltas: 100% (21/21), done.
    To github.com:kescobo/BioinformaticsBISC195.jl.git
-    * [new branch]      trunk -> trunk
-   Branch 'trunk' set up to track remote branch 'trunk' from 'origin'.
+    * [new branch]      main -> main
+   Branch 'main' set up to track remote branch 'main' from 'origin'.
    ```
 5. Now let's rename the module in the julia code.
    Open the assignment _directory_ in VS Code.
