@@ -115,7 +115,13 @@ separate from code that is used for one specific purpose.
    Create a file called `README.md`,
    give it a title (use markdown to make the title Heading 1 format),
    and add `By <your name>` under the title in bold.
-5. Commit and push your changes.
+5. By default git calls the default branch `master`.
+   In 2021, we don't like that any more, so change the name to `main` with
+
+   ```sh
+   $ git branch -m main
+   ```
+6. Commit and push your changes.
    Remember, the first time you push, you need to say _where_ to push:
 
    ```sh
@@ -125,12 +131,12 @@ separate from code that is used for one specific purpose.
    Take a look at the repo on github -
    your README should show up, correctly formatted,
    but the directories won't show up until there are committed files in them.
-6. Add a file called `data.md` to the `data/` directory -
+7. Add a file called `data.md` to the `data/` directory -
    This is where we'll describe how to get the data that we're going to analyze,
    but you can leave it blank for now
-7. Create a file in the `notebooks/` directory called `1-sequence-stats.jl` if you want to use Pluto.jl,
+8. Create a file in the `notebooks/` directory called `1-sequence-stats.jl` if you want to use Pluto.jl,
    or `1-sequence-stats.md` if you want to use a pure markdown notebook.
-8. Commit and push your changes.
+9.  Commit and push your changes.
 
 At this point, you should have a git repo with the following structure:
 
