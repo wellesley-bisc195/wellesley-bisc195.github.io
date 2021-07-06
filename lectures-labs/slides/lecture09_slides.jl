@@ -74,6 +74,12 @@ df[!, [:col1, :groups]]
 	combine(:col2=>sum)
 end
 
+# ╔═╡ 499ee1fb-1142-47b7-a5c7-d5aa5eb117d2
+gdf = groupby(df, :groups)
+
+# ╔═╡ 94d4f702-096e-4f58-9d7b-d74af48419ca
+combine(gdf, :col2=>sum)
+
 # ╔═╡ acbad635-4660-4b05-93c0-d2be6eff56be
 md"""
 ## When trying to use new packages...
@@ -84,10 +90,13 @@ md"""
 """
 
 # ╔═╡ 75650ef9-6b86-4d13-8936-9ab9dfafa464
-s1 = dna"CCTAGGAGGG"
+s1 = dna"CCaaTAGGAGGG"
 
 # ╔═╡ 7a9ed21f-a6c4-47de-8424-f25cf684e451
 s2 = dna"ACCTGGTATGATAGCG"
+
+# ╔═╡ fccff30e-458e-45bb-a382-5a173f1b1138
+BLOSUM62
 
 # ╔═╡ 4ef66428-cc67-4cd4-965d-f8b6188a1c98
 submat = DichotomousSubstitutionMatrix(1, -1)
@@ -96,7 +105,7 @@ submat = DichotomousSubstitutionMatrix(1, -1)
 scoremodel = AffineGapScoreModel(submat, gap_open=0, gap_extend=-1)
 
 # ╔═╡ 7017f9ae-b759-43f4-aac1-83b79de4671d
-pairalign(GlobalAlignment(), s1, s2, scoremodel)
+pairalign(LocalAlignment(), s1, s2, scoremodel)
 
 # ╔═╡ 3d46aa1a-b238-4b24-9beb-e544ec131191
 md"""
@@ -112,11 +121,23 @@ let
 	histogram(rand_numbers, 
 			xlims=(-5, 5),
 			ylims=(0,200),
-			primary=false)
+			primary=false, bins=20)
 	vline!([μ], label="Mean (expected)")
 	vline!([mean(rand_numbers)], label="Mean (actual)")
 	title!("A Normal Distribution")
 end
+
+# ╔═╡ 1b4e3a95-fd37-49b5-9079-1e262b369bef
+x = rand(Normal(0, 1), 100)
+
+# ╔═╡ 75ae1bbf-c31e-4bdc-a13d-ec7752ac2a86
+y = rand(MvNormal([0, 1], [1,1]), 100)'
+
+# ╔═╡ e205155f-ecf4-47b4-8302-c526843d95e3
+scatter(x, y,
+	xlabel="A normal distribition",
+	ylabel="A different normal distribution", color = ["blue" "red"],
+	title = "two random distribitions")
 
 # ╔═╡ 677d5800-e11a-4894-b38a-00fb44bcd5cb
 md"""
@@ -144,11 +165,14 @@ end
 # ╠═4c40a754-a776-47a9-ad0d-eb7e7f3464e0
 # ╠═31edf72d-f2ad-4ed6-bc47-9390a4cc61f8
 # ╠═c108ac66-543c-4f9f-81da-40868155219e
+# ╠═499ee1fb-1142-47b7-a5c7-d5aa5eb117d2
+# ╠═94d4f702-096e-4f58-9d7b-d74af48419ca
 # ╟─acbad635-4660-4b05-93c0-d2be6eff56be
 # ╠═340c6f5d-5cd9-415b-b1c0-6ad18d230dc5
 # ╠═e7d7d3c2-dbec-4704-adc3-f3a5deedcc22
-# ╠═75650ef9-6b86-4d13-8936-9ab9dfafa464
-# ╠═7a9ed21f-a6c4-47de-8424-f25cf684e451
+# ╟─75650ef9-6b86-4d13-8936-9ab9dfafa464
+# ╟─7a9ed21f-a6c4-47de-8424-f25cf684e451
+# ╟─fccff30e-458e-45bb-a382-5a173f1b1138
 # ╠═4ef66428-cc67-4cd4-965d-f8b6188a1c98
 # ╠═7126c76b-4599-48c2-8af8-8161aeebe851
 # ╠═7017f9ae-b759-43f4-aac1-83b79de4671d
@@ -156,6 +180,9 @@ end
 # ╠═f623ea54-6556-4064-9885-0e95ef8b25cb
 # ╟─3d46aa1a-b238-4b24-9beb-e544ec131191
 # ╠═67c2ed4b-3f1a-4836-a458-74b6cc13d2ef
+# ╠═1b4e3a95-fd37-49b5-9079-1e262b369bef
+# ╠═75ae1bbf-c31e-4bdc-a13d-ec7752ac2a86
+# ╠═e205155f-ecf4-47b4-8302-c526843d95e3
 # ╟─677d5800-e11a-4894-b38a-00fb44bcd5cb
 # ╠═2f4df2ba-2447-4fe9-8971-fe6191bb330d
 # ╠═5382e1ff-9f19-4a34-84a0-a3e853819211
