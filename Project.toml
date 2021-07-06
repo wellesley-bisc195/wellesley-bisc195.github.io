@@ -1,6 +1,8 @@
 [deps]
 BioAlignments = "00701ae9-d1dc-5365-b64a-a3a3ebf5695e"
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
+Chain = "8be319e6-bccf-4806-a6f7-6fae938471bc"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Franklin = "713c75ef-9fc9-4b05-94a9-213340da978e"
 IOCapture = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
