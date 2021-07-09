@@ -157,8 +157,8 @@ end
 
 # ╔═╡ Cell order:
 # ╟─2254fcb8-2958-471f-8804-74ffa494c96d
-# ╟─f6d11e7a-e52e-49f9-bb83-fb80bed608a6
-# ╟─d9697ced-b183-40af-b1b9-034d1f37e37f
+# ╠═f6d11e7a-e52e-49f9-bb83-fb80bed608a6
+# ╠═d9697ced-b183-40af-b1b9-034d1f37e37f
 # ╟─f499caea-c901-4869-a24b-481b4bbc5c37
 # ╠═f380bc9d-fb3c-405f-93e7-20257013ac9f
 # ╠═ffca34e3-f94f-46ee-98cd-0562981aed8c

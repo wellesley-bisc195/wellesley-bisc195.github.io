@@ -257,7 +257,7 @@ than the code that you have tended to write until now,
 But before we see examples of that,
 let's get the pluto notebook up and running.
 
-In the `notebooks/1-sequence-stats.md` file,
+In the `notebooks/1-sequence-stats.jl` file,
 write julia code to calculate the mean and standard deviation
 of the lengths and gc content of your coronavirus genomes,
 as you did in [Assignment 6](/assignments/Assignment06).
