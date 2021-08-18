@@ -73,7 +73,7 @@ can all be found with the appropriate lesson.
 There are also indices for each type of lesson content.
 
 - [Lesson index](/lessons)
-- [Lecture index](/lectures)
+- [Lecture index](/lectures-labs)
 - [Assignment index](/assignments)
 
 ### Call-out boxes
